@@ -29,6 +29,16 @@ public class LoginBeanUI implements Serializable {
     }
 
     public void login() throws IOException {
+        if (usuario.getCorreo() == null || usuario.getCorreo().trim().isEmpty() ||
+                usuario.getContrasena() == null || usuario.getContrasena().trim().isEmpty()) {
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_ERROR,
+                    "Debe llenar ambos campos",
+                    "Ingrese su correo y contraseña"));
+            return;
+        }
+
         Usuario us = loginHelper.Login(usuario.getCorreo(), usuario.getContrasena());
         if (us != null && us.getId() != null && us.getRol().equals(Rol.Administrador)) {
             usuario = us;

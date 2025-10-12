@@ -65,11 +65,16 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: left;
             font-family: "Minerva Modern";
+            box-sizing: border-box;
+            overflow-wrap: break-word;
         }
         .form-box label {
+            text-align: left;
+            width: 180px;
+            max-width: 180px;
             display: block;
+            margin: 0 auto 15px auto;
             margin-bottom: 6px;
             font-weight: bold;
             color: #fff;
@@ -77,11 +82,12 @@
         }
         .form-box input[type="text"],
         .form-box input[type="password"] {
-            width: 100%;
+            width: 180px;
+            max-width: 180px;
+            margin: 0 auto 15px auto;
+            display: block;
             padding: 6px 8px;
-            margin-bottom: 15px;
             border: 1px solid #ccc;
-            border-radius: 4px;
             box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1);
         }
         .btn-iniciar {
@@ -93,7 +99,6 @@
             color: #fff;
             font-size: 14px;
             font-weight: bold;
-            border-radius: 6px;
             box-shadow: 0 3px 5px rgba(0,0,0,0.3);
             cursor: pointer;
             transition: all 0.2s ease;
@@ -102,6 +107,21 @@
 
         .btn-iniciar:hover {
             transform: scale(1.05);
+        }
+        .mensaje {
+            width: 100%;
+            max-width: 260px;
+            margin-top: 12px;
+            text-align: center;
+            color: #ff4d4d;
+            font-weight: bold;
+            list-style: none;
+            padding: 0;
+        }
+        .mensaje {
+            list-style: none;
+            margin: 0;
+            padding: 0;
         }
     </style>
 </head>
@@ -115,14 +135,14 @@
             <div id="titulo">Inicio de Sesion</div>
             <h:form>
                 <h:outputLabel value="Correo" for="correo"/>
-                <h:inputText id="correo" value="#{loginUI.usuario.correo}" required="true"/>
+                <h:inputText id="correo" value="#{loginUI.usuario.correo}"/>
 
                 <h:outputLabel value="Contraseña" for="contrasena"/>
-                <h:inputSecret id="contrasena" value="#{loginUI.usuario.contrasena}" required="true"/>
+                <h:inputSecret id="contrasena" value="#{loginUI.usuario.contrasena}"/>
 
                 <h:commandButton id="iniciar" value="Login" styleClass="btn-iniciar" action="#{loginUI.login}"/>
 
-                <h:messages globalOnly="true" style="color:red; font-weight:bold; margin-top:10px;" />
+                <h:messages id="mensaje" globalOnly="true" style="color:red; font-weight:bold; margin-top:10px;" />
             </h:form>
         </div>
     </div>
