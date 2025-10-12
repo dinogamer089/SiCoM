@@ -12,18 +12,19 @@ import mx.desarollo.entity.Usuario;
 import java.io.Serializable;
 
 public class LoginHelper implements Serializable {
-    
+
 
     /**
      * Metodo para hacer login llamara a la instancia de usuarioFacade
      * @param correo
      * @param password
-     * @return 
+     * @return
      */
+
     public Usuario Login(String correo, String password){
         return ServiceFacadeLocator.getInstanceFacadeUsuario().login(password, correo);
     }
-    
-    
-    
+    public static void guardarUsuario(Usuario usuario){
+        ServiceFacadeLocator.getInstanceFacadeUsuario().saveUsario(usuario);
+    }
 }

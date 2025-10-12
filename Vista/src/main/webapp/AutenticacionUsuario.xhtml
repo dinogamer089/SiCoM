@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xml:lang="es" lang="es">
+<head>
+    <title>Inicio de sesión</title>
+    <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style type="text/css">
+        @font-face {
+            font-family: "Minerva Modern";
+            src: url("resources/MinervaModern Bold.ttf") format("truetype");
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        .container {
+            display: flex;
+            height: 100vh;
+            background: #E7D9CB;
+        }
+        .left {
+            width: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-left: 60px;
+        }
+        .left img {
+            max-width: 100%;
+            height: auto;
+        }
+        .right {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            padding-left: 80px;
+        }
+        #titulo {
+            font-size: 32px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .form-box {
+            background: #3D4435;
+            padding: 40px 40px 40px 30px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 320px;
+            min-height: 340px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: left;
+            font-family: "Minerva Modern";
+        }
+        .form-box label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: #fff;
+            font-size: 18px;
+        }
+        .form-box input[type="text"],
+        .form-box input[type="password"] {
+            width: 100%;
+            padding: 6px 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        .btn-iniciar {
+            margin: 15px auto 0 auto;
+            padding: 8px 16px;
+            display: block;
+            border: none;
+            background: #000;
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 6px;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: "FreightTextCmp Pro Semibold";
+        }
+
+        .btn-iniciar:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="left">
+        <img src="resources/logo.png" alt="Logo"/>
+    </div>
+    <div class="right">
+        <div class="form-box">
+            <div id="titulo">Inicio de Sesion</div>
+            <h:form>
+                <h:outputLabel value="Correo" for="correo"/>
+                <h:inputText id="correo" value="#{loginUI.usuario.correo}" required="true"/>
+
+                <h:outputLabel value="Contraseña" for="contrasena"/>
+                <h:inputSecret id="contrasena" value="#{loginUI.usuario.contrasena}" required="true"/>
+
+                <h:commandButton id="iniciar" value="Login" styleClass="btn-iniciar" action="#{loginUI.login}"/>
+
+                <h:messages globalOnly="true" style="color:red; font-weight:bold; margin-top:10px;" />
+            </h:form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
