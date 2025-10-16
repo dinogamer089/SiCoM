@@ -4,6 +4,7 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
       xml:lang="es" lang="es">
 <head>
     <title>Inicio de sesión</title>
@@ -140,7 +141,7 @@
                 <h:outputLabel value="Contraseña" for="contrasena"/>
                 <h:inputSecret id="contrasena" value="#{loginUI.usuario.contrasena}"/>
 
-                <h:commandButton id="iniciar" value="Login" styleClass="btn-iniciar" action="#{loginUI.login}"/>
+                <h:commandButton id="iniciar" value="Iniciar Sesion" styleClass="btn-iniciar" action="#{loginUI.login}"/>
 
                 <h:messages id="mensaje" globalOnly="true" style="color:red; font-weight:bold; margin-top:10px;" />
             </h:form>

@@ -44,15 +44,37 @@ public class LoginBeanUI implements Serializable {
             usuario = us;
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
-            usuario = new Usuario(); // clear to prevent reusing hashed password
         } else if(us != null && us.getId() != null && us.getRol().equals(Rol.Empleado)){
             usuario = us;
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/login.xhtml");
-            usuario = new Usuario(); // clear to prevent reusing hashed password
         }else {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_WARN, "Usuario o contraseña incorrecta", "Intente de nuevo"));
+        }
+    }
+    public void logout() throws IOException {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        facesContext.getExternalContext().invalidateSession(); // Destroys the session
+
+        // Redirect to the login page (adjust path if needed)
+        facesContext.getExternalContext().redirect(
+                facesContext.getExternalContext().getRequestContextPath() + "/AutenticacionUsuario.xhtml"
+        );
+    }
+    public void preventBackAfterLogout() throws IOException {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        var externalContext = facesContext.getExternalContext();
+        var response = (jakarta.servlet.http.HttpServletResponse) externalContext.getResponse();
+
+        // Disable browser and proxy caching
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+
+        if (externalContext.getSession(false) == null ||
+                usuario == null || usuario.getCorreo() == null) {
+            externalContext.redirect(externalContext.getRequestContextPath() + "/AutenticacionUsuario.xhtml");
         }
     }
 
