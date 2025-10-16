@@ -2,7 +2,7 @@ package mx.desarollo.facade;
 
 import mx.desarollo.entity.Usuario;
 import mx.desarollo.delegate.DelegateUsuario;
-import mx.desarollo.entity.Usuario;
+
 
 public class FacadeUsuario {
 
