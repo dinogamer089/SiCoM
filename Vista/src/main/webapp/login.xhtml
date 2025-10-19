@@ -47,6 +47,12 @@
     </h:head>
 
     <h:body>
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
+        </f:metadata>
         <h1>Empleado</h1>
+        <h:form>
+            <h:commandButton value="Logout" action="#{loginUI.logout}" styleClass="btn-logout" />
+        </h:form>
     </h:body>
 </html>

@@ -5,11 +5,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "usuario")
-public class Usuario {
+@Table(name = "administrador")
+public class Administrador {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idusuario", nullable = false)
+    @Column(name = "idAdmin", nullable = false)
     private Integer id;
 
     @Size(max = 45)
@@ -17,22 +17,10 @@ public class Usuario {
     @Column(name = "correo", nullable = false, length = 45)
     private String correo;
 
-    @Size(max = 45)
+    @Size(max = 100)
     @NotNull
-    @Column(name = "contrasena", nullable = false, length = 45)
+    @Column(name = "contrasena", nullable = false, length = 100)
     private String contrasena;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "rol", nullable = false)
-    private Rol rol;
-
-    public Rol getRol() {
-        return rol;
-    }
-
-    public void setRol(Rol rol) {
-        this.rol = rol;
-    }
 
     public Integer getId() {
         return id;

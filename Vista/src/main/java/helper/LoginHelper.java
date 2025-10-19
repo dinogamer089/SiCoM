@@ -6,9 +6,9 @@
 package helper;
 
 
+import mx.desarollo.entity.Administrador;
+import mx.desarollo.entity.Empleado;
 import mx.desarollo.integration.ServiceFacadeLocator;
-import mx.desarollo.entity.Usuario;
-
 import java.io.Serializable;
 
 public class LoginHelper implements Serializable {
@@ -21,10 +21,14 @@ public class LoginHelper implements Serializable {
      * @return
      */
 
-    public Usuario Login(String correo, String password){
-        return ServiceFacadeLocator.getInstanceFacadeUsuario().login(password, correo);
+    public Object login(String correo, String password) {
+        return ServiceFacadeLocator.getInstanceFacadeLogin().login(password, correo);
     }
-    public static void guardarUsuario(Usuario usuario){
-        ServiceFacadeLocator.getInstanceFacadeUsuario().saveUsario(usuario);
+    public void saveAdministrador(Administrador admin) {
+        ServiceFacadeLocator.getInstanceFacadeLogin().saveAdministrador(admin);
+    }
+
+    public void saveEmpleado(Empleado empleado) {
+        ServiceFacadeLocator.getInstanceFacadeLogin().saveEmpleado(empleado);
     }
 }

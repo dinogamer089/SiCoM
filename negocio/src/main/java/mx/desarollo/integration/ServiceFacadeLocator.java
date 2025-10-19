@@ -1,16 +1,14 @@
 package mx.desarollo.integration;
 
-import mx.desarollo.facade.FacadeUsuario;
+import mx.desarollo.facade.FacadeLogin;
 
 public class ServiceFacadeLocator {
-    private static FacadeUsuario facadeUsuario;
+    private static FacadeLogin facadeLogin;
 
-    public static FacadeUsuario getInstanceFacadeUsuario() {
-        if (facadeUsuario == null) {
-            facadeUsuario = new FacadeUsuario();
-            return facadeUsuario;
-        } else {
-            return facadeUsuario;
+    public static FacadeLogin getInstanceFacadeLogin() {
+        if (facadeLogin == null) {
+            facadeLogin = new FacadeLogin();
         }
+        return facadeLogin;
     }
 }

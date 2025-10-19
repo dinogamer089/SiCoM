@@ -136,10 +136,10 @@
             <div id="titulo">Inicio de Sesion</div>
             <h:form>
                 <h:outputLabel value="Correo" for="correo"/>
-                <h:inputText id="correo" value="#{loginUI.usuario.correo}"/>
+                <h:inputText id="correo" value="#{loginUI.correo}"/>
 
                 <h:outputLabel value="Contraseña" for="contrasena"/>
-                <h:inputSecret id="contrasena" value="#{loginUI.usuario.contrasena}"/>
+                <h:inputSecret id="contrasena" value="#{loginUI.contrasena}"/>
 
                 <h:commandButton id="iniciar" value="Iniciar Sesion" styleClass="btn-iniciar" action="#{loginUI.login}"/>
 

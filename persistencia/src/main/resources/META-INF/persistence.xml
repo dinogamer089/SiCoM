@@ -8,7 +8,8 @@
 
 
         <!-- Declaración manual de entidades -->
-        <class>mx.desarollo.entity.Usuario</class>
+        <class>mx.desarollo.entity.Administrador</class>
+        <class>mx.desarollo.entity.Empleado</class>
 
 
         <properties>
