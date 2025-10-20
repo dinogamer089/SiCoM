@@ -1,33 +1,49 @@
-<!DOCTYPE web-app PUBLIC
- "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
- "http://java.sun.com/dtd/web-app_2_3.dtd" >
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+         https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
 
-<web-app>
-  <display-name>Archetype Created Web Application</display-name>
+    <display-name>Eventos Campestre</display-name>
 
+    <!-- Configuración de JSF -->
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
 
-  <context-param>
-    <!--<param-name>javax.faces.PROJECT_STAGE</param-name>
-    <param-value>Development</param-value>--><!--LA LINEA 4 Y 5 SON PARA DEVOLVER EL TEMA DE DISEÑO POR DEFAULT-->
-    <param-name>primefaces.THEME</param-name><!--LA LINE 6 Y 7 SON PARA CAMBIAR EL TEMA DE DISEÑO DE LA APPWEB LOS LAYOUTS SE ENCUENTRAN EN LA LIGA-->
-    <param-value>south-street</param-value><!--http://primefaces.org/themes-->
-  </context-param>
-  <servlet>
-    <servlet-name>Faces Servlet</servlet-name>
-    <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>Faces Servlet</servlet-name>
-    <url-pattern>*.xhtml</url-pattern>
-  </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.xhtml</url-pattern>
+    </servlet-mapping>
 
-  <session-config>
-    <session-timeout>
-      30
-    </session-timeout>
-  </session-config>
-  <welcome-file-list>
-    <welcome-file>login.xhtml</welcome-file>
-  </welcome-file-list>
+    <!-- Parámetros de contexto -->
+    <context-param>
+        <param-name>jakarta.faces.PROJECT_STAGE</param-name>
+        <param-value>Development</param-value>
+    </context-param>
+
+    <!-- IMPORTANTE: Deshabilitar el tema de PrimeFaces o usar uno disponible -->
+    <context-param>
+        <param-name>primefaces.THEME</param-name>
+        <param-value>none</param-value>
+    </context-param>
+
+    <!-- Opcional: Habilitar el modo de desarrollo de PrimeFaces -->
+    <context-param>
+        <param-name>primefaces.CLIENT_SIDE_VALIDATION</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>primefaces.FONT_AWESOME</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+    <welcome-file-list>
+        <welcome-file>index.xhtml</welcome-file>
+    </welcome-file-list>
+
 </web-app>

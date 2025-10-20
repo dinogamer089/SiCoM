@@ -6,28 +6,21 @@
     <persistence-unit name="persistencePU">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
-
         <!-- Declaración manual de entidades -->
-        <class>mx.desarollo.entity.Alumno</class>
-        <class>mx.desarollo.entity.Usuario</class>
-
+        <class>mx.desarollo.entity.Articulo</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3307/desarrollo?useSSL=false&amp;serverTimezone=UTC"/>
+            <!-- SOLUCIÓN: Agregar allowPublicKeyRetrieval=true -->
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3307/sicom?useSSL=false&amp;serverTimezone=UTC&amp;allowPublicKeyRetrieval=true"/>
             <property name="jakarta.persistence.jdbc.user" value="root"/>
-            <property name="jakarta.persistence.jdbc.password" value="dino0899"/>
-
+            <property name="jakarta.persistence.jdbc.password" value="Minecraft11"/>
 
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
             <property name="hibernate.hbm2ddl.auto" value="validate"/>
 
 
-            <property name="hibernate.hikari.minimumIdle" value="5"/>
-            <property name="hibernate.hikari.maximumPoolSize" value="10"/>
-            <property name="hibernate.hikari.idleTimeout" value="30000"/>
         </properties>
     </persistence-unit>
 </persistence>
-
