@@ -229,13 +229,13 @@
 
             <div class="button-bar">
                 <p:commandButton value="+ Alta"
-                                 styleClass="btn"
+                                 style="background-color:black;color:white;border:none;padding:10px 20px;font-size:15px;cursor:pointer;font-family:'Minerva Modern',serif;"
                                  onclick="PF('dialogAlta').show();"
                                  actionListener="#{articuloUI.prepararNuevoArticulo()}"
                                  update=":dialogForm:dialogPanel"
                                  type="button"/>
                 <p:commandButton value="✎ Modificar"
-                                 styleClass="btn modificar"
+                                 style="background-color:black;color:white;border:none;padding:10px 20px;font-size:15px;cursor:pointer;font-family:'Minerva Modern',serif;"
                                  oncomplete="PF('editDialogWV').show();"
                                  update=":editDialog"/>
                 <button class="btn eliminar" type="button" disabled="disabled">🗑 Eliminar</button>
