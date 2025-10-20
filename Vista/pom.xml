@@ -94,9 +94,6 @@
             <scope>test</scope>
         </dependency>
 
-
-
-
         <!-- Weld para CDI -->
         <dependency>
             <groupId>org.jboss.weld.servlet</groupId>
