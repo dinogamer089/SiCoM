@@ -25,4 +25,9 @@ public class ServiceLocator {
         }
         return empleadoDAO;
     }
+
+    public static ArticuloDAO getInstanceArticuloDAO() {
+        return new ArticuloDAO(getEntityManager());
+    }
+
 }
