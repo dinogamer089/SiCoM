@@ -7,17 +7,14 @@ public class FacadeArticulo {
     private final DelegateArticulo delegateArticulo;
 
     public FacadeArticulo() {
-
         this.delegateArticulo = new DelegateArticulo();
     }
 
     public java.util.List<Articulo> obtenerArticulos(){
-
         return delegateArticulo.findAllArticulos();
     }
 
     public void guardarArticulo(Articulo articulo){
-
         delegateArticulo.saveArticulo(articulo);
     }
 
@@ -33,4 +30,8 @@ public class FacadeArticulo {
             throw e;
         }
     }
+    public void modificarArticulo(Articulo art) {
+        delegateArticulo.updateArticulo(art);
+    }
+
 }

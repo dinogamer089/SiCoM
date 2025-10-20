@@ -196,6 +196,7 @@
             width: 100%;
         }
 
+        /* Estilos para el botón de subir archivo */
         .ui-fileupload-simple {
             background-color: white !important;
             border: 1px solid #ccc !important;
@@ -248,16 +249,18 @@
                                  update=":dialogForm:dialogPanel"
                                  type="button"/>
 
-                <p:commandButton value="✎ Modificar"
-                                 type="button"
-                                 styleClass="btn"
-                                 disabled="#{empty articuloUI.seleccionada}"/>
 
                 <p:commandButton value="🗑 Eliminar"
                                  type="button"
                                  styleClass="btn"
                                  disabled="#{empty articuloUI.seleccionada}"
                                  onclick="PF('confirmEliminar').show();"/>
+
+                <p:commandButton value="✎ Modificar"
+                                 style="background-color:black;color:white;border:none;padding:10px 20px;font-size:15px;cursor:pointer;font-family:'Minerva Modern',serif;"
+                                 oncomplete="PF('editDialogWV').show();"
+                                 update=":editDialog"/>
+                <button class="btn eliminar" type="button" disabled="disabled">🗑 Eliminar</button>
             </div>
 
             <p:dataTable value="#{articuloUI.articulos}" var="art"
@@ -269,7 +272,6 @@
                          style="width:100%;">
 
                 <p:ajax event="rowSelect" listener="#{articuloUI.seleccionar(articuloUI.seleccionada)}" update="@form" />
-                <p:ajax event="rowUnselect" update="@form" />
 
                 <p:column headerText="ID">#{art.idarticulo}</p:column>
                 <p:column headerText="Nombre">#{art.nombre}</p:column>
@@ -307,6 +309,7 @@
             </p:confirmDialog>
         </h:form>
 
+        <!-- Diálogo de Alta -->
         <h:form id="dialogForm" enctype="multipart/form-data">
             <p:dialog header="Nuevo Artículo"
                       widgetVar="dialogAlta"
@@ -367,6 +370,46 @@
                 </f:facet>
             </p:dialog>
         </h:form>
+        <p:dialog id="editDialog"
+                  widgetVar="editDialogWV"
+                  header="Modificar artículo"
+                  modal="true"
+                  appendTo="@(body)"
+                  closable="false"
+                  resizable="false"
+                  draggable="false"
+                  style="background-color:#3D4435;color:white;border:none;width:400px;">
+            <h:form id="editForm" enctype="multipart/form-data">
+                <h:panelGrid columns="2" cellpadding="5">
+                    <h:outputLabel for="nombre" value="Nombre" />
+                    <p:inputText id="nombre" value="#{articuloUI.seleccionada.nombre}" style="width:180px;" />
+
+                    <h:outputLabel for="precio" value="Precio" />
+                    <p:inputText id="precio" value="#{articuloUI.seleccionada.precio}" style="width:180px;" />
+
+                    <h:outputLabel for="cantidad" value="Cantidad" />
+                    <p:inputText id="cantidad" value="#{articuloUI.seleccionada.cantidad}" style="width:180px;" />
+
+                    <h:outputLabel for="tipo" value="Tipo" />
+                    <p:inputText id="tipo" value="#{articuloUI.seleccionada.tipo}" style="width:180px;" />
+
+                    <h:outputLabel for="imagen" value="Imagen" />
+                    <h:inputFile id="imagen" value="#{articuloUI.imagenFile}" />
+                </h:panelGrid>
+
+                <p:commandButton value="Cancelar"
+                                 type="button"
+                                 style="background-color:black;color:white;"
+                                 onclick="PF('editDialogWV').hide();" />
+
+                <p:commandButton value="Listo"
+                                 style="background-color:black;color:white;"
+                                 actionListener="#{articuloUI.actualizarArticulo}"
+                                 update=":articulosForm"
+                                 ajax="false"
+                                 oncomplete="PF('editDialogWV').hide();" />
+            </h:form>
+        </p:dialog>
     </div>
 </h:body>
 </html>
