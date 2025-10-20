@@ -94,7 +94,7 @@
 
         /* --- Estilos de botón unificados --- */
         .btn-alta, .btn-eliminar, .btn-reset {
-            background-color: #000000; /* Color negro unificado */
+            background-color: #000000;
             color: #FFFFFF;
             font-family: "FreightText Pro", serif;
             border: none;
@@ -129,7 +129,7 @@
             color: #000000;
             padding: 12px 20px;
             margin-bottom: 10px;
-            gap: 15px; /* Espacio entre las columnas */
+            gap: 15px;
             font-family: "FreightText Pro", serif;
             cursor: pointer;
             transition: background-color 0.3s ease, color 0.3s ease;
@@ -162,8 +162,8 @@
         .col-empleado {
             display: flex;
             align-items: center;
-            gap: 8px; /* Espacio entre icono y texto */
-            overflow: hidden; /* Evita que el contenido se desborde */
+            gap: 8px;
+            overflow: hidden;
         }
 
         .col-empleado span {
@@ -173,13 +173,13 @@
         }
 
         .col-empleado.nombre {
-            flex-basis: 50%; /* Ajustado para 2 columnas */
+            flex-basis: 50%;
             flex-grow: 1;
             min-width: 200px;
         }
 
         .col-empleado.usuario {
-            flex-basis: 50%; /* Ajustado para 2 columnas */
+            flex-basis: 50%;
             flex-grow: 1;
             min-width: 150px;
         }
@@ -339,7 +339,6 @@
             font-weight: bold;
         }
 
-        /* Estilo para los mensajes de error de validación */
         .error-message {
             color: #FFB3B3;
             font-size: 0.9em;
@@ -359,8 +358,6 @@
         }
 
         /* --- INICIO: ESTILOS DE TOAST UNIFICADOS --- */
-
-        /* Base unificada para todos los toasts */
         .toast-base {
             display: none;
             position: fixed;
@@ -375,10 +372,9 @@
             font-family: "FreightText Pro", serif;
         }
 
-        /* Estilos específicos para el toast de eliminación */
         .toast-notification {
             padding: 15px;
-            width: 400px; /* Ancho específico para este toast en desktop */
+            width: 400px;
         }
 
         .toast-notification .progress-bar-container {
@@ -405,11 +401,9 @@
             text-decoration: underline;
         }
 
-        /* Estilos específicos para el toast simple */
         .toast-simple {
             padding: 15px 20px;
             font-size: 1.1em;
-            /* No tiene ancho fijo, se ajusta al contenido */
         }
         /* --- FIN DE ESTILOS UNIFICADOS --- */
 
@@ -462,16 +456,14 @@
             }
 
             .col-empleado.nombre,
-            .col-empleado.usuario { /* Quitado contrasena-col */
+            .col-empleado.usuario {
                 width: 100%;
                 min-width: 0;
                 flex-basis: auto;
             }
 
-            /* --- MODIFICADO: Media query para toasts --- */
-            /* Se aplica a la clase base unificada */
             .toast-base {
-                width: 90%; /* Ancho unificado en móvil */
+                width: 90%;
                 left: 5%;
                 right: 5%;
                 top: 60px;
@@ -496,7 +488,8 @@
             <h:outputLink value="AdminEmpleados.xhtml"> Empleados </h:outputLink>
         </div>
         <div class="topbar-center">
-            <div><h:outputLink value="principalAdministrador.xhtml"> EVENTOS CAMPESTRE </h:outputLink></div>
+            <div><h:outputLink value="#"> EVENTOS CAMPESTRE </h:outputLink></div>
+
 
             <div>
                 <h:outputLink value="#">Inventario</h:outputLink>
@@ -506,6 +499,7 @@
             </div>
         </div>
         <div class="topbar-right">
+
 
             <span>Administrador</span>
             <h:graphicImage name="administrador.png" alt="admin" styleClass="topbar-icon"/>
@@ -517,6 +511,7 @@
             <div class="titulo-empleados">
                 <h:graphicImage name="edicionN.png" alt="Icono Empleados" styleClass="titulo-icon"/>
 
+
                 <h2>Empleados</h2>
             </div>
 
@@ -526,41 +521,50 @@
                     <i class="fa-solid fa-plus"></i> Alta
                 </button>
 
-                <h:commandLink styleClass="btn-reset"
-                               rendered="#{empleadoUI.empleadoSeleccionado != null}"
-                               onclick="abrirModalReset(); return false;">
+                <h:commandLink
+                        styleClass="btn-reset"
+                        rendered="#{empleadoUI.empleadoSeleccionado != null}"
+                        onclick="abrirModalReset();
+ return false;">
                     <i class="fa-solid fa-key"></i> Restablecer Contraseña
                 </h:commandLink>
 
                 <h:panelGroup rendered="#{empleadoUI.empleadoSeleccionado == null}">
-                    <button type="button" class="btn-reset" style="opacity: 0.6; cursor: not-allowed;"
+                    <button type="button" class="btn-reset" style="opacity: 0.6;
+ cursor: not-allowed;"
                             disabled="true">
                         <i class="fa-solid fa-key"></i> Restablecer Contraseña
                     </button>
                 </h:panelGroup>
 
+
                 <h:commandLink styleClass="btn-eliminar"
                                rendered="#{empleadoUI.empleadoSeleccionado != null}"
-                               onclick="abrirModalEliminar(); return false;">
+                               onclick="abrirModalEliminar();
+ return false;">
                     <i class="fa-solid fa-trash"></i> Eliminar
                 </h:commandLink>
 
                 <h:panelGroup rendered="#{empleadoUI.empleadoSeleccionado == null}">
-                    <button type="button" class="btn-eliminar" style="opacity: 0.6; cursor: not-allowed;"
+                    <button type="button" class="btn-eliminar" style="opacity: 0.6;
+ cursor: not-allowed;"
                             disabled="true">
                         <i class="fa-solid fa-trash"></i> Eliminar
                     </button>
                 </h:panelGroup>
 
+
             </div>
 
             <div id="toastNotification" class="toast-notification toast-base">
                 <span id="toastDeleteMessage">Empleado eliminado:</span>
-                <div style="font-style: italic; font-size: 0.9em;">(La eliminación se concretará en <span id="countdown">5</span> segundos)</div>
+                <div style="font-style: italic;
+ font-size: 0.9em;">(<span id="countdown">5</span> segundos)</div>
                 <div class="progress-bar-container">
                     <div id="progressBar" class="progress-bar"></div>
                 </div>
-                <a href="#" onclick="deshacerEliminacion(); return false;">Deshacer</a>
+                <a href="#" onclick="deshacerEliminacion();
+ return false;">Deshacer</a>
             </div>
 
             <div id="toastSimple" class="toast-simple toast-base">
@@ -571,22 +575,27 @@
             <h:panelGroup id="listaEmpleadosPanel" layout="block" styleClass="lista-empleados">
 
                 <ui:repeat value="#{empleadoUI.empleados}" var="emp">
+
                     <h:commandLink
-                            styleClass="empleado #{empleadoUI.empleadoSeleccionado.id == emp.id ? 'seleccionado' : ''}">
+                            styleClass="empleado #{empleadoUI.empleadoSeleccionado.id == emp.id ?
+ 'seleccionado' : ''}">
                         <f:setPropertyActionListener target="#{empleadoUI.empleadoSeleccionado}" value="#{emp}"/>
                         <f:ajax render="mainForm"/>
 
                         <div class="col-empleado nombre">
+
                             <i class="fa-solid fa-id-card"></i>
                             <span>#{emp.apellidoPaterno} #{emp.apellidoMaterno} #{emp.nombre}</span>
                         </div>
 
                         <div class="col-empleado usuario">
+
                             <i class="fa-solid fa-user"></i>
                             <span>#{emp.correo}</span>
                         </div>
 
                     </h:commandLink>
+
                 </ui:repeat>
 
             </h:panelGroup>
@@ -595,72 +604,90 @@
                 <h:panelGroup id="modalAltaForm" layout="block" styleClass="modal-content">
 
                   <span class="close" onclick="cerrarModal()">
-                                <i class="fa-solid fa-times"></i>
+
+     <i class="fa-solid fa-times"></i>
                             </span>
                     <div class="modal-renglon modal-titulo">
 
                         <i class="fa-solid fa-user-plus"></i>
+
                         <span>Nuevo empleado</span>
                     </div>
 
                     <h:panelGroup layout="block" styleClass="modal-renglon"
-                                  style="padding-bottom: 0; padding-top: 0;"
+                                  style="padding-bottom: 0;
+ padding-top: 0;"
                                   rendered="#{facesContext.validationFailed and not empty facesContext.messageList}">
                         <span class="error-message-unico">
                             Todos los campos son obligatorios.
-                        </span>
+
+                     </span>
                     </h:panelGroup>
                     <div class="modal-renglon modal-campos">
                         <h:inputText id="paterno" value="#{empleadoUI.nuevoEmpleado.apellidoPaterno}"
+
                                      pt:placeholder="Apellido Paterno" required="true"
                                      requiredMessage=""/> <h:inputText id="materno" value="#{empleadoUI.nuevoEmpleado.apellidoMaterno}"
+
                                                                        pt:placeholder="ApellidoMaterno" required="true"
+
                                                                        requiredMessage=""/> <h:inputText id="nombre" value="#{empleadoUI.nuevoEmpleado.nombre}" pt:placeholder="Nombre"
+
                                                                                                          required="true" requiredMessage=""/> </div>
 
                     <div class="modal-renglon modal-correo-contrasena">
                         <h:inputText id="correo" value="#{empleadoUI.nuevoEmpleado.correo}" pt:placeholder="Correo Electrónico"
+
                                      required="true" requiredMessage=""/> <h:inputSecret id="pass" value="#{empleadoUI.nuevoEmpleado.contrasena}" pt:placeholder="Contraseña"
+
                                                                                          required="true" requiredMessage=""/> </div>
 
                     <div class="modal-renglon modal-botones">
-                        <button type="button" class="btn-cancelar" onclick="cerrarModal(); return false;">Cancelar</button>
+                        <button type="button" class="btn-cancelar" onclick="cerrarModal();
+ return false;">Cancelar</button>
 
                         <h:commandButton styleClass="btn-listo" action="#{empleadoUI.guardarEmpleado}" value="Listo">
                             <f:ajax execute="modalAltaForm" render="messages modalAltaForm listaEmpleadosPanel"
-                                    oncomplete="if (!args.validationFailed) { cerrarModal(); mostrarToastSimple('¡Empleado guardado exitosamente!'); }"/>
+                                    oncomplete="if (!args.validationFailed) { cerrarModal();
+ mostrarToastSimple('¡Empleado guardado exitosamente!'); }"/>
                         </h:commandButton>
                     </div>
 
                 </h:panelGroup>
             </div>
             <div id="modalEliminar" class="modal">
+
                 <h:panelGroup id="modalEliminarContent" layout="block" styleClass="modal-content">
                     <div class="modal-renglon modal-titulo">
 
                         <i class="fa-solid fa-trash"></i>
                         <span>Eliminar empleado</span>
+
                     </div>
                     <div class="modal-renglon modal-cuerpo-texto">
                         <span>Confirma que desea eliminar al empleado:</span>
                         <span id="nombreEmpleadoEliminar" class="nombre-empleado-bold">
-                                #{empleadoUI.empleadoSeleccionado.nombre} #{empleadoUI.empleadoSeleccionado.apellidoPaterno}
+
+           #{empleadoUI.empleadoSeleccionado.nombre} #{empleadoUI.empleadoSeleccionado.apellidoPaterno}
                             </span>
 
                     </div>
                     <div class="modal-renglon modal-botones">
+
                         <button type="button" class="btn-cancelar"
                                 onclick="cerrarModalEliminar();
-                                return false;">Cancelar
+ return false;">Cancelar
                         </button>
 
                         <button type="button" class="btn-listo"
-                                onclick="cerrarModalEliminar(); var nombre = document.getElementById('nombreEmpleadoEliminar').innerText; mostrarToastEliminar(nombre.trim()); return false;">
+                                onclick="cerrarModalEliminar();
+ var nombre = document.getElementById('nombreEmpleadoEliminar').innerText; mostrarToastEliminar(nombre.trim()); return false;">
                             Confirmar
                         </button>
 
                     </div>
                 </h:panelGroup>
+
             </div>
 
             <div id="modalResetPass" class="modal">
@@ -670,37 +697,47 @@
                     <i class="fa-solid fa-times"></i>
                 </span>
 
+
                     <div class="modal-renglon modal-titulo">
                         <i class="fa-solid fa-key"></i>
                         <span>Restablecer Contraseña</span>
                     </div>
 
+
                     <div class="modal-renglon modal-cuerpo-texto">
                         <span>Establecer nueva contraseña para el empleado:</span>
                         <span class="nombre-empleado-bold">
                         #{empleadoUI.empleadoSeleccionado.nombre} #{empleadoUI.empleadoSeleccionado.apellidoPaterno}
-                    </span>
+
+          </span>
                     </div>
 
                     <div class="modal-renglon modal-correo-contrasena" style="justify-content: center;">
                         <h:inputSecret id="newPass" value="#{empleadoUI.nuevaContrasena}"
+
                                        pt:placeholder="Escribir nueva contraseña"
                                        required="true"
-                                       requiredMessage="La contraseña no puede estar vacía."
-                                       style="width: 50%; min-width: 200px;"/>
+                                       requiredMessage="La contraseña
+ no puede estar vacía."
+                                       style="width: 50%;
+ min-width: 200px;"/>
                         <h:message for="newPass" styleClass="error-message"/>
                     </div>
 
                     <div class="modal-renglon modal-botones">
-                        <button type="button" class="btn-cancelar" onclick="cerrarModalReset(); return false;">
+                        <button type="button" class="btn-cancelar" onclick="cerrarModalReset();
+ return false;">
                             Cancelar
                         </button>
 
                         <h:commandLink styleClass="btn-listo" action="#{empleadoUI.restablecerContrasena}">
+
                             Confirmar
                             <f:ajax execute="modalResetForm"
                                     render="mainForm messages"
-                                    oncomplete="if (!args.validationFailed) { cerrarModalReset(); mostrarToastSimple('¡Contraseña actualizada!'); }"/>
+
+                                    oncomplete="if (!args.validationFailed) { cerrarModalReset(); mostrarToastSimple('¡Contraseña actualizada!');
+ }"/>
                         </h:commandLink>
                     </div>
 
@@ -708,12 +745,14 @@
             </div>
 
             <h:commandButton id="btnResetModal" style="display:none;"
+
                              action="#{empleadoUI.prepararNuevoEmpleado}">
                 <f:ajax render="modalAltaForm"
                         onerror="alert('Error de AJAX al resetear modal. Revisa la consola.');"/>
             </h:commandButton>
 
             <h:commandButton id="btnConfirmarEliminacionReal" style="display:none;"
+
                              action="#{empleadoUI.eliminarEmpleado}">
                 <f:ajax execute="@this" render="mainForm"/>
             </h:commandButton>
@@ -722,15 +761,12 @@
     <script type="text/javascript">
         //<![CDATA[
 
-        // --- AÑADIDO: Variables globales para los temporizadores ---
         var deleteTimer;
         var progressInterval;
         var simpleToastTimer;
 
         // --- Funciones Modal Alta ---
         function abrirAltaEmpleado() {
-            // Opcional: Clic programático al botón oculto para limpiar el bean
-            // document.getElementById('mainForm:btnResetModal').click();
             document.getElementById('modalAlta').style.display = 'block';
         }
 
@@ -757,8 +793,6 @@
             document.getElementById('modalResetPass').style.display = 'none';
         }
 
-
-
         // --- FUNCIONES AÑADIDAS: Notificaciones Toast ---
 
         /**
@@ -766,26 +800,15 @@
          * Usada para "Alta" y "Restablecer Contraseña".
          */
         function mostrarToastSimple(mensaje) {
-            // Limpiar cualquier toast anterior
             clearTimeout(simpleToastTimer);
-
             var toast = document.getElementById('toastSimple');
             var message = document.getElementById('toastSimpleMessage');
 
             message.innerText = mensaje;
-
-            // Asegurarse de que esté visible y con animación
-            // NOTA: Necesitarás una clase .mostrar en tu CSS para la animación
-            // Ejemplo: .toast-base.mostrar { display: block; opacity: 1; ... }
             toast.style.display = 'block';
-            // toast.classList.add('mostrar'); // Asumiendo que tienes animación CSS
 
-            // Ocultar el toast después de 3 segundos
             simpleToastTimer = setTimeout(function() {
-                // toast.classList.remove('mostrar');
                 toast.style.display = 'none';
-                // Esperar un poco antes de ocultarlo completamente
-                // setTimeout(() => { toast.style.display = 'none'; }, 300); // Si usas transiciones
             }, 3000);
         }
 
@@ -794,33 +817,26 @@
          * La función ahora acepta 'nombreEmpleado' como parámetro.
          */
         function mostrarToastEliminar(nombreEmpleado) {
-            // Limpiar timers anteriores si existen
             clearTimeout(deleteTimer);
             clearInterval(progressInterval);
 
             var toast = document.getElementById('toastNotification');
             var progressBar = document.getElementById('progressBar');
             var countdown = document.getElementById('countdown');
-
-            // --- AÑADIDO: Actualiza el mensaje del toast con el nombre ---
             var messageElement = document.getElementById('toastDeleteMessage');
             if (nombreEmpleado) {
-                // Usamos innerHTML para poder añadir tags de estilo
                 messageElement.innerHTML = 'Empleado eliminado: <strong style="font-style: italic; padding-left: 5px;">' + nombreEmpleado + '</strong>';
             } else {
                 messageElement.innerText = 'Empleado eliminado:';
             }
-            // --- FIN AÑADIDO ---
 
-
-            // Resetear estado
             toast.style.display = 'block';
             progressBar.style.width = '0%';
             countdown.innerText = '3';
 
-            var timeLeft = 3; // 3 segundos
-            var totalTime = 3000; // 3000 ms
-            var updateInterval = 100; // 100 ms
+            var timeLeft = 3;
+            var totalTime = 3000;
+            var updateInterval = 100;
             var steps = totalTime / updateInterval;
             var currentStep = 0;
 
@@ -830,6 +846,7 @@
                 progressBar.style.width = percentage + '%';
 
                 var newTimeLeft = Math.ceil((totalTime - (currentStep * updateInterval)) / 1000);
+
                 if (newTimeLeft < timeLeft) {
                     timeLeft = newTimeLeft;
                     countdown.innerText = timeLeft;
@@ -839,11 +856,8 @@
                     clearInterval(progressInterval);
                 }
             }, updateInterval);
-
-            // Programar la eliminación real
             deleteTimer = setTimeout(function() {
                 toast.style.display = 'none';
-                // Hacer clic en el botón JSF oculto para ejecutar la acción del bean
                 document.getElementById('mainForm:btnConfirmarEliminacionReal').click();
             }, totalTime);
         }
@@ -852,39 +866,31 @@
          * Cancela la eliminación programada.
          */
         function deshacerEliminacion() {
-            // Cancelar el timer de eliminación
             clearTimeout(deleteTimer);
-            // Detener la barra de progreso
             clearInterval(progressInterval);
-
-            // Ocultar la notificación
             document.getElementById('toastNotification').style.display = 'none';
-
-            // Opcional: Mostrar un toast de confirmación de "Deshacer"
-            // (También se quita el setTimeout(0) de aquí)
             mostrarToastSimple('Eliminación cancelada');
         }
 
-
-        // --- Event Listener MODIFICADO ---
         document.addEventListener('DOMContentLoaded', function () {
             window.onclick = function (event) {
                 var modalAlta = document.getElementById('modalAlta');
                 var modalEliminar = document.getElementById('modalEliminar');
                 var modalReset = document.getElementById('modalResetPass');
 
+
                 if (event.target == modalAlta) {
                     cerrarModal();
                 }
                 if (event.target == modalEliminar) {
                     cerrarModalEliminar();
+
                 }
                 if (event.target == modalReset) {
                     cerrarModalReset();
                 }
             }
         });
-
         //]]>
     </script>
 

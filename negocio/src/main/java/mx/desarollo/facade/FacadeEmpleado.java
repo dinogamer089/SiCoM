@@ -23,4 +23,8 @@ public class FacadeEmpleado {
     public void updateEmpleado(Empleado empleado) {
         delegateEmpleado.updateEmpleado(empleado);
     }
+
+    public void deleteEmpleado(Empleado empleado) {
+        delegateEmpleado.deleteEmpleado(empleado);
+    }
 }
