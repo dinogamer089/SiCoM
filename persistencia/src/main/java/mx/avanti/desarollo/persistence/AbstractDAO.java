@@ -20,23 +20,18 @@ public abstract class AbstractDAO<T> {
 
     protected abstract EntityManager getEntityManager();
 
-      /* ========================
+    /* ========================
        Operaciones CRUD básicas
        ======================== */
 
-    // Save or persist a new entity
+
     public void save(T entity) {
         executeInsideTransaction(em -> em.persist(entity));
     }
 
-    // Update an existing entity
+
     public void update(T entity) {
         executeInsideTransaction(em -> em.merge(entity));
-    }
-
-    // Delete an entity
-    public void delete(T entity) {
-        executeInsideTransaction(em -> em.remove(em.contains(entity) ? entity : em.merge(entity)));
     }
 
     // Find by ID
@@ -51,6 +46,7 @@ public abstract class AbstractDAO<T> {
                 em.refresh(entity);
             }
             return entity;
+
         }));
     }
 
@@ -82,8 +78,8 @@ public abstract class AbstractDAO<T> {
 
     public List<T> findFromWhere(String de, String campo, String criterio) {
         String jpql = "SELECT DISTINCT a FROM " + entityClass.getCanonicalName()
-                + " a JOIN a." + de + " b WHERE b." + campo + " = :value";
-
+                + " a JOIN a."
+                + de + " b WHERE b." + campo + " = :value";
         return execute(em ->
                 em.createQuery(jpql, entityClass)
                         .setParameter("value", criterio)
@@ -93,26 +89,29 @@ public abstract class AbstractDAO<T> {
 
     public T findByOneParameterUnique(String value, String field) {
         String jpql = "SELECT e FROM " + entityClass.getSimpleName()
-                + " e WHERE e." + field + " = :value";
+                + " e WHERE e."
+                + field + " = :value";
         return execute(em -> {
             try {
                 return em.createQuery(jpql, entityClass)
                         .setParameter("value", value)
                         .getSingleResult();
+
             } catch (NoResultException ex) {
                 return null;
             }
         });
     }
 
-    // Find by field value (generic single-field query)
+
     public List<T> findByField(String fieldName, Object value) {
         return findByOneParameter(value, fieldName);
     }
 
     public List<T> findByOneParameter(Object value, String field) {
         String jpql = "SELECT e FROM " + entityClass.getSimpleName()
-                + " e WHERE e." + field + " = :value";
+                + " e WHERE e."
+                + field + " = :value";
         return execute(em ->
                 em.createQuery(jpql, entityClass)
                         .setParameter("value", value)
@@ -120,9 +119,6 @@ public abstract class AbstractDAO<T> {
         );
     }
 
-    /* ========================
-       SQL / procedimientos
-       ======================== */
 
     /**
      * Ejecuta un procedimiento almacenado que no requiere parámetros.
@@ -138,7 +134,6 @@ public abstract class AbstractDAO<T> {
     }
 
 
-
     public List<T> executeNativeQuery(String sql) {
         return execute(em ->
                 em.createNativeQuery(sql, entityClass)
@@ -146,12 +141,12 @@ public abstract class AbstractDAO<T> {
         );
     }
 
-      /* ========================
+    /* ========================
        Helpers internos
        ======================== */
 
 
-    // Utility to run in transaction
+
     private void executeInsideTransaction(Consumer<EntityManager> action) {
         execute(em -> {
             action.accept(em);
@@ -159,7 +154,6 @@ public abstract class AbstractDAO<T> {
         });
     }
 
-    // Optional: for custom return values
     protected <R> R execute(Function<EntityManager, R> function) {
         EntityManager em = getEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -173,6 +167,4 @@ public abstract class AbstractDAO<T> {
             throw e;
         }
     }
-
-
 }

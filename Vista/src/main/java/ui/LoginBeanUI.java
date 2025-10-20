@@ -33,7 +33,7 @@ public class LoginBeanUI implements Serializable {
         if (us != null && us.getId() != null && us.getRol().equals(Rol.Administrador)) {
             usuario = us;
             FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
+                    .redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/principalAdministrador.xhtml");
             usuario = new Usuario(); // clear to prevent reusing hashed password
         } else if(us != null && us.getId() != null && us.getRol().equals(Rol.Empleado)){
             usuario = us;
