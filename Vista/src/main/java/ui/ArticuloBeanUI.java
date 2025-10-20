@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Base64;
 import java.util.List;
+import java.io.Serializable; import java.util.List;
 
 @Named("articuloUI")
 @SessionScoped
@@ -35,6 +36,7 @@ public class ArticuloBeanUI implements Serializable {
     public ArticuloBeanUI() {
         articuloHelper = new ArticuloHelper();
     }
+    private Articulo seleccionada;
 
     @PostConstruct
     public void init() {
