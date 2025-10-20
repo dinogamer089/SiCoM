@@ -130,6 +130,33 @@ public class ArticuloBeanUI implements Serializable {
         }
     }
 
+    // Método para eliminar artículo
+    public void eliminarArticulo() {
+        try {
+            if (seleccionada == null) {
+                mostrarMensaje(FacesMessage.SEVERITY_WARN, "Advertencia", "Debe seleccionar un artículo para eliminar");
+                return;
+            }
+
+            System.out.println("Eliminando artículo: " + seleccionada.getNombre() + " (ID: " + seleccionada.getIdarticulo() + ")");
+
+            articuloHelper.eliminarArticulo(seleccionada.getIdarticulo());
+            mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Artículo eliminado correctamente");
+
+            // Recargar lista
+            articulos = articuloHelper.obtenerTodas();
+
+            // Limpiar selección
+            seleccionada = null;
+
+        } catch (Exception e) {
+            System.err.println("Error al eliminar artículo: " + e.getMessage());
+            e.printStackTrace();
+            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo eliminar el artículo: " + e.getMessage());
+        }
+    }
+
+
 
     public String getImagenBase64(byte[] imagen) {
         if (imagen == null || imagen.length == 0) {

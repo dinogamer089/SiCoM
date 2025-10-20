@@ -17,6 +17,19 @@ public class FacadeArticulo {
     public void guardarArticulo(Articulo articulo){
         delegateArticulo.saveArticulo(articulo);
     }
+
+    public void eliminarArticulo(Integer id) {
+        System.out.println("=== FacadeArticulo.eliminarArticulo() ===");
+        System.out.println("ID: " + id);
+        try {
+            delegateArticulo.deleteArticulo(id);
+            System.out.println("✓ Artículo eliminado en Facade");
+        } catch (Exception e) {
+            System.err.println("ERROR en FacadeArticulo.eliminarArticulo():");
+            e.printStackTrace();
+            throw e;
+        }
+    }
     public void modificarArticulo(Articulo art) {
         delegateArticulo.updateArticulo(art);
     }

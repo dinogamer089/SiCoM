@@ -1,7 +1,7 @@
 package mx.desarollo.integration;
 
-import mx.desarollo.facade.FacadeLogin;
 import mx.desarollo.facade.FacadeArticulo;
+import mx.desarollo.facade.FacadeLogin;
 
 public class ServiceFacadeLocator {
     private static FacadeLogin facadeLogin;
@@ -21,5 +21,4 @@ public class ServiceFacadeLocator {
         }
         return facadeArticulo;
     }
-
 }

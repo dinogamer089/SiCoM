@@ -85,10 +85,23 @@
             cursor: pointer;
             transition: 0.2s;
             font-family: 'Minerva Modern', serif;
+            border-radius: 0;
         }
 
         .btn:hover {
             background-color: #444;
+        }
+
+        .ui-button.btn {
+            background-color: black !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 0 !important;
+            padding: 10px 20px !important;
+        }
+
+        .ui-button.btn:hover {
+            background-color: #444 !important;
         }
 
         .table-container {
@@ -183,6 +196,7 @@
             width: 100%;
         }
 
+        /* Estilos para el botón de subir archivo */
         .ui-fileupload-simple {
             background-color: white !important;
             border: 1px solid #ccc !important;
@@ -229,11 +243,19 @@
 
             <div class="button-bar">
                 <p:commandButton value="+ Alta"
-                                 style="background-color:black;color:white;border:none;padding:10px 20px;font-size:15px;cursor:pointer;font-family:'Minerva Modern',serif;"
+                                 styleClass="btn"
                                  onclick="PF('dialogAlta').show();"
                                  actionListener="#{articuloUI.prepararNuevoArticulo()}"
                                  update=":dialogForm:dialogPanel"
                                  type="button"/>
+
+
+                <p:commandButton value="🗑 Eliminar"
+                                 type="button"
+                                 styleClass="btn"
+                                 disabled="#{empty articuloUI.seleccionada}"
+                                 onclick="PF('confirmEliminar').show();"/>
+
                 <p:commandButton value="✎ Modificar"
                                  style="background-color:black;color:white;border:none;padding:10px 20px;font-size:15px;cursor:pointer;font-family:'Minerva Modern',serif;"
                                  oncomplete="PF('editDialogWV').show();"
@@ -268,8 +290,26 @@
                                   style="color: gray; font-style: italic;"/>
                 </p:column>
             </p:dataTable>
+
+            <p:confirmDialog header="Confirmar eliminación"
+                             message="¿Eliminar el artículo '#{articuloUI.seleccionada != null ? articuloUI.seleccionada.nombre : ''}'?"
+                             widgetVar="confirmEliminar"
+                             closable="true"
+                             width="420">
+                <p:commandButton value="Eliminar"
+                                 styleClass="btn"
+                                 action="#{articuloUI.eliminarArticulo()}"
+                                 update=":articulosForm:messages :articulosForm:tablaArticulos"
+                                 oncomplete="PF('confirmEliminar').hide();"
+                                 ajax="true" />
+                <p:commandButton value="Cancelar"
+                                 type="button"
+                                 styleClass="btn"
+                                 onclick="PF('confirmEliminar').hide();" />
+            </p:confirmDialog>
         </h:form>
 
+        <!-- Diálogo de Alta -->
         <h:form id="dialogForm" enctype="multipart/form-data">
             <p:dialog header="Nuevo Artículo"
                       widgetVar="dialogAlta"
