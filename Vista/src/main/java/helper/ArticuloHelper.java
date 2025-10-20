@@ -40,4 +40,11 @@ public class ArticuloHelper {
             throw e;
         }
     }
+
+    public void editarArticulo(Articulo art) {
+        if (art.getNombre() != null) {
+            art.setNombre(art.getNombre().toUpperCase());
+        }
+        ServiceFacadeLocator.getInstanceFacadeArticulo().modificarArticulo(art);
+    }
 }

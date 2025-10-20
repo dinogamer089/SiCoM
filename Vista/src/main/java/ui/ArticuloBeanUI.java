@@ -9,6 +9,7 @@ import jakarta.inject.Named;
 import mx.desarollo.entity.Articulo;
 import org.primefaces.model.file.UploadedFile;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Base64;
 import java.util.List;
@@ -148,4 +149,26 @@ public class ArticuloBeanUI implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(severity, resumen, detalle));
     }
+
+    public void actualizarArticulo() {
+        if (seleccionada != null) {
+            try {
+                // Update image only if a file was uploaded
+                if (imagenFile != null && imagenFile.getSize() > 0) {
+                    seleccionada.setImagen(imagenFile.getInputStream().readAllBytes());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            articuloHelper.editarArticulo(seleccionada);
+            System.out.println("Articulo actualizado: " + seleccionada.getNombre());
+
+            // reset
+            seleccionada = null;
+            imagenFile = null;
+            articulos = articuloHelper.obtenerTodas();
+        }
+    }
+
 }

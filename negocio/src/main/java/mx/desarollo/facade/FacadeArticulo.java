@@ -17,4 +17,8 @@ public class FacadeArticulo {
     public void guardarArticulo(Articulo articulo){
         delegateArticulo.saveArticulo(articulo);
     }
+    public void modificarArticulo(Articulo art) {
+        delegateArticulo.updateArticulo(art);
+    }
+
 }
