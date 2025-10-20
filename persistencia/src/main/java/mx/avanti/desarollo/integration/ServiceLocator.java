@@ -16,6 +16,7 @@ import mx.avanti.desarollo.persistence.HibernateUtil;
  */
 public class ServiceLocator {
     private static UsuarioDAO usuarioDAO;
+    private static ArticuloDAO articuloDAO;
 
     private static EntityManager getEntityManager(){
         return HibernateUtil.getEntityManager();
@@ -30,6 +31,15 @@ public class ServiceLocator {
             return usuarioDAO;
         } else{
             return usuarioDAO;
+        }
+    }
+
+    public static ArticuloDAO getInstanceArticuloDAO(){
+        if(articuloDAO == null){
+            articuloDAO = new ArticuloDAO(getEntityManager());
+            return articuloDAO;
+        } else{
+            return articuloDAO;
         }
     }
 
