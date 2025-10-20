@@ -97,7 +97,7 @@ public class ArticuloBeanUI implements Serializable {
                 return;
             }
 
-            // Procesar imagen si se subió
+
             if (imagenFile != null && imagenFile.getContent() != null && imagenFile.getSize() > 0) {
                 try {
                     byte[] imageBytes = imagenFile.getContent();
@@ -129,7 +129,7 @@ public class ArticuloBeanUI implements Serializable {
         }
     }
 
-    // Método para convertir byte[] a Base64 para mostrar en el HTML
+
     public String getImagenBase64(byte[] imagen) {
         if (imagen == null || imagen.length == 0) {
             return "";
