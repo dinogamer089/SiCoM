@@ -29,4 +29,10 @@ public class EmpleadoHelper implements Serializable {
         ServiceFacadeLocator.getInstanceFacadeEmpleado().updateEmpleado(empleado);
     }
 
+    /**
+     * Llama al facade para eliminar un empleado.
+     */
+    public void deleteEmpleado(Empleado empleado) {
+        ServiceFacadeLocator.getInstanceFacadeEmpleado().deleteEmpleado(empleado);
+    }
 }

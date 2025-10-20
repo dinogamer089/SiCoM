@@ -27,6 +27,7 @@ public class DelegateEmpleado {
      * Guarda un nuevo empleado, encriptando su contraseña.
      */
     public void saveEmpleado(Empleado empleado) {
+        // Encripta la contraseña antes de guardar
         String hashed = BCrypt.hashpw(empleado.getContrasena(), BCrypt.gensalt(12));
         empleado.setContrasena(hashed);
         empleadoDAO.save(empleado);
@@ -34,7 +35,7 @@ public class DelegateEmpleado {
 
     /**
      * Actualiza un empleado existente.
-     * Si la contraseña se modifico, la encripta.
+     * Si la contraseña se modifico (no es el hash existente), la encripta.
      */
     public void updateEmpleado(Empleado empleado) {
 
@@ -58,4 +59,10 @@ public class DelegateEmpleado {
         empleadoDAO.update(empleado);
     }
 
+    /**
+     * Elimina un empleado de la base de datos.
+     */
+    public void deleteEmpleado(Empleado empleado) {
+        empleadoDAO.delete(empleado);
+    }
 }

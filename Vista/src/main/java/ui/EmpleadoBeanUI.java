@@ -23,6 +23,7 @@ public class EmpleadoBeanUI implements Serializable {
     private Empleado nuevoEmpleado;
     private String nuevaContrasena;
 
+    // ========== FLAG PARA COMUNICAR ÉXITO A JAVASCRIPT ==========
     private boolean operacionExitosa = false;
     private FacadeEmpleado facadeEmpleado;
 
@@ -56,6 +57,7 @@ public class EmpleadoBeanUI implements Serializable {
                     nuevoEmpleado.getApellidoPaterno() == null || nuevoEmpleado.getApellidoPaterno().trim().isEmpty() ||
                     nuevoEmpleado.getApellidoMaterno() == null || nuevoEmpleado.getApellidoMaterno().trim().isEmpty()) {
 
+
                 ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Nombre y apellidos son obligatorios."));
                 ctx.validationFailed();
                 PrimeFaces.current().ajax().addCallbackParam("operacionExitosa", this.operacionExitosa);
@@ -76,10 +78,13 @@ public class EmpleadoBeanUI implements Serializable {
                 return;
             }
 
+            // Hash de contraseña
             String hashGenerado = BCrypt.hashpw(nuevoEmpleado.getContrasena(), BCrypt.gensalt());
             nuevoEmpleado.setContrasena(hashGenerado);
 
+            // Guardar
             facadeEmpleado.saveEmpleado(nuevoEmpleado);
+            // Recargar lista y limpiar formulario
             cargarEmpleados();
             this.nuevoEmpleado = new Empleado();
 
@@ -99,6 +104,7 @@ public class EmpleadoBeanUI implements Serializable {
             System.err.println("Error al guardar empleado: " + e.getMessage());
             e.printStackTrace();
         }
+
 
         PrimeFaces.current().ajax().addCallbackParam("operacionExitosa", this.operacionExitosa);
     }
@@ -138,47 +144,46 @@ public class EmpleadoBeanUI implements Serializable {
             ctx.validationFailed();
         }
 
+
         PrimeFaces.current().ajax().addCallbackParam("operacionExitosa", this.operacionExitosa);
     }
 
-    // Getters y Setters
-    public List<Empleado> getEmpleados() {
-        return empleados;
+
+    public void eliminarEmpleado() {
+        if (empleadoSeleccionado != null) {
+            try {
+                facadeEmpleado.deleteEmpleado(empleadoSeleccionado);
+                cargarEmpleados();
+                empleadoSeleccionado = null;
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Empleado eliminado."));
+            } catch (Exception e) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                                "No se pudo eliminar el empleado: " + e.getMessage()));
+            }
+        }
     }
 
-    public void setEmpleados(List<Empleado> empleados) {
-        this.empleados = empleados;
+    // ========== GETTERS Y SETTERS ==========
+    public List<Empleado> getEmpleados() { return empleados;
     }
-
-    public Empleado getEmpleadoSeleccionado() {
-        return empleadoSeleccionado;
+    public void setEmpleados(List<Empleado> empleados) { this.empleados = empleados;
     }
-
-    public void setEmpleadoSeleccionado(Empleado empleadoSeleccionado) {
-        this.empleadoSeleccionado = empleadoSeleccionado;
+    public Empleado getEmpleadoSeleccionado() { return empleadoSeleccionado;
     }
-
-    public Empleado getNuevoEmpleado() {
-        return nuevoEmpleado;
+    public void setEmpleadoSeleccionado(Empleado empleadoSeleccionado) { this.empleadoSeleccionado = empleadoSeleccionado;
     }
-
-    public void setNuevoEmpleado(Empleado nuevoEmpleado) {
-        this.nuevoEmpleado = nuevoEmpleado;
+    public Empleado getNuevoEmpleado() { return nuevoEmpleado;
     }
-
-    public String getNuevaContrasena() {
-        return nuevaContrasena;
+    public void setNuevoEmpleado(Empleado nuevoEmpleado) { this.nuevoEmpleado = nuevoEmpleado;
     }
-
-    public void setNuevaContrasena(String nuevaContrasena) {
-        this.nuevaContrasena = nuevaContrasena;
+    public String getNuevaContrasena() { return nuevaContrasena;
     }
-
-    public boolean isOperacionExitosa() {
-        return operacionExitosa;
+    public void setNuevaContrasena(String nuevaContrasena) { this.nuevaContrasena = nuevaContrasena;
     }
-
-    public void setOperacionExitosa(boolean operacionExitosa) {
-        this.operacionExitosa = operacionExitosa;
+    public boolean isOperacionExitosa() { return operacionExitosa;
+    }
+    public void setOperacionExitosa(boolean operacionExitosa) { this.operacionExitosa = operacionExitosa;
     }
 }
