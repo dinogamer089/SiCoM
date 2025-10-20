@@ -40,4 +40,17 @@ public class ArticuloHelper {
             throw e;
         }
     }
+
+    public void eliminarArticulo(Integer id) {
+        System.out.println("=== ArticuloHelper.eliminarArticulo() ===");
+        System.out.println("ID a eliminar: " + id);
+        try {
+            ServiceFacadeLocator.getInstanceFacadeArticulo().eliminarArticulo(id);
+            System.out.println("✓ Artículo eliminado exitosamente");
+        } catch (Exception e) {
+            System.err.println("✗ ERROR al eliminar artículo:");
+            e.printStackTrace();
+            throw e;
+        }
+    }
 }

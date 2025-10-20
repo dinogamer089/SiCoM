@@ -13,4 +13,19 @@ public class DelegateArticulo {
 
     public void saveArticulo(Articulo articulo){
     ServiceLocator.getInstanceArticuloDAO().save(articulo);}
+
+    public void deleteArticulo(Integer id) {
+        try {
+
+            Articulo articulo = ServiceLocator.getInstanceArticuloDAO()
+                    .find(id)
+                    .orElseThrow(() -> new RuntimeException("Artículo no encontrado con ID: " + id));
+
+            ServiceLocator.getInstanceArticuloDAO().delete(articulo);
+        } catch (Exception e) {
+            System.err.println("Error en deleteArticulo: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
 }

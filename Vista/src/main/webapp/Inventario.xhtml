@@ -85,10 +85,23 @@
             cursor: pointer;
             transition: 0.2s;
             font-family: 'Minerva Modern', serif;
+            border-radius: 0;
         }
 
         .btn:hover {
             background-color: #444;
+        }
+
+        .ui-button.btn {
+            background-color: black !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 0 !important;
+            padding: 10px 20px !important;
+        }
+
+        .ui-button.btn:hover {
+            background-color: #444 !important;
         }
 
         .table-container {
@@ -183,7 +196,6 @@
             width: 100%;
         }
 
-        /* Estilos para el botón de subir archivo */
         .ui-fileupload-simple {
             background-color: white !important;
             border: 1px solid #ccc !important;
@@ -236,8 +248,16 @@
                                  update=":dialogForm:dialogPanel"
                                  type="button"/>
 
-                <button class="btn modificar" type="button" disabled="disabled">✎ Modificar</button>
-                <button class="btn eliminar" type="button" disabled="disabled">🗑 Eliminar</button>
+                <p:commandButton value="✎ Modificar"
+                                 type="button"
+                                 styleClass="btn"
+                                 disabled="#{empty articuloUI.seleccionada}"/>
+
+                <p:commandButton value="🗑 Eliminar"
+                                 type="button"
+                                 styleClass="btn"
+                                 disabled="#{empty articuloUI.seleccionada}"
+                                 onclick="PF('confirmEliminar').show();"/>
             </div>
 
             <p:dataTable value="#{articuloUI.articulos}" var="art"
@@ -249,6 +269,7 @@
                          style="width:100%;">
 
                 <p:ajax event="rowSelect" listener="#{articuloUI.seleccionar(articuloUI.seleccionada)}" update="@form" />
+                <p:ajax event="rowUnselect" update="@form" />
 
                 <p:column headerText="ID">#{art.idarticulo}</p:column>
                 <p:column headerText="Nombre">#{art.nombre}</p:column>
@@ -267,9 +288,25 @@
                                   style="color: gray; font-style: italic;"/>
                 </p:column>
             </p:dataTable>
+
+            <p:confirmDialog header="Confirmar eliminación"
+                             message="¿Eliminar el artículo '#{articuloUI.seleccionada != null ? articuloUI.seleccionada.nombre : ''}'?"
+                             widgetVar="confirmEliminar"
+                             closable="true"
+                             width="420">
+                <p:commandButton value="Eliminar"
+                                 styleClass="btn"
+                                 action="#{articuloUI.eliminarArticulo()}"
+                                 update=":articulosForm:messages :articulosForm:tablaArticulos"
+                                 oncomplete="PF('confirmEliminar').hide();"
+                                 ajax="true" />
+                <p:commandButton value="Cancelar"
+                                 type="button"
+                                 styleClass="btn"
+                                 onclick="PF('confirmEliminar').hide();" />
+            </p:confirmDialog>
         </h:form>
 
-        <!-- Diálogo de Alta -->
         <h:form id="dialogForm" enctype="multipart/form-data">
             <p:dialog header="Nuevo Artículo"
                       widgetVar="dialogAlta"
@@ -318,8 +355,8 @@
                 <f:facet name="footer">
                     <p:commandButton value="Guardar"
                                      action="#{articuloUI.guardarArticulo()}"
-                                     update=":articulosForm:messages :articulosForm:tablaArticulos"
-                                     oncomplete="if(args &amp;&amp; !args.validationFailed) PF('dialogAlta').hide();"
+                                     ajax="false"
+                                     process="@form"
                                      styleClass="btn"
                                      style="margin-right: 10px;"/>
 
