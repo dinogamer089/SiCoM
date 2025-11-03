@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dataSource name="desarrollo@localhost">
+<dataSource name="SiCoM@localhost">
   <database-model serializer="dbm" dbms="MYSQL" family-id="MYSQL" format-version="4.53">
     <root id="1">
       <DefaultCasing>lower/lower</DefaultCasing>
@@ -1003,8 +1003,8 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <AutoIntrospectionLevel>3</AutoIntrospectionLevel>
       <Current>1</Current>
       <LastIntrospectionLevel>3</LastIntrospectionLevel>
-      <LastIntrospectionLocalTimestamp>2025-10-20.06:26:47</LastIntrospectionLocalTimestamp>
-      <CollationName>utf8mb3_general_ci</CollationName>
+      <LastIntrospectionLocalTimestamp>2025-11-02.00:25:56</LastIntrospectionLocalTimestamp>
+      <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <schema id="289" parent="1" name="information_schema">
       <CollationName>utf8mb3_general_ci</CollationName>
@@ -1042,17 +1042,17 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb3_general_ci</CollationName>
     </table>
-    <table id="298" parent="288" name="alumno">
+    <table id="298" parent="288" name="articulo">
       <DetailsLevel>3</DetailsLevel>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb3_general_ci</CollationName>
     </table>
-    <table id="299" parent="288" name="articulo">
+    <table id="299" parent="288" name="cliente">
       <DetailsLevel>3</DetailsLevel>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb3_general_ci</CollationName>
     </table>
-    <table id="300" parent="288" name="combinacion_mesa">
+    <table id="300" parent="288" name="detallerenta">
       <DetailsLevel>3</DetailsLevel>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb3_general_ci</CollationName>
@@ -1062,7 +1062,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb3_general_ci</CollationName>
     </table>
-    <table id="302" parent="288" name="usuario">
+    <table id="302" parent="288" name="renta">
       <DetailsLevel>3</DetailsLevel>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb3_general_ci</CollationName>
@@ -1093,69 +1093,69 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="308" parent="298" name="idalumno">
-      <AutoIncrement>1</AutoIncrement>
+    <column id="308" parent="298" name="idarticulo">
+      <AutoIncrement>6</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="309" parent="298" name="apellidos">
+    <column id="309" parent="298" name="nombre">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(45)|0s</StoredType>
     </column>
-    <column id="310" parent="298" name="matricula">
+    <column id="310" parent="298" name="precio">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="311" parent="298" name="nombre">
-      <NotNull>1</NotNull>
-      <Position>4</Position>
-      <StoredType>varchar(45)|0s</StoredType>
-    </column>
-    <index id="312" parent="298" name="PRIMARY">
-      <ColNames>idalumno</ColNames>
-      <Type>btree</Type>
-      <Unique>1</Unique>
-    </index>
-    <key id="313" parent="298" name="PRIMARY">
-      <NameSurrogate>1</NameSurrogate>
-      <Primary>1</Primary>
-      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
-    </key>
-    <column id="314" parent="299" name="idarticulo">
-      <AutoIncrement>1</AutoIncrement>
-      <NotNull>1</NotNull>
-      <Position>1</Position>
-      <StoredType>int|0s</StoredType>
-    </column>
-    <column id="315" parent="299" name="nombre">
-      <NotNull>1</NotNull>
-      <Position>2</Position>
-      <StoredType>varchar(45)|0s</StoredType>
-    </column>
-    <column id="316" parent="299" name="precio">
-      <NotNull>1</NotNull>
-      <Position>3</Position>
-      <StoredType>int|0s</StoredType>
-    </column>
-    <column id="317" parent="299" name="cantidad">
+    <column id="311" parent="298" name="cantidad">
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="318" parent="299" name="tipo">
+    <column id="312" parent="298" name="tipo">
       <NotNull>1</NotNull>
       <Position>5</Position>
       <StoredType>varchar(45)|0s</StoredType>
     </column>
-    <column id="319" parent="299" name="imagen">
+    <column id="313" parent="298" name="imagen">
       <Position>6</Position>
       <StoredType>longblob|0s</StoredType>
     </column>
-    <index id="320" parent="299" name="PRIMARY">
+    <index id="314" parent="298" name="PRIMARY">
       <ColNames>idarticulo</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <key id="315" parent="298" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <column id="316" parent="299" name="idCliente">
+      <AutoIncrement>3</AutoIncrement>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="317" parent="299" name="nombre">
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StoredType>varchar(45)|0s</StoredType>
+    </column>
+    <column id="318" parent="299" name="telefono">
+      <NotNull>1</NotNull>
+      <Position>3</Position>
+      <StoredType>varchar(45)|0s</StoredType>
+    </column>
+    <column id="319" parent="299" name="direccion">
+      <NotNull>1</NotNull>
+      <Position>4</Position>
+      <StoredType>varchar(45)|0s</StoredType>
+    </column>
+    <index id="320" parent="299" name="PRIMARY">
+      <ColNames>idCliente</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
@@ -1164,155 +1164,137 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="322" parent="300" name="id">
-      <AutoIncrement>1</AutoIncrement>
+    <column id="322" parent="300" name="idDetalle">
+      <AutoIncrement>3</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="323" parent="300" name="mesa_id">
+    <column id="323" parent="300" name="cantidadRentada">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="324" parent="300" name="mantel_id">
+    <column id="324" parent="300" name="idArticulo">
+      <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="325" parent="300" name="extra_tipo">
-      <DefaultExpression>&apos;NINGUNO&apos;</DefaultExpression>
+    <column id="325" parent="300" name="idRenta">
       <NotNull>1</NotNull>
       <Position>4</Position>
-      <StoredType>enum(&apos;NINGUNO&apos;, &apos;CAMINO&apos;, &apos;CUBRE&apos;)|0e</StoredType>
-    </column>
-    <column id="326" parent="300" name="extra_id">
-      <Position>5</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="327" parent="300" name="imagen">
-      <NotNull>1</NotNull>
-      <Position>6</Position>
-      <StoredType>longblob|0s</StoredType>
-    </column>
-    <foreign-key id="328" parent="300" name="fk_combo_mesa">
-      <ColNames>mesa_id</ColNames>
+    <foreign-key id="326" parent="300" name="fk_detalleRenta_articulo">
+      <ColNames>idArticulo</ColNames>
       <RefColNames>idarticulo</RefColNames>
       <RefTableName>articulo</RefTableName>
     </foreign-key>
-    <foreign-key id="329" parent="300" name="fk_combo_mantel">
-      <ColNames>mantel_id</ColNames>
-      <RefColNames>idarticulo</RefColNames>
-      <RefTableName>articulo</RefTableName>
+    <foreign-key id="327" parent="300" name="fk_detalleRenta_renta">
+      <ColNames>idRenta</ColNames>
+      <RefColNames>idRenta</RefColNames>
+      <RefTableName>renta</RefTableName>
     </foreign-key>
-    <foreign-key id="330" parent="300" name="fk_combo_extra">
-      <ColNames>extra_id</ColNames>
-      <RefColNames>idarticulo</RefColNames>
-      <RefTableName>articulo</RefTableName>
-    </foreign-key>
-    <index id="331" parent="300" name="PRIMARY">
-      <ColNames>id</ColNames>
+    <index id="328" parent="300" name="PRIMARY">
+      <ColNames>idDetalle</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="332" parent="300" name="uk_combo">
-      <ColNames>mesa_id
-mantel_id
-extra_tipo
-extra_id</ColNames>
-      <Type>btree</Type>
-      <Unique>1</Unique>
-    </index>
-    <index id="333" parent="300" name="idx_combo_lookup">
-      <ColNames>mesa_id
-mantel_id
-extra_tipo
-extra_id</ColNames>
+    <index id="329" parent="300" name="fk_detalleRenta_articulo">
+      <ColNames>idArticulo</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="334" parent="300" name="fk_combo_mantel">
-      <ColNames>mantel_id</ColNames>
+    <index id="330" parent="300" name="fk_detalleRenta_renta">
+      <ColNames>idRenta</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="335" parent="300" name="fk_combo_extra">
-      <ColNames>extra_id</ColNames>
-      <Type>btree</Type>
-    </index>
-    <key id="336" parent="300" name="PRIMARY">
+    <key id="331" parent="300" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <key id="337" parent="300" name="uk_combo">
-      <UnderlyingIndexName>uk_combo</UnderlyingIndexName>
-    </key>
-    <column id="338" parent="301" name="correo">
+    <column id="332" parent="301" name="correo">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>varchar(45)|0s</StoredType>
     </column>
-    <column id="339" parent="301" name="nombre">
+    <column id="333" parent="301" name="nombre">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(45)|0s</StoredType>
     </column>
-    <column id="340" parent="301" name="apellido_paterno">
+    <column id="334" parent="301" name="apellido_paterno">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>varchar(45)|0s</StoredType>
     </column>
-    <column id="341" parent="301" name="apellido_materno">
+    <column id="335" parent="301" name="apellido_materno">
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StoredType>varchar(45)|0s</StoredType>
     </column>
-    <column id="342" parent="301" name="idEmpleado">
-      <AutoIncrement>3</AutoIncrement>
+    <column id="336" parent="301" name="idEmpleado">
+      <AutoIncrement>5</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>5</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="343" parent="301" name="contrasena">
+    <column id="337" parent="301" name="contrasena">
       <NotNull>1</NotNull>
       <Position>6</Position>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <index id="344" parent="301" name="PRIMARY">
+    <index id="338" parent="301" name="PRIMARY">
       <ColNames>idEmpleado</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="345" parent="301" name="PRIMARY">
+    <key id="339" parent="301" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="346" parent="302" name="correo">
+    <column id="340" parent="302" name="idRenta">
+      <AutoIncrement>3</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
-      <StoredType>varchar(45)|0s</StoredType>
+      <StoredType>int|0s</StoredType>
     </column>
-    <column id="347" parent="302" name="idusuario">
-      <AutoIncrement>2</AutoIncrement>
+    <column id="341" parent="302" name="fecha">
       <NotNull>1</NotNull>
       <Position>2</Position>
-      <StoredType>int|0s</StoredType>
-    </column>
-    <column id="348" parent="302" name="contrasena">
-      <NotNull>1</NotNull>
-      <Position>3</Position>
       <StoredType>varchar(45)|0s</StoredType>
     </column>
-    <column id="349" parent="302" name="idAlumno">
+    <column id="342" parent="302" name="hora">
       <NotNull>1</NotNull>
-      <Position>4</Position>
+      <Position>3</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <index id="350" parent="302" name="PRIMARY">
-      <ColNames>idusuario</ColNames>
+    <column id="343" parent="302" name="estado">
+      <NotNull>1</NotNull>
+      <Position>4</Position>
+      <StoredType>varchar(45)|0s</StoredType>
+    </column>
+    <column id="344" parent="302" name="idCliente">
+      <NotNull>1</NotNull>
+      <Position>5</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <foreign-key id="345" parent="302" name="fk_renta_cliente">
+      <ColNames>idCliente</ColNames>
+      <RefColNames>idCliente</RefColNames>
+      <RefTableName>cliente</RefTableName>
+    </foreign-key>
+    <index id="346" parent="302" name="PRIMARY">
+      <ColNames>idRenta</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="351" parent="302" name="PRIMARY">
+    <index id="347" parent="302" name="fk_renta_cliente">
+      <ColNames>idCliente</ColNames>
+      <Type>btree</Type>
+    </index>
+    <key id="348" parent="302" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>

@@ -1,0 +1,260 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xml:lang="es" lang="es">
+
+<h:head>
+    <title>Detalle de Cotización</title>
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style type="text/css">
+        @font-face {
+            font-family: "Minerva Modern";
+            src: url("resources/MinervaModern Bold.ttf") format("truetype");
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: #E7D9CB;
+        }
+
+        .topbar {
+            background-color: #3D4435;
+            color: #C2C8CC;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+        .topbar-left, .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .topbar-center {
+            text-align: center;
+            flex-grow: 1;
+            font-style: italic;
+            font-size: 22px;
+        }
+        .topbar a {
+            text-decoration: none;
+            color: #C2C8CC;
+            font-size: 16px;
+            margin: 0 5px;
+            font-style: italic;
+        }
+        .topbar a:hover {
+            text-decoration: underline;
+        }
+        .topbar img {
+            width: 20px;
+            height: 20px;
+        }
+        .content {
+            padding: 20px 60px;
+            font-family: 'Minerva Modern', serif;
+        }
+
+        .detalle-container {
+            display: flex;
+            gap: 40px;
+            padding-top: 20px;
+        }
+
+        .cliente-info-box {
+            flex: 0 0 350px;
+            font-size: 18px;
+        }
+
+        .cliente-row {
+            display: flex;
+            margin-bottom: 15px;
+            font-family: 'Minerva Modern', serif;
+        }
+
+        .cliente-label {
+            font-weight: bold;
+            flex: 0 0 100px;
+            color: #000000;
+        }
+
+        .cliente-value {
+            font-weight: normal;
+        }
+
+        .articulos-section {
+            flex-grow: 1;
+        }
+
+        .articulos-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #000000;
+            font-family: 'Minerva Modern', serif;
+        }
+
+        .custom-datatable table {
+            background: #E7D9CB;
+        }
+
+        .articulos-card{
+            background-color: #3D4435;
+            padding: 15px;
+        }
+
+        .ui-datatable thead th,
+        .custom-datatable thead th {
+            background-color: #3D4435 !important;
+            color: white !important;
+            text-align: center !important;
+            font-weight: bold !important;
+            font-family: "FreightTextCmp Pro Semibold" !important;
+        }
+
+        .custom-datatable .ui-datatable-data tr,
+        .custom-datatable .ui-datatable-data td {
+            border-color: #000000 !important;
+            color: #000000 !important;
+            font-family: "FreightTextCmp Pro Semibold" !important;
+        }
+
+        .custom-datatable .ui-datatable-data tr {
+            background: white !important;
+        }
+
+        .custom-datatable .ui-datatable-data tr:nth-child(even) {
+            background: white !important;
+        }
+
+        .custom-datatable .ui-datatable-data td {
+            border: none !important;
+            padding: 8px 10px;
+        }
+
+        .custom-datatable .ui-widget-content {
+            border: none !important;
+        }
+
+    </style>
+</h:head>
+<h:body>
+    <div class="topbar">
+        <div class="topbar-left">
+            <img src="resources/edicion.png" alt="Empleados" class="topbar-icon" />
+            <a href="AdminEmpleados.xhtml">Empleados</a>
+        </div>
+        <div class="topbar-center">
+            <a href="#"> EVENTOS CAMPESTRE</a><br />
+            <a href="Inventario.xhtml">Inventario</a>
+            <a href="Articulos.xhtml">Artículos</a>
+            <a href="Cotizaciones.xhtml">Cotizaciones</a>
+            <a href="Rentas.xhtml">Rentas</a>
+        </div>
+        <div class="topbar-right">
+            <span>Administrador</span>
+            <img src="resources/administrador.png" alt="admin" class="topbar-icon" />
+        </div>
+    </div>
+
+    <div class="content">
+        <h:form>
+            <div class="detalle-container">
+                <div class="cliente-info-box">
+                    <div class="cliente-row">
+                        <div style="margin-bottom: 20px;">
+                            <h:commandLink action="Cotizaciones.xhtml" title="Regresar">
+                                <h:graphicImage value="resources/retornar.png"
+                                                alt="Regresar"
+                                                width="40"
+                                                height="40"
+                                                style="cursor: pointer;" /> </h:commandLink>
+                        </div>
+                    </div>
+                    <div class="cliente-row">
+                        <span class="cliente-label">Nombre:</span>
+                        <span class="cliente-value">#{rentaUI.rentaSeleccionada.idCliente.nombre}</span>
+                    </div>
+
+                    <div class="cliente-row">
+                        <span class="cliente-label">Dirección:</span>
+                        <span class="cliente-value">#{rentaUI.rentaSeleccionada.idCliente.direccion}</span>
+                    </div>
+
+                    <div class="cliente-row">
+                        <span class="cliente-label">Telefono:</span>
+                        <span class="cliente-value">#{rentaUI.rentaSeleccionada.idCliente.telefono}</span>
+                    </div>
+
+                    <div class="cliente-row">
+                        <span class="cliente-label">Estado:</span>
+                        <span class="cliente-value">#{rentaUI.rentaSeleccionada.estado}</span>
+                    </div>
+
+                    <div class="cliente-row">
+                        <span class="cliente-label">Hora:</span>
+                        <span class="cliente-value">#{rentaUI.rentaSeleccionada.hora}:00</span>
+                    </div>
+                </div>
+
+                    <div class="articulos-section">
+                        <div class="articulos-title">Artículos</div>
+
+                        <div class="articulos-card">
+                            <p:dataTable var="detalle"
+                                         value="#{rentaUI.rentaSeleccionada.detallesRenta}"
+                                         styleClass="custom-datatable"
+                                         emptyMessage="No hay artículos en esta renta."
+                                         style="border-spacing: 0 10px; border-collapse: separate;">
+
+                                <p:column headerText="Nombre del Artículo">
+                                    <h:outputText value="#{detalle.idArticulo.nombre}" />
+                                </p:column>
+
+                                <p:column headerText="Tipo">
+                                    <h:outputText value="#{detalle.idArticulo.tipo}" />
+                                </p:column>
+
+                                <p:column headerText="Imagen">
+                                    <h:panelGroup rendered="#{detalle.idArticulo.imagen != null and detalle.idArticulo.imagen.length > 0}">
+                                        <h:graphicImage value="#{articuloUI.getImagenBase64(detalle.idArticulo.imagen)}"
+                                                        width="40"
+                                                        height="40"
+                                                        style="object-fit: cover;"/>
+                                    </h:panelGroup>
+                                </p:column>
+
+                                <p:column headerText="Precio Unitario" style="text-align: right;">
+                                    <h:outputText value="#{detalle.idArticulo.precio}">
+                                        <f:convertNumber type="currency" currencySymbol="$" />
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column headerText="Cantidad Rentada" style="text-align: right;">
+                                    <h:outputText value="#{detalle.cantidadRentada}" />
+                                </p:column>
+
+                                <p:column headerText="Subtotal" style="text-align: right;">
+                                    <h:outputText value="#{detalle.cantidadRentada * detalle.idArticulo.precio}">
+                                        <f:convertNumber type="currency" currencySymbol="$" />
+                                    </h:outputText>
+                                </p:column>
+
+                            </p:dataTable>
+                        </div>
+                    </div>
+            </div>
+        </h:form>
+    </div>
+</h:body>
+</html>
