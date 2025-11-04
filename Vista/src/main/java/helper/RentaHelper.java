@@ -28,16 +28,4 @@ public class RentaHelper {
             return new ArrayList<>();
         }
     }
-
-    public void guardarRenta(Renta renta) {
-        System.out.println("=== RentaHelper.crearRenta() ===");
-        try {
-            ServiceFacadeLocator.getInstanceFacadeRenta().guardarRenta(renta);
-            System.out.println("✓ Renta creado exitosamente");
-        } catch (Exception e) {
-            System.err.println("✗ ERROR al crear Renta:");
-            e.printStackTrace();
-            throw e;
-        }
-    }
 }

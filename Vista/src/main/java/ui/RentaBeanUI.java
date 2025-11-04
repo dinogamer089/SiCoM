@@ -42,33 +42,6 @@ public class RentaBeanUI implements Serializable {
         return "DetalleRenta.xhtml?faces-redirect=true";
     }
 
-    public void guardarRenta() {
-        try {
-            // Se asume que las validaciones de Cliente, Artículos, etc. se harán antes o en la capa de negocio.
-            // Aquí puedes agregar validaciones de campos propios de Renta (fecha, estado).
-            if (nuevaRenta.getFecha() == null) {
-                mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "La fecha de renta es obligatoria.");
-                return;
-            }
-            if (nuevaRenta.getEstado() == null || nuevaRenta.getEstado().trim().isEmpty()) {
-                mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "El estado de la renta es obligatorio.");
-                return;
-            }
-
-            rentaHelper.guardarRenta(nuevaRenta);
-            mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Renta creada correctamente.");
-
-            obtenerTodasLasCotizaciones();
-
-            nuevaRenta = new Renta();
-
-        } catch (Exception e) {
-            System.err.println("Error al guardar renta: " + e.getMessage());
-            e.printStackTrace();
-            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo crear la renta: " + e.getMessage());
-        }
-    }
-
     public List<Renta> getRentas() {
         return rentas;
     }

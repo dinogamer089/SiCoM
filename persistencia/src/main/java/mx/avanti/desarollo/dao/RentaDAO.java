@@ -24,15 +24,6 @@ public class RentaDAO extends AbstractDAO<Renta> {
                 .getResultList();
     }
 
-    public List<Renta> obtenerTodos(){
-        return entityManager
-                .createQuery("SELECT r FROM Renta r " +
-                        "LEFT JOIN FETCH r.detallesRenta dr " +
-                        "LEFT JOIN FETCH dr.idArticulo " +
-                        "ORDER BY r.id", Renta.class)
-                .getResultList();
-    }
-
     @Override
     public EntityManager getEntityManager() {
         return entityManager;

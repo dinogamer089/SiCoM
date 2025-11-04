@@ -30,15 +30,6 @@ public class ServiceFacadeLocator {
         return facadeEmpleado;
     }
 
-    private static FacadeCliente facadeCliente;
-
-    public static FacadeCliente getInstanceFacadeCliente() {
-        if (facadeCliente == null) {
-            facadeCliente = new FacadeCliente();
-        }
-        return facadeCliente;
-    }
-
     private static FacadeRenta facadeRenta;
 
     public static FacadeRenta getInstanceFacadeRenta() {
@@ -46,14 +37,5 @@ public class ServiceFacadeLocator {
             facadeRenta = new FacadeRenta();
         }
         return facadeRenta;
-    }
-
-    private static FacadeDetalle facadeDetalle;
-
-    public static FacadeDetalle getInstanceFacadeDetalle() {
-        if (facadeDetalle == null) {
-            facadeDetalle = new FacadeDetalle();
-        }
-        return facadeDetalle;
     }
 }

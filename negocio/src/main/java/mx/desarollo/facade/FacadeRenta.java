@@ -10,15 +10,7 @@ public class FacadeRenta {
         this.delegateRenta = new DelegateRenta();
     }
 
-    public java.util.List<Renta> obtenerRentas(){
-        return delegateRenta.findAllRentas();
-    }
-
     public java.util.List<Renta> obtenerCotizaciones(){
         return delegateRenta.findAllCotizaciones();
-    }
-
-    public void guardarRenta(Renta renta){
-        delegateRenta.saveRenta(renta);
     }
 }
