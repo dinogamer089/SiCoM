@@ -129,7 +129,7 @@
             margin-right: 15px;
         }
 
-        .status-encotizacion { color: #f2f27a; }
+        .status-encotizacion { color: lightblue; }
 
     </style>
 </h:head>
@@ -160,25 +160,35 @@
 
             <div class="cotizaciones-list">
 
-                <ui:repeat value="#{rentaUI.rentas}" var="cot">
+                <h:panelGroup rendered="#{not empty rentaUI.rentas}">
+                    <ui:repeat value="#{rentaUI.rentas}" var="cot">
 
-                    <h:commandLink action="#{rentaUI.seleccionarRenta(cot)}" style="text-decoration: none; color: inherit;">
-                        <div class="cotizacion-card">
-                            <div class="cotizacion-details">
-                                <img src="resources/cotizacion.png" alt="Cotizacion" />
+                        <h:commandLink action="#{rentaUI.seleccionarRenta(cot)}" style="text-decoration: none; color: inherit;">
+                            <div class="cotizacion-card">
+                                <div class="cotizacion-details">
+                                    <img src="resources/cotizacion.png" alt="Cotizacion" />
 
-                                <div class="cotizacion-info">
-                                    <h:outputText value="#{cot.idCliente.nombre}" style="font-size: 16px;"/>
-                                    <h:outputText value="#{cot.idCliente.telefono}" style="font-size: 14px;"/>
+                                    <div class="cotizacion-info">
+                                        <h:outputText value="#{cot.idCliente.nombre}" style="font-size: 16px;"/>
+                                        <h:outputText value="#{cot.idCliente.telefono}" style="font-size: 14px;"/>
 
-                                    <h:outputText value="#{cot.estado}"
-                                                  styleClass="cotizacion-status
-                                          #{cot.estado eq 'Pendiente por aprobar' ? 'status-encotizacion' : ''}"/>
+                                        <h:outputText value="#{cot.estado}"
+                                                      styleClass="cotizacion-status
+                                  #{cot.estado eq 'Pendiente por aprobar' ? 'status-encotizacion' : ''}"/>
+                                    </div>
                                 </div>
                             </div>
+                        </h:commandLink>
+                    </ui:repeat>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{empty rentaUI.rentas}">
+                    <div class="cotizacion-card" style="background-color: #000000; cursor: default; justify-content: center; width: 300px;">
+                        <div class="cotizacion-info" style="text-align: center; color: white">
+                            <h:outputText value="No existen cotizaciones por el momento." />
                         </div>
-                    </h:commandLink>
-                </ui:repeat>
+                    </div>
+                </h:panelGroup>
 
             </div>
 

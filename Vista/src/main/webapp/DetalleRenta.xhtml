@@ -76,6 +76,12 @@
             font-size: 18px;
         }
 
+        .cliente-info {
+            background-color: #3D4435;
+            padding: 15px;
+            color: white;
+        }
+
         .cliente-row {
             display: flex;
             margin-bottom: 15px;
@@ -85,7 +91,7 @@
         .cliente-label {
             font-weight: bold;
             flex: 0 0 100px;
-            color: #000000;
+            color: white;
         }
 
         .cliente-value {
@@ -181,29 +187,31 @@
                                                 style="cursor: pointer;" /> </h:commandLink>
                         </div>
                     </div>
-                    <div class="cliente-row">
-                        <span class="cliente-label">Nombre:</span>
-                        <span class="cliente-value">#{rentaUI.rentaSeleccionada.idCliente.nombre}</span>
-                    </div>
+                    <div class="cliente-info">
+                        <div class="cliente-row">
+                            <span class="cliente-label">Nombre:</span>
+                            <span class="cliente-value">#{rentaUI.rentaSeleccionada.idCliente.nombre}</span>
+                        </div>
 
-                    <div class="cliente-row">
-                        <span class="cliente-label">Dirección:</span>
-                        <span class="cliente-value">#{rentaUI.rentaSeleccionada.idCliente.direccion}</span>
-                    </div>
+                        <div class="cliente-row">
+                            <span class="cliente-label">Dirección:</span>
+                            <span class="cliente-value">#{rentaUI.rentaSeleccionada.idCliente.direccion}</span>
+                        </div>
 
-                    <div class="cliente-row">
-                        <span class="cliente-label">Telefono:</span>
-                        <span class="cliente-value">#{rentaUI.rentaSeleccionada.idCliente.telefono}</span>
-                    </div>
+                        <div class="cliente-row">
+                            <span class="cliente-label">Telefono:</span>
+                            <span class="cliente-value">#{rentaUI.rentaSeleccionada.idCliente.telefono}</span>
+                        </div>
 
-                    <div class="cliente-row">
-                        <span class="cliente-label">Estado:</span>
-                        <span class="cliente-value">#{rentaUI.rentaSeleccionada.estado}</span>
-                    </div>
+                        <div class="cliente-row">
+                            <span class="cliente-label">Estado:</span>
+                            <span class="cliente-value">#{rentaUI.rentaSeleccionada.estado}</span>
+                        </div>
 
-                    <div class="cliente-row">
-                        <span class="cliente-label">Hora:</span>
-                        <span class="cliente-value">#{rentaUI.rentaSeleccionada.hora}:00</span>
+                        <div class="cliente-row">
+                            <span class="cliente-label">Hora:</span>
+                            <span class="cliente-value">#{rentaUI.rentaSeleccionada.hora}:00</span>
+                        </div>
                     </div>
                 </div>
 
