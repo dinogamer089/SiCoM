@@ -1,7 +1,6 @@
 package mx.desarollo.integration;
 
-import mx.desarollo.facade.FacadeArticulo;
-import mx.desarollo.facade.FacadeLogin;
+import mx.desarollo.facade.*;
 
 public class ServiceFacadeLocator {
     private static FacadeLogin facadeLogin;
@@ -20,5 +19,23 @@ public class ServiceFacadeLocator {
             facadeArticulo = new FacadeArticulo();
         }
         return facadeArticulo;
+    }
+
+    private static FacadeEmpleado facadeEmpleado;
+
+    public static FacadeEmpleado getInstanceFacadeEmpleado() {
+        if (facadeEmpleado == null) {
+            facadeEmpleado = new FacadeEmpleado();
+        }
+        return facadeEmpleado;
+    }
+
+    private static FacadeRenta facadeRenta;
+
+    public static FacadeRenta getInstanceFacadeRenta() {
+        if (facadeRenta == null) {
+            facadeRenta = new FacadeRenta();
+        }
+        return facadeRenta;
     }
 }
