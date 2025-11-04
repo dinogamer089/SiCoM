@@ -7,19 +7,15 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Table(name = "empleado")
 public class Empleado {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idEmpleado", nullable = false)
+    @Column(name = "idempleado", nullable = false)
     private Integer id;
 
-    @Size(max = 45)
+    @Size(max = 80)
     @NotNull
-    @Column(name = "correo", nullable = false, length = 45)
-    private String correo;
-
-    @Size(max = 45)
-    @NotNull
-    @Column(name = "nombre", nullable = false, length = 45)
+    @Column(name = "nombre", nullable = false, length = 80)
     private String nombre;
 
     @Size(max = 45)
@@ -32,25 +28,24 @@ public class Empleado {
     @Column(name = "apellido_materno", nullable = false, length = 45)
     private String apellidoMaterno;
 
-    @Size(max = 100)
+    @Size(max = 45)
     @NotNull
-    @Column(name = "contrasena", nullable = false, length = 100)
+    @Column(name = "correo", nullable = false, length = 45, unique = true)
+    private String correo;
+
+    @Size(max = 255)
+    @NotNull
+    @Column(name = "contrasena", nullable = false, length = 255)
     private String contrasena;
 
+    // --- Getters y Setters ---
+    // (Tus getters y setters actuales están perfectos) [cite: 7-19]
     public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getCorreo() {
-        return correo;
-    }
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
     }
 
     public String getNombre() {
@@ -77,6 +72,14 @@ public class Empleado {
         this.apellidoMaterno = apellidoMaterno;
     }
 
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
     public String getContrasena() {
         return contrasena;
     }
@@ -85,4 +88,17 @@ public class Empleado {
         this.contrasena = contrasena;
     }
 
+    // ========== ¡AÑADIR ESTE MÉTODO! ==========
+    /**
+     * Método helper para la UI que concatena los nombres.
+     * No se mapea a la BD (no tiene @Column).
+     * @return El nombre completo del empleado.
+     */
+    @Transient // Indica a JPA que ignore este método para la persistencia
+    public String getNombreCompleto() {
+        return (nombre != null ? nombre : "") + " " +
+                (apellidoPaterno != null ? apellidoPaterno : "") + " " +
+                (apellidoMaterno != null ? apellidoMaterno : "");
+    }
+    // =============================================
 }
