@@ -16,38 +16,47 @@ import java.util.List;
 
 @Named("empleadoUI")
 @ViewScoped
-public class EmpleadoBeanUI implements Serializable {
+public class EmpleadoBeanUI implements Serializable
+{
 
     private List<Empleado> empleados;
     private Empleado empleadoSeleccionado;
     private Empleado nuevoEmpleado;
     private String nuevaContrasena;
 
-    // ========== FLAG PARA COMUNICAR ÉXITO A JAVASCRIPT ==========
     private boolean operacionExitosa = false;
     private FacadeEmpleado facadeEmpleado;
 
+    // --- INICIO: init ---
     @PostConstruct
     public void init() {
         facadeEmpleado = ServiceFacadeLocator.getInstanceFacadeEmpleado();
         cargarEmpleados();
         this.nuevoEmpleado = new Empleado();
     }
+    // --- FIN: init ---
 
+    // --- INICIO: cargarEmpleados ---
     private void cargarEmpleados() {
         this.empleados = facadeEmpleado.getAllEmpleados();
     }
+    // --- FIN: cargarEmpleados ---
 
+    // --- INICIO: prepararNuevoEmpleado ---
     public void prepararNuevoEmpleado() {
         this.nuevoEmpleado = new Empleado();
         this.operacionExitosa = false;
     }
+    // --- FIN: prepararNuevoEmpleado ---
 
+    // --- INICIO: prepararModalReset ---
     public void prepararModalReset() {
         this.nuevaContrasena = null;
         this.operacionExitosa = false;
     }
+    // --- FIN: prepararModalReset ---
 
+    // --- INICIO: guardarEmpleado ---
     public void guardarEmpleado() {
         this.operacionExitosa = false;
         FacesContext ctx = FacesContext.getCurrentInstance();
@@ -82,33 +91,43 @@ public class EmpleadoBeanUI implements Serializable {
             String hashGenerado = BCrypt.hashpw(nuevoEmpleado.getContrasena(), BCrypt.gensalt());
             nuevoEmpleado.setContrasena(hashGenerado);
 
-            // Guardar
             facadeEmpleado.saveEmpleado(nuevoEmpleado);
-            // Recargar lista y limpiar formulario
             cargarEmpleados();
             this.nuevoEmpleado = new Empleado();
 
             this.operacionExitosa = true;
-            ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Empleado guardado correctamente."));
+
         } catch (Exception e) {
             this.operacionExitosa = false;
-            String mensajeError = "No se pudo guardar el empleado.";
-            if (e.getMessage() != null && e.getMessage().toLowerCase().contains("duplicate")) {
-                mensajeError = "El correo electrónico ya está registrado.";
-            } else if (e.getMessage() != null) {
-                mensajeError += " Causa: " + e.getMessage();
+
+            String mensajeRaiz = obtenerMensajeRaiz(e);
+            String mensajeUsuario;
+            String detalleUsuario;
+
+            if (mensajeRaiz != null && (
+                    mensajeRaiz.toLowerCase().contains("duplicate") ||
+                            mensajeRaiz.toLowerCase().contains("unique constraint")
+            )) {
+                mensajeUsuario = "Correo duplicado";
+                detalleUsuario = "El correo electrónico ya se encuentra registrado.";
+
+            } else {
+                mensajeUsuario = "Error al guardar";
+                detalleUsuario = "No se pudo guardar el empleado.";
             }
 
-            ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al guardar", mensajeError));
+            ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, mensajeUsuario, detalleUsuario));
             ctx.validationFailed();
-            System.err.println("Error al guardar empleado: " + e.getMessage());
+
+            System.err.println("Error al guardar empleado (excepción completa):");
             e.printStackTrace();
         }
 
-
         PrimeFaces.current().ajax().addCallbackParam("operacionExitosa", this.operacionExitosa);
     }
+    // --- FIN: guardarEmpleado ---
 
+    // --- INICIO: restablecerContrasena ---
     public void restablecerContrasena() {
         this.operacionExitosa = false;
         FacesContext ctx = FacesContext.getCurrentInstance();
@@ -121,7 +140,7 @@ public class EmpleadoBeanUI implements Serializable {
         }
 
         if (nuevaContrasena == null || nuevaContrasena.trim().isEmpty()) {
-            ctx.addMessage("formResetPass:newPass", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "La contraseña no puede estar vacía."));
+            ctx.addMessage("modalResetForm:newPass", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "La contraseña no puede estar vacía."));
             ctx.validationFailed();
             PrimeFaces.current().ajax().addCallbackParam("operacionExitosa", this.operacionExitosa);
             return;
@@ -137,35 +156,53 @@ public class EmpleadoBeanUI implements Serializable {
             this.nuevaContrasena = null;
 
             this.operacionExitosa = true;
-            ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Contraseña actualizada correctamente."));
+
+
         } catch (Exception e) {
             this.operacionExitosa = false;
             ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error Fatal", "No se pudo actualizar la contraseña: " + e.getMessage()));
             ctx.validationFailed();
+            e.printStackTrace();
         }
-
 
         PrimeFaces.current().ajax().addCallbackParam("operacionExitosa", this.operacionExitosa);
     }
+    // --- FIN: restablecerContrasena ---
 
-
+    // --- INICIO: eliminarEmpleado ---
     public void eliminarEmpleado() {
         if (empleadoSeleccionado != null) {
             try {
                 facadeEmpleado.deleteEmpleado(empleadoSeleccionado);
                 cargarEmpleados();
                 empleadoSeleccionado = null;
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Empleado eliminado."));
+
             } catch (Exception e) {
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
                                 "No se pudo eliminar el empleado: " + e.getMessage()));
+                e.printStackTrace();
             }
         }
     }
+    // --- FIN: eliminarEmpleado ---
 
-    // ========== GETTERS Y SETTERS ==========
+    // --- INICIO: obtenerMensajeRaiz ---
+    private String obtenerMensajeRaiz(Throwable throwable) {
+        if (throwable == null) {
+            return null;
+        }
+        Throwable causa = throwable;
+        // Sigue buscando la causa más profunda
+        while (causa.getCause() != null && causa.getCause() != causa) {
+            causa = causa.getCause();
+        }
+        return causa.getMessage();
+    }
+    // --- FIN: obtenerMensajeRaiz ---
+
+
+    // --- GETTERS Y SETTERS ---
     public List<Empleado> getEmpleados() { return empleados;
     }
     public void setEmpleados(List<Empleado> empleados) { this.empleados = empleados;
@@ -181,9 +218,5 @@ public class EmpleadoBeanUI implements Serializable {
     public String getNuevaContrasena() { return nuevaContrasena;
     }
     public void setNuevaContrasena(String nuevaContrasena) { this.nuevaContrasena = nuevaContrasena;
-    }
-    public boolean isOperacionExitosa() { return operacionExitosa;
-    }
-    public void setOperacionExitosa(boolean operacionExitosa) { this.operacionExitosa = operacionExitosa;
     }
 }
