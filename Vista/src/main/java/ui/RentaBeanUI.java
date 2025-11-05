@@ -2,24 +2,24 @@ package ui;
 
 import helper.RentaHelper;
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import mx.desarollo.entity.Renta;
-import mx.desarollo.entity.Cliente; // Asumimos que necesitas Cliente para la nueva Renta
 
 import java.io.Serializable;
 import java.util.List;
 
 @Named("rentaUI")
-@SessionScoped
+@ViewScoped
 public class RentaBeanUI implements Serializable {
 
     private RentaHelper rentaHelper;
     private List<Renta> rentas;
     private Renta nuevaRenta;
     private Renta rentaSeleccionada;
+    private Integer idRentaSeleccionada;
 
     public RentaBeanUI() {
         rentaHelper = new RentaHelper();
@@ -39,7 +39,13 @@ public class RentaBeanUI implements Serializable {
     public String seleccionarRenta(Renta renta) {
         this.rentaSeleccionada = renta;
 
-        return "DetalleRenta.xhtml?faces-redirect=true";
+        return "DetalleRenta.xhtml?idRenta=" + renta.getId() + "&faces-redirect=true";
+    }
+
+    public void cargarRentaSeleccionada() {
+        if (idRentaSeleccionada != null) {
+            this.rentaSeleccionada = rentaHelper.findById(idRentaSeleccionada);
+        }
     }
 
     public List<Renta> getRentas() {
@@ -64,6 +70,14 @@ public class RentaBeanUI implements Serializable {
 
     public void setRentaSeleccionada(Renta rentaSeleccionada) {
         this.rentaSeleccionada = rentaSeleccionada;
+    }
+
+    public Integer getIdRentaSeleccionada() {
+        return idRentaSeleccionada;
+    }
+
+    public void setIdRentaSeleccionada(Integer idRentaSeleccionada) {
+        this.idRentaSeleccionada = idRentaSeleccionada;
     }
 
     private void mostrarMensaje(FacesMessage.Severity severity, String resumen, String detalle) {

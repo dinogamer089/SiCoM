@@ -28,4 +28,15 @@ public class RentaHelper {
             return new ArrayList<>();
         }
     }
+
+    public Renta findById(int rentaId) {
+        try {
+            Renta renta = ServiceFacadeLocator.getInstanceFacadeRenta().obtenerRentaId(rentaId);
+
+            return renta;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

@@ -155,6 +155,11 @@
     </style>
 </h:head>
 <h:body>
+    <f:metadata>
+        <f:viewParam name="idRenta" value="#{rentaUI.idRentaSeleccionada}" />
+        <f:viewAction action="#{rentaUI.cargarRentaSeleccionada}" />
+    </f:metadata>
+
     <div class="topbar">
         <div class="topbar-left">
             <img src="resources/edicion.png" alt="Empleados" class="topbar-icon" />
@@ -209,8 +214,21 @@
                         </div>
 
                         <div class="cliente-row">
+                            <span class="cliente-label">Fecha:</span>
+                            <span class="cliente-value">
+                                <h:outputText value="#{rentaUI.rentaSeleccionada.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" type="localDate" />
+                                </h:outputText>
+                            </span>
+                        </div>
+
+                        <div class="cliente-row">
                             <span class="cliente-label">Hora:</span>
-                            <span class="cliente-value">#{rentaUI.rentaSeleccionada.hora}:00</span>
+                            <span class="cliente-value">
+                                <h:outputText value="#{rentaUI.rentaSeleccionada.hora}">
+                                    <f:convertDateTime pattern="HH:mm" type="localTime" />
+                                </h:outputText>
+                            </span>
                         </div>
                     </div>
                 </div>

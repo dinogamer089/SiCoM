@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -14,14 +16,13 @@ public class Renta {
     @Column(name = "idRenta", nullable = false)
     private Integer id;
 
-    @Size(max = 45)
     @NotNull
-    @Column(name = "fecha", nullable = false, length = 45)
-    private String fecha;
+    @Column(name = "fecha", nullable = false)
+    private LocalDate fecha;
 
     @NotNull
     @Column(name = "hora", nullable = false)
-    private Integer hora;
+    private LocalTime hora;
 
     @Size(max = 45)
     @NotNull
@@ -45,19 +46,15 @@ public class Renta {
         this.id = id;
     }
 
-    public String getFecha() {
-        return fecha;
-    }
+    public LocalDate getFecha() { return fecha; }
 
-    public void setFecha(String fecha) {
+    public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
 
-    public Integer getHora() {
-        return hora;
-    }
+    public LocalTime getHora() { return hora; }
 
-    public void setHora(Integer hora) {
+    public void setHora(LocalTime hora) {
         this.hora = hora;
     }
 
@@ -77,7 +74,6 @@ public class Renta {
         this.idCliente = idCliente;
     }
 
-    // Actualiza también los Getters y Setters
     public List<Detallerenta> getDetallesRenta() {
         return detallesRenta;
     }

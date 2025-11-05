@@ -9,4 +9,8 @@ public class DelegateRenta {
     public List<Renta> findAllCotizaciones(){
         return ServiceLocator.getInstanceRentaDAO().obtenerTodosCotizaciones();
     }
+
+    public Renta findRentaId(Integer idRenta){
+        return ServiceLocator.getInstanceRentaDAO().obtenerRentaID(idRenta);
+    }
 }
