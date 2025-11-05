@@ -6,7 +6,6 @@ import mx.desarollo.entity.Articulo;
 
 import java.util.List;
 
-
 public class ArticuloDAO extends AbstractDAO<Articulo> {
     private final EntityManager entityManager;
 
@@ -15,15 +14,13 @@ public class ArticuloDAO extends AbstractDAO<Articulo> {
         this.entityManager = em;
     }
 
-    public List<Articulo> obtenerTodos(){
-        return entityManager
-                .createQuery("SELECT a FROM Articulo a", Articulo.class)
-                .getResultList();
+    public List<Articulo> obtenerTodos() {
+        String jpql = "SELECT DISTINCT a FROM Articulo a LEFT JOIN FETCH a.imagen";
+        return execute(em -> em.createQuery(jpql, Articulo.class).getResultList());
     }
 
     @Override
-    public EntityManager getEntityManager() {
+    protected EntityManager getEntityManager() {
         return entityManager;
     }
-
 }
