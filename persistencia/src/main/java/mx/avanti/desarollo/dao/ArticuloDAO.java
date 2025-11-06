@@ -16,8 +16,10 @@ public class ArticuloDAO extends AbstractDAO<Articulo> {
     }
 
     public List<Articulo> obtenerTodos() {
-        String jpql = "SELECT DISTINCT a FROM Articulo a LEFT JOIN FETCH a.imagen";
-        return execute(em -> em.createQuery(jpql, Articulo.class).getResultList());
+        return execute(em -> {
+            String jpql = "SELECT a FROM Articulo a";
+            return em.createQuery(jpql, Articulo.class).getResultList();
+        });
     }
 
     public void saveWithImage(Articulo articulo, Imagen imagen) {

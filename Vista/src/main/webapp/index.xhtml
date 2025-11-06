@@ -154,6 +154,82 @@
         .inventory-table .ui-state-highlight td {
             background-color: #b7e6b3 !important;
         }
+
+        /* Estilos para el diálogo */
+        .ui-dialog .ui-dialog-content {
+            background-color: #E7D9CB !important;
+            padding: 20px !important;
+        }
+
+        .ui-dialog .ui-dialog-titlebar {
+            background-color: #3D4435 !important;
+            color: white !important;
+        }
+
+        .ui-panelgrid td {
+            padding: 8px !important;
+        }
+
+        /* Estilos para selectOneMenu y inputs en el diálogo */
+        .ui-selectonemenu,
+        .ui-selectonemenu .ui-selectonemenu-trigger,
+        .ui-selectonemenu .ui-selectonemenu-label {
+            background-color: white !important;
+            border: 1px solid #ccc !important;
+        }
+
+        .ui-inputtext,
+        .ui-inputnumber input {
+            background-color: white !important;
+            border: 1px solid #ccc !important;
+            padding: 5px !important;
+        }
+
+        .ui-fileupload-simple {
+            background-color: white !important;
+        }
+
+        /* Dropdown panel del selectOneMenu */
+        .ui-selectonemenu-panel {
+            background-color: white !important;
+        }
+
+        .ui-selectonemenu-panel .ui-selectonemenu-items {
+            background-color: white !important;
+        }
+
+        .ui-selectonemenu-panel .ui-selectonemenu-item {
+            background-color: white !important;
+            color: black !important;
+        }
+
+        .ui-selectonemenu-panel .ui-selectonemenu-item:hover {
+            background-color: #f0f0f0 !important;
+        }
+
+        /* --- INICIO: ESTILOS DE TOAST --- */
+        .toast-base {
+            display: none;
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: #f9f1e7 !important;
+            color: #333 !important;
+            border: 1px solid #ccc !important;
+            border-left: 4px solid #5cb85c !important;
+            z-index: 9999 !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
+            font-family: 'Minerva Modern', serif !important;
+            border-radius: 4px !important;
+        }
+
+        .toast-simple {
+            padding: 15px 20px !important;
+            font-size: 1.1em !important;
+            min-width: 300px !important;
+            max-width: 400px !important;
+        }
+        /* --- FIN: ESTILOS DE TOAST --- */
     </style>
 </h:head>
 <h:body>
@@ -178,32 +254,131 @@
     <div class="content">
         <h1 class="title">Inventario</h1>
 
-        <div class="button-bar">
-            <button class="btn alta">+ Alta</button>
-            <button class="btn modificar">✎ Modificar</button>
-            <button class="btn eliminar">🗑 Eliminar</button>
-        </div>
+        <h:form>
+            <div class="button-bar">
+                <p:commandButton value="+ Alta" styleClass="btn alta"
+                                 onclick="PF('dlgAlta').show();" type="button" />
+                <button class="btn modificar" type="button">✎ Modificar</button>
+                <button class="btn eliminar" type="button">🗑 Eliminar</button>
+            </div>
+        </h:form>
 
         <h:form id="articulosForm">
             <p:dataTable value="#{articuloUI.articulos}" var="art"
                          selection="#{articuloUI.seleccionada}"
                          selectionMode="single"
-                         rowKey="#{art.idarticulo}"
+                         rowKey="#{art.id}"
                          styleClass="inventory-table"
                          style="width:100%;">
 
                 <p:ajax event="rowSelect" listener="#{articuloUI.seleccionar(articuloUI.seleccionada)}" update="@form" />
 
-                <p:column headerText="ID">#{art.idarticulo}</p:column>
+                <p:column headerText="ID">#{art.id}</p:column>
                 <p:column headerText="Nombre">#{art.nombre}</p:column>
-                <p:column headerText="Cantidad">#{art.cantidad}</p:column>
-                <p:column headerText="Precio">#{art.precio}$</p:column>
-                <p:column headerText="Tipo">#{art.tipo}</p:column>
+                <p:column headerText="Cantidad">#{art.unidades}</p:column>
+                <p:column headerText="Precio">$#{art.precio}</p:column>
+                <p:column headerText="Tipo">#{art.categoria}</p:column>
                 <p:column headerText="Imágenes">
-                    <img src="#{art.imagen}" alt="img" width="18" />
+                    <img src="#{articuloUI.getImagenBase64(art)}" alt="img" width="50" />
                 </p:column>
             </p:dataTable>
         </h:form>
+
+        <!-- Toast Notification -->
+        <div id="toastSimple" class="toast-simple toast-base">
+            <span id="toastSimpleMessage"></span>
+        </div>
     </div>
+
+    <script type="text/javascript">
+        //<![CDATA[
+        var simpleToastTimer;
+
+        function mostrarToastSimple(mensaje) {
+            console.log('Toast llamado con mensaje:', mensaje);
+            clearTimeout(simpleToastTimer);
+            var toast = document.getElementById('toastSimple');
+            var message = document.getElementById('toastSimpleMessage');
+
+            console.log('Toast element:', toast);
+            console.log('Message element:', message);
+
+            if (toast && message) {
+                message.innerText = mensaje;
+                toast.style.display = 'block';
+                console.log('Toast mostrado');
+
+                simpleToastTimer = setTimeout(function() {
+                    toast.style.display = 'none';
+                    console.log('Toast ocultado');
+                }, 3000);
+            } else {
+                console.error('No se encontraron los elementos del toast');
+            }
+        }
+        //]]>
+    </script>
+
+    <p:dialog header="Nuevo Artículo" widgetVar="dlgAlta" modal="true" width="500">
+        <h:form id="formAlta" enctype="multipart/form-data">
+            <p:messages id="messages" showDetail="true" closable="true" />
+
+            <p:panelGrid columns="2" styleClass="ui-fluid">
+                <p:outputLabel for="nombre" value="Nombre:" />
+                <p:inputText id="nombre" value="#{articuloUI.nuevoArticulo.nombre}" required="true" />
+
+                <p:outputLabel for="categoria" value="Categoría:" />
+                <p:selectOneMenu id="categoria" value="#{articuloUI.nuevoArticulo.categoria}" required="true">
+                    <f:selectItem itemLabel="Seleccione..." itemValue="#{null}" />
+                    <f:selectItem itemLabel="MESA" itemValue="MESA" />
+                    <f:selectItem itemLabel="TEXTIL" itemValue="TEXTIL" />
+                    <f:selectItem itemLabel="SILLA" itemValue="SILLA" />
+                    <f:selectItem itemLabel="CARPA" itemValue="CARPA" />
+                    <f:selectItem itemLabel="COOLER" itemValue="COOLER" />
+                    <f:selectItem itemLabel="CALENTON" itemValue="CALENTON" />
+                </p:selectOneMenu>
+
+                <p:outputLabel for="precio" value="Precio:" />
+                <p:inputNumber id="precio" value="#{articuloUI.nuevoPrecio}"
+                              decimalPlaces="2" required="true" />
+
+                <p:outputLabel for="unidades" value="Unidades:" />
+                <p:inputNumber id="unidades" value="#{articuloUI.nuevoArticulo.unidades}"
+                              decimalPlaces="0" required="true" />
+
+                <p:outputLabel for="forma" value="Forma:" />
+                <p:selectOneMenu id="forma" value="#{articuloUI.nuevoArticulo.forma}">
+                    <f:selectItem itemLabel="N/A" itemValue="#{null}" />
+                    <f:selectItem itemLabel="REDONDA" itemValue="REDONDA" />
+                    <f:selectItem itemLabel="RECTANGULAR" itemValue="RECTANGULAR" />
+                    <f:selectItem itemLabel="UNIVERSAL" itemValue="UNIVERSAL" />
+                </p:selectOneMenu>
+
+                <p:outputLabel for="textilTipo" value="Tipo Textil:" />
+                <p:selectOneMenu id="textilTipo" value="#{articuloUI.nuevoArticulo.textilTipo}">
+                    <f:selectItem itemLabel="N/A" itemValue="#{null}" />
+                    <f:selectItem itemLabel="MANTEL" itemValue="MANTEL" />
+                    <f:selectItem itemLabel="CAMINO" itemValue="CAMINO" />
+                    <f:selectItem itemLabel="CUBRE" itemValue="CUBRE" />
+                </p:selectOneMenu>
+
+                <p:outputLabel for="imagen" value="Imagen:" />
+                <p:fileUpload id="imagen" mode="simple"
+                             skinSimple="true"
+                             value="#{articuloUI.archivoImagen}" />
+            </p:panelGrid>
+
+            <p:commandButton value="Guardar"
+                           action="#{articuloUI.guardarNuevo()}"
+                           update=":articulosForm messages"
+                           oncomplete="if (args &amp;&amp; !args.validationFailed) { var msgs = document.querySelectorAll('.ui-messages-error'); if (msgs.length === 0) { PF('dlgAlta').hide(); mostrarToastSimple('¡Artículo guardado exitosamente!'); } }"
+                           styleClass="btn" style="margin-top: 20px;" />
+            <p:commandButton value="Cancelar"
+                           onclick="PF('dlgAlta').hide();"
+                           type="button"
+                           styleClass="btn" style="margin-top: 20px; margin-left: 10px;" />
+        </h:form>
+    </p:dialog>
+
 </h:body>
 </html>

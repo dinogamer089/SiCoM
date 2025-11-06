@@ -8,6 +8,7 @@
 
         <!-- Declaración manual de entidades -->
         <class>mx.desarollo.entity.Articulo</class>
+        <class>mx.desarollo.entity.Imagen</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>

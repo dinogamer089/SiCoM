@@ -27,7 +27,6 @@
             background: #E7D9CB;
         }
 
-        /* --- Estilos de la Barra de Navegacion Superior (Topbar) --- */
         .topbar {
             background-color: #3D4435;
             color: #C2C8CC;
@@ -96,12 +95,11 @@
         .table-container {
             background-color: white;
             border: 1px solid #ccc;
-            max-height: 350px; /* fixed table height */
+            max-height: 350px;
             overflow-y: auto;
             border-radius: 5px;
         }
 
-        /* Table styles */
         .inventory-table {
             width: 100%;
             border-collapse: collapse;
@@ -126,13 +124,10 @@
             background-color: #f3f3f3;
         }
 
-        /* Optional hover effect */
         .inventory-table tbody tr:hover td {
             background-color: #dcdcdc;
         }
-        /* --- PrimeFaces DataTable custom styles --- */
 
-        /* Header style */
         .ui-datatable thead th,
         .inventory-table thead th {
             background-color: black !important;
@@ -141,14 +136,12 @@
             font-weight: bold !important;
         }
 
-        /* Table text style */
         .ui-datatable tbody td,
         .inventory-table tbody td {
             color: black !important;
             font-weight: bold !important;
         }
 
-        /* Selected row highlight */
         .ui-datatable .ui-state-highlight,
         .ui-datatable .ui-state-highlight td,
         .inventory-table .ui-state-highlight td {
@@ -178,32 +171,97 @@
     <div class="content">
         <h1 class="title">Inventario</h1>
 
-        <div class="button-bar">
-            <button class="btn alta">+ Alta</button>
-            <button class="btn modificar">✎ Modificar</button>
-            <button class="btn eliminar">🗑 Eliminar</button>
-        </div>
+        <h:form>
+            <div class="button-bar">
+                <p:commandButton value="+ Alta" styleClass="btn alta"
+                                 onclick="PF('dlgAlta').show();" type="button" />
+                <button class="btn modificar" type="button">✎ Modificar</button>
+                <button class="btn eliminar" type="button">🗑 Eliminar</button>
+            </div>
+        </h:form>
 
         <h:form id="articulosForm">
             <p:dataTable value="#{articuloUI.articulos}" var="art"
                          selection="#{articuloUI.seleccionada}"
                          selectionMode="single"
-                         rowKey="#{art.idarticulo}"
+                         rowKey="#{art.id}"
                          styleClass="inventory-table"
                          style="width:100%;">
 
                 <p:ajax event="rowSelect" listener="#{articuloUI.seleccionar(articuloUI.seleccionada)}" update="@form" />
 
-                <p:column headerText="ID">#{art.idarticulo}</p:column>
+                <p:column headerText="ID">#{art.id}</p:column>
                 <p:column headerText="Nombre">#{art.nombre}</p:column>
-                <p:column headerText="Cantidad">#{art.cantidad}</p:column>
-                <p:column headerText="Precio">#{art.precio}$</p:column>
-                <p:column headerText="Tipo">#{art.tipo}</p:column>
-                <p:column headerText="Imágenes">
-                    <img src="#{art.imagen}" alt="img" width="18" />
+                <p:column headerText="Categoría">#{art.categoria}</p:column>
+                <p:column headerText="Unidades">#{art.unidades}</p:column>
+                <p:column headerText="Precio">$#{art.precio}</p:column>
+                <p:column headerText="Activo">#{art.activo ? 'Sí' : 'No'}</p:column>
+                <p:column headerText="Forma">#{art.forma}</p:column>
+                <p:column headerText="Imagen">
+                    <img src="#{articuloUI.getImagenBase64(art)}" alt="img" width="50" />
                 </p:column>
             </p:dataTable>
         </h:form>
     </div>
+
+    <p:dialog header="Nuevo Artículo" widgetVar="dlgAlta" modal="true" width="500">
+        <h:form id="formAlta" enctype="multipart/form-data">
+            <p:panelGrid columns="2" styleClass="ui-fluid">
+                <p:outputLabel for="nombre" value="Nombre:" />
+                <p:inputText id="nombre" value="#{articuloUI.nuevoArticulo.nombre}" required="true" />
+
+                <p:outputLabel for="categoria" value="Categoría:" />
+                <p:selectOneMenu id="categoria" value="#{articuloUI.nuevoArticulo.categoria}" required="true">
+                    <f:selectItem itemLabel="Seleccione..." itemValue="#{null}" />
+                    <f:selectItem itemLabel="MESA" itemValue="MESA" />
+                    <f:selectItem itemLabel="TEXTIL" itemValue="TEXTIL" />
+                    <f:selectItem itemLabel="SILLA" itemValue="SILLA" />
+                    <f:selectItem itemLabel="CARPA" itemValue="CARPA" />
+                    <f:selectItem itemLabel="COOLER" itemValue="COOLER" />
+                    <f:selectItem itemLabel="CALENTON" itemValue="CALENTON" />
+                </p:selectOneMenu>
+
+                <p:outputLabel for="precio" value="Precio:" />
+                <p:inputNumber id="precio" value="#{articuloUI.nuevoPrecio}"
+                               decimalPlaces="2" required="true" />
+
+                <p:outputLabel for="unidades" value="Unidades:" />
+                <p:inputNumber id="unidades" value="#{articuloUI.nuevoArticulo.unidades}"
+                               decimalPlaces="0" required="true" />
+
+                <p:outputLabel for="forma" value="Forma:" />
+                <p:selectOneMenu id="forma" value="#{articuloUI.nuevoArticulo.forma}">
+                    <f:selectItem itemLabel="N/A" itemValue="#{null}" />
+                    <f:selectItem itemLabel="REDONDA" itemValue="REDONDA" />
+                    <f:selectItem itemLabel="RECTANGULAR" itemValue="RECTANGULAR" />
+                    <f:selectItem itemLabel="UNIVERSAL" itemValue="UNIVERSAL" />
+                </p:selectOneMenu>
+
+                <p:outputLabel for="textilTipo" value="Tipo Textil:" />
+                <p:selectOneMenu id="textilTipo" value="#{articuloUI.nuevoArticulo.textilTipo}">
+                    <f:selectItem itemLabel="N/A" itemValue="#{null}" />
+                    <f:selectItem itemLabel="MANTEL" itemValue="MANTEL" />
+                    <f:selectItem itemLabel="CAMINO" itemValue="CAMINO" />
+                    <f:selectItem itemLabel="CUBRE" itemValue="CUBRE" />
+                </p:selectOneMenu>
+
+                <p:outputLabel for="imagen" value="Imagen:" />
+                <p:fileUpload id="imagen" mode="simple"
+                              skinSimple="true"
+                              listener="#{articuloUI.handleFileUpload}" />
+            </p:panelGrid>
+
+            <p:commandButton value="Guardar"
+                             action="#{articuloUI.guardarNuevo()}"
+                             update=":articulosForm"
+                             oncomplete="if (args.validationFailed == false) PF('dlgAlta').hide();"
+                             styleClass="btn" style="margin-top: 20px;" />
+            <p:commandButton value="Cancelar"
+                             onclick="PF('dlgAlta').hide();"
+                             type="button"
+                             styleClass="btn" style="margin-top: 20px; margin-left: 10px;" />
+        </h:form>
+    </p:dialog>
+
 </h:body>
 </html>
