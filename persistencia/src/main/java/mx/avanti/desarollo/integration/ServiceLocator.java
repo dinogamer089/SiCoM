@@ -8,6 +8,7 @@ public class ServiceLocator {
     private static AdministradorDAO administradorDAO;
     private static EmpleadoDAO empleadoDAO;
     private static ArticuloDAO articuloDAO;
+    private static RentaDAO rentaDAO;
 
     private static EntityManager getEntityManager() {
         return HibernateUtil.getEntityManager();
@@ -32,5 +33,12 @@ public class ServiceLocator {
             articuloDAO = new ArticuloDAO(getEntityManager());
         }
         return articuloDAO;
+    }
+
+    public static RentaDAO getInstanceRentaDAO() {
+        if (rentaDAO == null) {
+            rentaDAO = new RentaDAO(getEntityManager());
+        }
+        return rentaDAO;
     }
 }

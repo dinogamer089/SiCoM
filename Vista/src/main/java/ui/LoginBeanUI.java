@@ -37,7 +37,7 @@ public class LoginBeanUI implements Serializable {
 
         if (result instanceof mx.desarollo.entity.Administrador) {
             usuario = result;
-            context.getExternalContext().redirect(context.getExternalContext().getRequestContextPath() + "/index.xhtml");
+            context.getExternalContext().redirect(context.getExternalContext().getRequestContextPath() + "/principalAdministrador.xhtml");
         } else if (result instanceof mx.desarollo.entity.Empleado) {
             usuario = result;
             context.getExternalContext().redirect(context.getExternalContext().getRequestContextPath() + "/login.xhtml");
