@@ -17,30 +17,20 @@ import mx.avanti.desarollo.persistence.HibernateUtil;
 public class ServiceLocator {
 
     private static ArticuloDAO articuloDAO;
-    private static UsuarioDAO usuarioDAO;
 
-    private static EntityManager getEntityManager(){
+
+    private static EntityManager getEntityManager() {
         return HibernateUtil.getEntityManager();
     }
 
 
-    public static ArticuloDAO getInstanceArticuloDAO(){
-        if(articuloDAO == null){
+    public static ArticuloDAO getInstanceArticuloDAO() {
+        if (articuloDAO == null) {
             articuloDAO = new ArticuloDAO(getEntityManager());
             return articuloDAO;
-        } else{
+        } else {
             return articuloDAO;
         }
     }
 
-
-    public static UsuarioDAO getInstanceUsuarioDAO(){
-        if(usuarioDAO == null){
-            usuarioDAO = new UsuarioDAO(getEntityManager());
-            return usuarioDAO;
-        } else{
-            return usuarioDAO;
-        }
-    }
-    
 }

@@ -1,24 +1,18 @@
-
 package helper;
 
 import mx.desarollo.entity.Articulo;
-import mx.avanti.desarollo.integration.ServiceLocator;
+import mx.desarollo.entity.Imagen;
+import mx.desarollo.integration.ServiceFacadeLocator;
+
 import java.util.List;
 
 public class ArticuloHelper {
 
     public List<Articulo> obtenerTodas() {
-        System.out.println("=== ArticuloHelper.obtenerTodas() ===");
-        try {
-            List<Articulo> articulos = ServiceLocator.getInstanceArticuloDAO().obtenerTodos();
-            System.out.println("✓ Artículos obtenidos: " + (articulos != null ? articulos.size() : "null"));
-            return articulos;
-        } catch (Exception e) {
-            System.err.println("✗ ERROR en ArticuloHelper:");
-            System.err.println("  Tipo: " + e.getClass().getName());
-            System.err.println("  Mensaje: " + e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
+        return ServiceFacadeLocator.getInstanceFacadeArticulo().obtenerArticulos();
+    }
+
+    public void guardarConImagen(Articulo articulo, Imagen imagen) {
+        ServiceFacadeLocator.getInstanceFacadeArticulo().crearArticuloConImagen(articulo, imagen);
     }
 }

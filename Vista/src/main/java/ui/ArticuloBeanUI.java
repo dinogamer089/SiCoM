@@ -6,10 +6,8 @@ import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
-import mx.avanti.desarollo.integration.ServiceLocator;
 import mx.desarollo.entity.Articulo;
 import mx.desarollo.entity.Imagen;
-import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.file.UploadedFile;
 
 import java.io.Serializable;
@@ -27,7 +25,7 @@ public class ArticuloBeanUI implements Serializable {
 
     private Articulo nuevoArticulo;
     private BigDecimal nuevoPrecio;
-    private UploadedFile archivoImagen;
+    private UploadedFile uploadedFile;
 
     public ArticuloBeanUI() {
         articuloHelper = new ArticuloHelper();
@@ -84,68 +82,30 @@ public class ArticuloBeanUI implements Serializable {
         this.nuevoPrecio = nuevoPrecio;
     }
 
-    public UploadedFile getArchivoImagen() {
-        return archivoImagen;
+    public UploadedFile getUploadedFile() {
+        return uploadedFile;
     }
 
-    public void setArchivoImagen(UploadedFile archivoImagen) {
-        this.archivoImagen = archivoImagen;
-    }
-
-    public void handleFileUpload(FileUploadEvent event) {
-        this.archivoImagen = event.getFile();
+    public void setUploadedFile(UploadedFile uploadedFile) {
+        this.uploadedFile = uploadedFile;
     }
 
     public void guardarNuevo() {
-        System.out.println("=== INICIANDO GUARDAR NUEVO ===");
         try {
-            // Validar campos obligatorios
-            if (nuevoArticulo.getNombre() == null || nuevoArticulo.getNombre().trim().isEmpty()) {
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "El campo Nombre es obligatorio"));
-                return;
-            }
-
-            if (nuevoArticulo.getCategoria() == null) {
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "El campo Categoría es obligatorio"));
-                return;
-            }
-
-            if (nuevoPrecio == null) {
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "El campo Precio es obligatorio"));
-                return;
-            }
-
-            if (nuevoArticulo.getUnidades() == null || nuevoArticulo.getUnidades() <= 0) {
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "El campo Unidades es obligatorio y debe ser mayor a 0"));
-                return;
-            }
-
-            if (archivoImagen == null || archivoImagen.getContent() == null || archivoImagen.getContent().length == 0) {
+            if (uploadedFile == null || uploadedFile.getContent() == null) {
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Debe seleccionar una imagen"));
                 return;
             }
 
-            System.out.println("Nombre: " + nuevoArticulo.getNombre());
-            System.out.println("Categoría: " + nuevoArticulo.getCategoria());
-            System.out.println("Precio: " + nuevoPrecio);
-            System.out.println("Unidades: " + nuevoArticulo.getUnidades());
-            System.out.println("Tamaño de imagen: " + archivoImagen.getContent().length + " bytes");
-
             nuevoArticulo.setPrecio(nuevoPrecio);
 
             Imagen imagen = new Imagen();
-            imagen.setDatos(archivoImagen.getContent());
-            imagen.setMime(archivoImagen.getContentType());
+            imagen.setDatos(uploadedFile.getContent());
+            imagen.setMime(uploadedFile.getContentType());
 
-            System.out.println("Guardando en base de datos...");
-            ServiceLocator.getInstanceArticuloDAO().saveWithImage(nuevoArticulo, imagen);
+            articuloHelper.guardarConImagen(nuevoArticulo, imagen);
 
-            System.out.println("Actualizando lista de artículos...");
             articulos = articuloHelper.obtenerTodas();
 
             FacesContext.getCurrentInstance().addMessage(null,
@@ -154,15 +114,12 @@ public class ArticuloBeanUI implements Serializable {
             nuevoArticulo = new Articulo();
             nuevoArticulo.setActivo(true);
             nuevoPrecio = null;
-            archivoImagen = null;
-
-            System.out.println("=== GUARDAR COMPLETADO CON ÉXITO ===");
+            uploadedFile = null;
 
         } catch (Exception e) {
-            System.out.println("=== ERROR AL GUARDAR ===");
             e.printStackTrace();
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo guardar el artículo: " + e.getMessage()));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo guardar el artículo"));
         }
     }
 }
