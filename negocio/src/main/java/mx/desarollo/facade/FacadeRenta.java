@@ -17,4 +17,8 @@ public class FacadeRenta {
     public Renta obtenerRentaId(Integer idRenta){
         return delegateRenta.findRentaId(idRenta);
     }
+
+    public void actualizarRenta(Renta renta){
+        delegateRenta.actualizarRenta(renta);
+    }
 }
