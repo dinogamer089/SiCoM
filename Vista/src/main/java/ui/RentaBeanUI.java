@@ -48,6 +48,25 @@ public class RentaBeanUI implements Serializable {
         }
     }
 
+    public void aprobarCotizacion(){
+        if (rentaSeleccionada != null && "Pendiente por aprobar".equals(rentaSeleccionada.getEstado())) {
+            try {
+                rentaSeleccionada.setEstado("Aprobado");
+
+                rentaHelper.actualizarRenta(rentaSeleccionada);
+
+                mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "La cotización ha sido aprobada.");
+
+                cargarRentaSeleccionada();
+
+            } catch (Exception e) {
+                rentaSeleccionada.setEstado("Pendiente por aprobar");
+                mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo aprobar la cotización: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
     public List<Renta> getRentas() {
         return rentas;
     }
