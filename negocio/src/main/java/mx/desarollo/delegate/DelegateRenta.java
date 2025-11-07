@@ -13,4 +13,8 @@ public class DelegateRenta {
     public Renta findRentaId(Integer idRenta){
         return ServiceLocator.getInstanceRentaDAO().obtenerRentaID(idRenta);
     }
+
+    public void actualizarRenta(Renta renta){
+        ServiceLocator.getInstanceRentaDAO().update(renta);
+    }
 }
