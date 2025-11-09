@@ -28,4 +28,9 @@ public class FacadeArticulo {
     public void crearArticuloConImagen(Articulo articulo, Imagen imagen) {
         delegateArticulo.saveArticuloWithImage(articulo, imagen);
     }
+
+    // Eliminación
+    public void eliminarArticuloPorId(Integer id) {
+        delegateArticulo.deleteArticuloById(id);
+    }
 }

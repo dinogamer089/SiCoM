@@ -19,4 +19,10 @@ public class DelegateArticulo {
     public void saveArticuloWithImage(Articulo articulo, Imagen imagen) {
         ServiceLocator.getInstanceArticuloDAO().saveWithImage(articulo, imagen);
     }
+
+    // Eliminación
+    public void deleteArticuloById(Integer id) {
+        var dao = ServiceLocator.getInstanceArticuloDAO();
+        dao.find(id).ifPresent(dao::delete);
+    }
 }
