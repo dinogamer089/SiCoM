@@ -179,4 +179,31 @@ public class ArticuloBeanUI implements Serializable {
         this.imagenBytes = null;
         this.imagenMime = null;
     }
+
+    // === Eliminación ===
+    public void eliminarSeleccionada() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        try {
+            if (seleccionada == null || seleccionada.getId() == null) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                        "Seleccione un artículo", "Debe seleccionar un artículo para eliminar"));
+                context.validationFailed();
+                return;
+            }
+
+            articuloHelper.eliminarPorId(seleccionada.getId());
+
+            // refrescar lista y limpiar selección
+            articulos = articuloHelper.obtenerTodas();
+            seleccionada = null;
+
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+                    "Eliminado", "Artículo eliminado correctamente"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "No se pudo eliminar", "Puede estar referenciado por rentas o cotizaciones"));
+            context.validationFailed();
+        }
+    }
 }

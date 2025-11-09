@@ -205,5 +205,66 @@
                              styleClass="btn" style="margin-top: 20px; margin-left: 10px;" />
         </h:form>
     </p:dialog>
+    <script type="text/javascript">
+        //<![CDATA[
+        document.addEventListener('DOMContentLoaded', function(){
+            try {
+                function updateDeleteBtn(){
+                    var del = document.querySelector('.button-bar > button.btn.eliminar');
+                    if (!del) return;
+                    var hasSel = document.querySelector('#articulosForm .ui-datatable .ui-state-highlight') != null;
+                    del.disabled = !hasSel;
+                }
+
+                // Inicial y tras interacciones dentro de la tabla
+                updateDeleteBtn();
+                document.addEventListener('click', function(e){
+                    if (e.target && e.target.closest && e.target.closest('#articulosForm')) {
+                        setTimeout(updateDeleteBtn, 0);
+                    }
+                });
+                if (window.PrimeFaces && PrimeFaces.ajax && PrimeFaces.ajax.addOnEvent) {
+                    PrimeFaces.ajax.addOnEvent(function(e){ if (e && e.status === 'success') updateDeleteBtn(); });
+                }
+
+                // Abrir diálogo al hacer clic en el botón (si no está deshabilitado)
+                var btns = document.querySelectorAll('.btn.eliminar');
+                btns.forEach(function(b){
+                    b.addEventListener('click', function(){
+                        if (b.disabled) return;
+                        if (typeof PF !== 'undefined' && PF('dlgEliminar')) {
+                            PF('dlgEliminar').show();
+                        }
+                    });
+                });
+            } catch (e) { /* noop */ }
+        });
+        //]]>
+    </script>
+
+    <p:dialog header="Eliminar Artículo" widgetVar="dlgEliminar" modal="true" width="500" closable="true" resizable="false">
+        <h:form id="formEliminar">
+            <p:messages id="messagesEliminar" showDetail="true" closable="true" />
+
+            <div style="padding: 10px; font-family:'Minerva Modern', serif;">
+                <p style="margin:0 0 10px 0; color:#a94442;"><strong>Advertencia:</strong> Eliminar un artículo puede afectar cotizaciones o rentas existentes.</p>
+                <p style="margin:0;">¿Desea eliminar el artículo <strong>#{articuloUI.seleccionada != null ? articuloUI.seleccionada.nombre : ''}</strong> de forma permanente?</p>
+                
+            </div>
+
+            <p:commandButton value="Eliminar"
+                             action="#{articuloUI.eliminarSeleccionada}"
+                             process="@form"
+                             update=":articulosForm formEliminar:messagesEliminar"
+                             ajax="true"
+                             styleClass="btn" style="margin-top: 20px;"
+                             oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('dlgEliminar').hide(); mostrarToastSimple('Artículo eliminado'); }" />
+
+            <p:commandButton value="Cancelar" type="button"
+                             onclick="PF('dlgEliminar').hide();"
+                             styleClass="btn" style="margin-top: 20px; margin-left: 10px;" />
+        </h:form>
+    </p:dialog>
+
 </h:body>
 </html>

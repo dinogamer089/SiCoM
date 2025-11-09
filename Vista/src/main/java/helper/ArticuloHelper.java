@@ -50,4 +50,9 @@ public class ArticuloHelper {
     public void guardarConImagen(Articulo articulo, Imagen imagen) {
         ServiceFacadeLocator.getInstanceFacadeArticulo().crearArticuloConImagen(articulo, imagen);
     }
+
+    /* ======= Eliminación ======= */
+    public void eliminarPorId(Integer id) {
+        ServiceFacadeLocator.getInstanceFacadeArticulo().eliminarArticuloPorId(id);
+    }
 }
