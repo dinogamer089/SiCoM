@@ -9,11 +9,11 @@
       xml:lang="es" lang="es">
 
 <h:head>
-    <title>Gestion de Cotizaciones</title>
+    <title>Gestion de Rentas</title>
     <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <f:metadata>
-        <f:event type="preRenderView" listener="#{rentaUI.obtenerTodasLasCotizaciones}" />
+        <f:event type="preRenderView" listener="#{rentaUI.obtenerTodasLasRentas}" />
     </f:metadata>
 
     <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
@@ -77,13 +77,13 @@
             color: #000000;
         }
 
-        .cotizaciones-list {
+        .rentas-list {
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
         }
 
-        .cotizacion-card {
+        .renta-card {
             width: 250px;
             height: 120px;
             background-color: black;
@@ -97,26 +97,26 @@
             transition: transform 0.2s;
         }
 
-        .cotizacion-card:hover {
+        .renta-card:hover {
             transform: translateY(-5px);
         }
 
-        .cotizacion-icon {
+        .renta-icon {
             font-size: 40px;
         }
 
-        .cotizacion-details {
+        .renta-details {
             display: flex;
             align-items: center;
         }
 
-        .cotizacion-details img{
+        .renta-details img{
             width: 25px;
             height: 30px;
             margin-right: 10px;
         }
 
-        .cotizacion-info {
+        .renta-info {
             display: flex;
             flex-direction: column;
             font-weight: bold;
@@ -124,7 +124,7 @@
             font-family: "FreightTextCmp Pro Semibold";
         }
 
-        .cotizacion-status {
+        .renta-status {
             font-size: 14px;
             font-style: italic;
             margin-top: 5px;
@@ -135,7 +135,7 @@
             margin-right: 15px;
         }
 
-        .status-encotizacion { color: lightblue; }
+        .status-entregado { color: lightblue; }
 
     </style>
 </h:head>
@@ -159,28 +159,28 @@
     </div>
 
     <div class="content">
-        <h1 class="title">Cotizaciones</h1>
+        <h1 class="title">Rentas</h1>
 
-        <h:form id="cotizacionesForm">
+        <h:form id="rentasForm">
             <p:growl id="messages" showDetail="true" life="3000"/>
 
-            <div class="cotizaciones-list">
+            <div class="rentas-list">
 
                 <h:panelGroup rendered="#{not empty rentaUI.rentas}">
-                    <ui:repeat value="#{rentaUI.rentas}" var="cot">
+                    <ui:repeat value="#{rentaUI.rentas}" var="rent">
 
-                        <h:commandLink action="#{rentaUI.seleccionarRenta(cot)}" style="text-decoration: none; color: inherit;">
-                            <div class="cotizacion-card">
-                                <div class="cotizacion-details">
-                                    <img src="resources/cotizacion.png" alt="Cotizacion" />
+                        <h:commandLink action="#{rentaUI.seleccionarRenta(rent)}" style="text-decoration: none; color: inherit;">
+                            <div class="renta-card">
+                                <div class="renta-details">
+                                    <img src="resources/cotizacion.png" alt="Renta" />
 
-                                    <div class="cotizacion-info">
-                                        <h:outputText value="#{cot.idCliente.nombre}" style="font-size: 16px;"/>
-                                        <h:outputText value="#{cot.idCliente.telefono}" style="font-size: 14px;"/>
+                                    <div class="renta-info">
+                                        <h:outputText value="#{rent.idCliente.nombre}" style="font-size: 16px;"/>
+                                        <h:outputText value="#{rent.idCliente.telefono}" style="font-size: 14px;"/>
 
-                                        <h:outputText value="#{cot.estado}"
-                                                      styleClass="cotizacion-status
-                                  #{cot.estado eq 'Pendiente por aprobar' ? 'status-encotizacion' : ''}"/>
+                                        <h:outputText value="#{rent.estado}"
+                                                      styleClass="rent-status
+                                  #{rent.estado eq 'Entregado' ? 'status-entregado' : ''}"/>
                                     </div>
                                 </div>
                             </div>
@@ -189,9 +189,9 @@
                 </h:panelGroup>
 
                 <h:panelGroup rendered="#{empty rentaUI.rentas}">
-                    <div class="cotizacion-card" style="background-color: #000000; cursor: default; justify-content: center; width: 300px;">
-                        <div class="cotizacion-info" style="text-align: center; color: white">
-                            <h:outputText value="No existen cotizaciones por el momento." />
+                    <div class="rent-card" style="background-color: #000000; cursor: default; justify-content: center; width: 300px;">
+                        <div class="rent-info" style="text-align: center; color: white">
+                            <h:outputText value="No existen rentas por el momento." />
                         </div>
                     </div>
                 </h:panelGroup>

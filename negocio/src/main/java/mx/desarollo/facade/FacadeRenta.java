@@ -14,6 +14,10 @@ public class FacadeRenta {
         return delegateRenta.findAllCotizaciones();
     }
 
+    public java.util.List<Renta> obtenerRentas(){
+        return delegateRenta.findAllRentas();
+    }
+
     public Renta obtenerRentaId(Integer idRenta){
         return delegateRenta.findRentaId(idRenta);
     }
