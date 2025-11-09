@@ -1,10 +1,11 @@
 package mx.desarollo.integration;
 
-import mx.desarollo.facade.FacadeArticulo;
 import mx.desarollo.facade.FacadeLogin;
+import mx.desarollo.facade.FacadeArticulo;
 
 public class ServiceFacadeLocator {
     private static FacadeLogin facadeLogin;
+    private static FacadeArticulo facadeArticulo;
 
     public static FacadeLogin getInstanceFacadeLogin() {
         if (facadeLogin == null) {
@@ -12,8 +13,6 @@ public class ServiceFacadeLocator {
         }
         return facadeLogin;
     }
-
-    private static FacadeArticulo facadeArticulo;
 
     public static FacadeArticulo getInstanceFacadeArticulo() {
         if (facadeArticulo == null) {
