@@ -7,10 +7,11 @@ import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import mx.desarollo.entity.Articulo;
-import org.primefaces.model.file.UploadedFile;
+import mx.desarollo.entity.Imagen;
+import org.primefaces.event.FileUploadEvent;
 
-import java.io.IOException;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Base64;
 import java.util.List;
 
@@ -22,8 +23,14 @@ public class ArticuloBeanUI implements Serializable {
     private List<Articulo> articulos;
     private ArticuloHelper articuloHelper;
     private Articulo seleccionada;
+
     private Articulo nuevoArticulo;
-    private UploadedFile imagenFile;
+    private BigDecimal nuevoPrecio;
+
+    // buffer de imagen subida (advanced)
+    private byte[] imagenBytes;
+    private String imagenMime;
+    // buffer manejado por servlet de subida
 
     public ArticuloBeanUI() {
         articuloHelper = new ArticuloHelper();
@@ -32,170 +39,144 @@ public class ArticuloBeanUI implements Serializable {
     @PostConstruct
     public void init() {
         articulo = new Articulo();
-        nuevoArticulo = new Articulo();
         articulos = articuloHelper.obtenerTodas();
+        nuevoArticulo = new Articulo();
+        nuevoArticulo.setActivo(true);
+        imagenBytes = null;
+        imagenMime = null;
     }
 
-    public List<Articulo> getArticulos() {
-        return articulos;
-    }
+    public List<Articulo> getArticulos() { return articulos; }
 
     public void seleccionar(Articulo art) {
         this.seleccionada = art;
         System.out.println("Seleccionada: " + art.getNombre());
     }
 
-    public Articulo getSeleccionada() {
-        return seleccionada;
-    }
+    public Articulo getSeleccionada() { return seleccionada; }
+    public void setSeleccionada(Articulo art) { this.seleccionada = art; }
 
-    public void setSeleccionada(Articulo art) {
-        this.seleccionada = art;
-    }
-
-    public Articulo getNuevoArticulo() {
-        return nuevoArticulo;
-    }
-
-    public void setNuevoArticulo(Articulo nuevoArticulo) {
-        this.nuevoArticulo = nuevoArticulo;
-    }
-
-    public UploadedFile getImagenFile() {
-        return imagenFile;
-    }
-
-    public void setImagenFile(UploadedFile imagenFile) {
-        this.imagenFile = imagenFile;
-    }
-
-    // Método para preparar nuevo artículo
-    public void prepararNuevoArticulo() {
-        nuevoArticulo = new Articulo();
-        imagenFile = null;
-    }
-
-    // Método para guardar artículo
-    public void guardarArticulo() {
-        try {
-            if (nuevoArticulo.getNombre() == null || nuevoArticulo.getNombre().trim().isEmpty()) {
-                mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "El nombre es obligatorio");
-                return;
-            }
-
-            if (nuevoArticulo.getCantidad() == null || nuevoArticulo.getCantidad() <= 0) {
-                mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "La cantidad debe ser mayor a 0");
-                return;
-            }
-
-            if (nuevoArticulo.getPrecio() == null || nuevoArticulo.getPrecio() <= 0) {
-                mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "El precio debe ser mayor a 0");
-                return;
-            }
-
-            if (nuevoArticulo.getTipo() == null || nuevoArticulo.getTipo().trim().isEmpty()) {
-                mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "El tipo es obligatorio");
-                return;
-            }
-
-
-            if (imagenFile != null && imagenFile.getContent() != null && imagenFile.getSize() > 0) {
-                try {
-                    byte[] imageBytes = imagenFile.getContent();
-                    nuevoArticulo.setImagen(imageBytes);
-                    System.out.println("Imagen procesada: " + imageBytes.length + " bytes");
-                } catch (Exception e) {
-                    System.err.println("Error al procesar imagen: " + e.getMessage());
-                    e.printStackTrace();
-                    mostrarMensaje(FacesMessage.SEVERITY_WARN, "Advertencia", "No se pudo procesar la imagen");
-                }
-            } else {
-                System.out.println("No se subió imagen");
-            }
-
-            articuloHelper.guardarArticulo(nuevoArticulo);
-            mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Artículo creado correctamente");
-
-            // Recargar lista
-            articulos = articuloHelper.obtenerTodas();
-
-            // Limpiar formulario
-            nuevoArticulo = new Articulo();
-            imagenFile = null;
-
-        } catch (Exception e) {
-            System.err.println("Error al guardar artículo: " + e.getMessage());
-            e.printStackTrace();
-            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo crear el artículo: " + e.getMessage());
-        }
-    }
-
-    // Método para eliminar artículo
-    public void eliminarArticulo() {
-        try {
-            if (seleccionada == null) {
-                mostrarMensaje(FacesMessage.SEVERITY_WARN, "Advertencia", "Debe seleccionar un artículo para eliminar");
-                return;
-            }
-
-            System.out.println("Eliminando artículo: " + seleccionada.getNombre() + " (ID: " + seleccionada.getIdarticulo() + ")");
-
-            articuloHelper.eliminarArticulo(seleccionada.getIdarticulo());
-            mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Artículo eliminado correctamente");
-
-            // Recargar lista
-            articulos = articuloHelper.obtenerTodas();
-
-            // Limpiar selección
-            seleccionada = null;
-
-        } catch (Exception e) {
-            System.err.println("Error al eliminar artículo: " + e.getMessage());
-            e.printStackTrace();
-            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo eliminar el artículo: " + e.getMessage());
-        }
-    }
-
-
-
-    public String getImagenBase64(byte[] imagen) {
-        if (imagen == null || imagen.length == 0) {
+    public String getImagenBase64(Articulo art) {
+        if (art == null || art.getImagen() == null || art.getImagen().getDatos() == null) {
             return "";
         }
+        byte[] imageBytes = art.getImagen().getDatos();
+        String base64 = Base64.getEncoder().encodeToString(imageBytes);
+        String mime = art.getImagen().getMime();
+        return "data:" + mime + ";base64," + base64;
+    }
+
+    public Articulo getNuevoArticulo() { return nuevoArticulo; }
+    public void setNuevoArticulo(Articulo nuevoArticulo) { this.nuevoArticulo = nuevoArticulo; }
+
+    public BigDecimal getNuevoPrecio() { return nuevoPrecio; }
+    public void setNuevoPrecio(BigDecimal nuevoPrecio) { this.nuevoPrecio = nuevoPrecio; }
+
+    // La imagen se obtiene de sesión cargada por UploadImageServlet
+
+    // === Manejo de upload (PrimeFaces advanced) ===
+    public void onUpload(FileUploadEvent event) {
         try {
-            String base64 = Base64.getEncoder().encodeToString(imagen);
-            return "data:image/jpeg;base64," + base64;
-        } catch (Exception e) {
-            System.err.println("Error al convertir imagen a base64: " + e.getMessage());
-            e.printStackTrace();
-            return "";
-        }
-    }
-
-    private void mostrarMensaje(FacesMessage.Severity severity, String resumen, String detalle) {
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(severity, resumen, detalle));
-    }
-
-    public void actualizarArticulo() {
-        if (seleccionada != null) {
-            try {
-                // Update image only if a file was uploaded
-                if (imagenFile != null && imagenFile.getSize() > 0) {
-                    seleccionada.setImagen(imagenFile.getInputStream().readAllBytes());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            var file = event.getFile();
+            if (file == null || file.getContent() == null || file.getContent().length == 0) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "El archivo está vacío"));
+                return;
             }
 
-            articuloHelper.editarArticulo(seleccionada);
-            System.out.println("Articulo actualizado: " + seleccionada.getNombre());
+            String ct = file.getContentType() != null ? file.getContentType().toLowerCase() : "";
+            String name = file.getFileName() != null ? file.getFileName() : "";
+            String ext = "";
+            int p = name.lastIndexOf('.');
+            if (p >= 0 && p < name.length() - 1) {
+                ext = name.substring(p + 1).toLowerCase();
+            }
 
-            // reset
-            seleccionada = null;
-            imagenFile = null;
-            articulos = articuloHelper.obtenerTodas();
+            boolean mimeOk = ct.equals("image/jpeg") || ct.equals("image/jpg") || ct.equals("image/pjpeg")
+                    || ct.equals("image/png") || ct.equals("image/x-png");
+            boolean extOk = ext.equals("jpg") || ext.equals("jpeg") || ext.equals("png");
+
+            if (!mimeOk || !extOk) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Formato no permitido",
+                                "Solo se acepta JPG o PNG."));
+                return;
+            }
+
+            this.imagenBytes = file.getContent();
+            this.imagenMime = (ct.startsWith("image/jp")) ? "image/jpeg" : "image/png";
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "OK", "Imagen cargada: " + name));
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo procesar la imagen"));
         }
     }
 
+    public void guardarNuevo() {
+        try {
+            if (nuevoPrecio == null) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "El precio es requerido"));
+                FacesContext.getCurrentInstance().validationFailed();
+                return;
+            }
+            // Si no hubo evento, leer desde sesión (cargado por UploadImageServlet)
+            if (imagenBytes == null || imagenBytes.length == 0 || imagenMime == null) {
+                var map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+                byte[] content = (byte[]) map.get("uploadBytes");
+                String ct = (String) map.get("uploadMime");
+                if (content != null && content.length > 0) {
+                    this.imagenBytes = content;
+                    boolean looksJpeg = content.length >= 2 && (content[0] & 0xFF) == 0xFF && (content[1] & 0xFF) == 0xD8;
+                    this.imagenMime = (ct != null && !ct.isBlank()) ? ct.toLowerCase() : (looksJpeg ? "image/jpeg" : "image/png");
+                }
+            }
+            if (imagenBytes == null || imagenBytes.length == 0 || imagenMime == null) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Debe cargar una imagen JPG/PNG"));
+                FacesContext.getCurrentInstance().validationFailed();
+                return;
+            }
+
+            nuevoArticulo.setPrecio(nuevoPrecio);
+
+            Imagen imagen = new Imagen();
+            imagen.setDatos(imagenBytes);
+            imagen.setMime(imagenMime);
+
+            // Persistimos en una sola transacción (helper->DAO.saveWithImage)
+            articuloHelper.guardarConImagen(nuevoArticulo, imagen);
+
+            // refrescar tabla
+            articulos = articuloHelper.obtenerTodas();
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Artículo creado correctamente"));
+
+            // limpiar buffers/form
+            cancelarAlta();
+            // limpiar archivo simple
+            var map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+            map.remove("uploadBytes");
+            map.remove("uploadMime");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo guardar el artículo"));
+            FacesContext.getCurrentInstance().validationFailed();
+        }
+    }
+
+    public void cancelarAlta() {
+        this.nuevoArticulo = new Articulo();
+        this.nuevoArticulo.setActivo(true);
+        this.nuevoPrecio = null;
+        this.imagenBytes = null;
+        this.imagenMime = null;
+    }
 }

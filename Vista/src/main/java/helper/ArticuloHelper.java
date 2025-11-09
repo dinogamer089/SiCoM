@@ -1,63 +1,53 @@
 package helper;
 
+import helper.dto.ArticuloCardDTO;
 import mx.desarollo.entity.Articulo;
+import mx.desarollo.entity.Imagen;
 import mx.desarollo.integration.ServiceFacadeLocator;
-import java.util.List;
+
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Base64;
 
 public class ArticuloHelper {
 
-    public List<Articulo> obtenerTodas() {
-        System.out.println("=== ArticuloHelper.obtenerTodas() ===");
-        try {
-            List<Articulo> articulos = ServiceFacadeLocator.getInstanceFacadeArticulo().obtenerArticulos();
-            System.out.println("✓ Artículos obtenidos: " + (articulos != null ? articulos.size() : "null"));
+    /* ======= Catalogo: mapeo a DTO ======= */
+    public static List<ArticuloCardDTO> toCardDTOs(List<Articulo> entidades) {
+        List<ArticuloCardDTO> out = new ArrayList<>();
+        if (entidades == null) return out;
 
-            // Si es null, retornar lista vacía en lugar de null
-            if (articulos == null) {
-                return new ArrayList<>();
+        for (Articulo a : entidades) {
+            ArticuloCardDTO dto = new ArticuloCardDTO();
+
+            dto.setId(a.getId());
+            dto.setNombre(a.getNombre());
+            dto.setPrecio(a.getPrecio());
+
+            int stock = (a.getUnidades() != null) ? a.getUnidades() : 0;
+            dto.setUnidades(stock);
+            dto.setDisponible(stock > 0);
+
+            dto.setCategoria(a.getCategoria());
+            dto.setForma(a.getForma());
+            dto.setTextilTipo(a.getTextilTipo());
+
+            if (a.getImagen() != null && a.getImagen().getDatos() != null) {
+                String mime = a.getImagen().getMime();
+                String b64 = Base64.getEncoder().encodeToString(a.getImagen().getDatos());
+                dto.setImagenDataUrl("data:" + mime + ";base64," + b64);
             }
 
-            return articulos;
-        } catch (Exception e) {
-            System.err.println("✗ ERROR en ArticuloHelper:");
-            System.err.println("  Tipo: " + e.getClass().getName());
-            System.err.println("  Mensaje: " + e.getMessage());
-            e.printStackTrace();
-            // En caso de error, retornar lista vacía en lugar de lanzar excepción
-            return new ArrayList<>();
+            out.add(dto);
         }
+        return out;
     }
 
-    public void guardarArticulo(Articulo articulo) {
-        System.out.println("=== ArticuloHelper.crearArticulo() ===");
-        try {
-            ServiceFacadeLocator.getInstanceFacadeArticulo().guardarArticulo(articulo);
-            System.out.println("✓ Artículo creado exitosamente");
-        } catch (Exception e) {
-            System.err.println("✗ ERROR al crear artículo:");
-            e.printStackTrace();
-            throw e;
-        }
+    /* ======= Alta ======= */
+    public List<Articulo> obtenerTodas() {
+        return ServiceFacadeLocator.getInstanceFacadeArticulo().obtenerArticulos();
     }
 
-    public void eliminarArticulo(Integer id) {
-        System.out.println("=== ArticuloHelper.eliminarArticulo() ===");
-        System.out.println("ID a eliminar: " + id);
-        try {
-            ServiceFacadeLocator.getInstanceFacadeArticulo().eliminarArticulo(id);
-            System.out.println("✓ Artículo eliminado exitosamente");
-        } catch (Exception e) {
-            System.err.println("✗ ERROR al eliminar artículo:");
-            e.printStackTrace();
-            throw e;
-        }
-    }
-
-    public void editarArticulo(Articulo art) {
-        if (art.getNombre() != null) {
-            art.setNombre(art.getNombre().toUpperCase());
-        }
-        ServiceFacadeLocator.getInstanceFacadeArticulo().modificarArticulo(art);
+    public void guardarConImagen(Articulo articulo, Imagen imagen) {
+        ServiceFacadeLocator.getInstanceFacadeArticulo().crearArticuloConImagen(articulo, imagen);
     }
 }

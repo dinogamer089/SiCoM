@@ -1,16 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>mx.avanti.desarollo</groupId>
         <artifactId>guia</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+
     <artifactId>vista</artifactId>
     <packaging>war</packaging>
     <name>web Maven Webapp</name>
     <url>http://maven.apache.org</url>
-
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -18,15 +19,14 @@
         <maven.compiler.target>21</maven.compiler.target>
         <failOnMissingWebXml>false</failOnMissingWebXml>
 
-
         <primefaces.version>14.0.0</primefaces.version>
         <primefaces.extensions.version>14.0.0</primefaces.extensions.version>
         <jakarta.ee.version>10.0.0</jakarta.ee.version>
 
-
         <joda.time.version>2.12.5</joda.time.version>
         <itext.version>8.0.2</itext.version>
         <poi.version>5.2.4</poi.version>
+        <xmlbeans.version>5.2.1</xmlbeans.version>
         <jfreechart.version>1.5.3</jfreechart.version>
         <google.api.drive.version>v3-rev20230822-2.0.0</google.api.drive.version>
         <google.api.client.version>2.2.0</google.api.client.version>
@@ -37,7 +37,6 @@
         <slf4j.version>2.0.9</slf4j.version>
         <logback.version>1.4.11</logback.version>
     </properties>
-
 
     <repositories>
         <repository>
@@ -53,7 +52,6 @@
         </repository>
     </repositories>
 
-
     <dependencies>
         <!-- Jakarta EE API -->
         <dependency>
@@ -63,7 +61,6 @@
             <scope>provided</scope>
         </dependency>
 
-
         <!-- PrimeFaces 14 -->
         <dependency>
             <groupId>org.primefaces</groupId>
@@ -71,7 +68,6 @@
             <version>${primefaces.version}</version>
             <classifier>jakarta</classifier>
         </dependency>
-
 
         <!-- PrimeFaces Extensions 14 -->
         <dependency>
@@ -81,12 +77,14 @@
             <classifier>jakarta</classifier>
         </dependency>
 
-
+        <!-- JSF impl -->
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>jakarta.faces</artifactId>
             <version>4.0.1</version>
         </dependency>
+
+        <!-- Test -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -94,12 +92,14 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Weld para CDI -->
+        <!-- CDI (Weld) -->
         <dependency>
             <groupId>org.jboss.weld.servlet</groupId>
             <artifactId>weld-servlet-shaded</artifactId>
             <version>5.1.1.Final</version>
         </dependency>
+
+        <!-- Módulos locales -->
         <dependency>
             <groupId>mx.avanti.desarollo</groupId>
             <artifactId>entidad</artifactId>
@@ -112,8 +112,6 @@
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
-
-
         <dependency>
             <groupId>mx.avanti.desarollo</groupId>
             <artifactId>persistencia</artifactId>
@@ -121,8 +119,32 @@
             <scope>compile</scope>
         </dependency>
 
-
+        <!-- *** Necesario para evitar "org/apache/poi/util/StringUtil" ***
+             (PF puede validar/leer metadata de archivos y toca POI) -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
+            <version>${xmlbeans.version}</version>
+        </dependency>
+        <!-- (sin dependencias extra de uploader; usamos PF native) -->
+        <dependency>
+            <groupId>mx.avanti.desarollo</groupId>
+            <artifactId>entidad</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
+
     <build>
         <finalName>web</finalName>
     </build>
