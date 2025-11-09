@@ -197,6 +197,32 @@
             padding: 10px 15px !important;
         }
 
+        .estado-dropdown.ui-selectonemenu {
+            width: 230px;
+        }
+
+        .estado-dropdown .ui-selectonemenu-label {
+            background-color: black !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 0 !important;
+            padding: 10px 20px !important;
+            font-family: 'Minerva Modern', serif;
+            font-size: 16px;
+        }
+
+        .estado-dropdown .ui-selectonemenu-trigger {
+            background-color: black !important;
+            border: none !important;
+            border-radius: 0 !important;
+            color: white !important;
+        }
+
+        .ui-selectonemenu-panel .ui-selectonemenu-list-item {
+            font-family: 'Minerva Modern', serif;
+            padding: 8px 10px;
+        }
+
     </style>
 </h:head>
 <h:body>
@@ -289,6 +315,17 @@
                                        message="¿Está seguro de que desea aprobar esta cotización y convertirla en Renta?"
                                        icon="pi pi-exclamation-triangle" />
                         </p:commandButton>
+
+                        <p:selectOneMenu value="#{rentaUI.rentaSeleccionada.estado}"
+                                         styleClass="estado-dropdown"
+                                         rendered="#{rentaUI.rentaSeleccionada.estado ne 'Pendiente por aprobar'}">
+
+                            <f:selectItems value="#{rentaUI.listaEstadosRenta}" />
+
+                            <p:ajax event="change"
+                                    listener="#{rentaUI.actualizarEstadoRenta}"
+                                    update="@form :growl" />
+                        </p:selectOneMenu>
                     </div>
                 </div>
 

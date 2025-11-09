@@ -50,4 +50,26 @@ public class RentaHelper {
             e.printStackTrace();
         }
     }
+
+    public List<Renta> obtenerTodasRentas() {
+        System.out.println("=== RentaHelper.obtenerTodasRentas() ===");
+        try {
+            List<Renta> rentas = ServiceFacadeLocator.getInstanceFacadeRenta().obtenerRentas();
+            System.out.println("✓ Rentas obtenidos: " + (rentas != null ? rentas.size() : "null"));
+
+            // Si es null, retornar lista vacía en lugar de null
+            if (rentas == null) {
+                return new ArrayList<>();
+            }
+
+            return rentas;
+        } catch (Exception e) {
+            System.err.println("✗ ERROR en RentaHelper:");
+            System.err.println("  Tipo: " + e.getClass().getName());
+            System.err.println("  Mensaje: " + e.getMessage());
+            e.printStackTrace();
+            // En caso de error, retornar lista vacía en lugar de lanzar excepción
+            return new ArrayList<>();
+        }
+    }
 }

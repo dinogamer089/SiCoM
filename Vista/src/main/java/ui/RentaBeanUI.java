@@ -9,6 +9,7 @@ import jakarta.inject.Named;
 import mx.desarollo.entity.Renta;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Named("rentaUI")
@@ -20,6 +21,7 @@ public class RentaBeanUI implements Serializable {
     private Renta nuevaRenta;
     private Renta rentaSeleccionada;
     private Integer idRentaSeleccionada;
+    private List<String> listaEstadosRenta;
 
     public RentaBeanUI() {
         rentaHelper = new RentaHelper();
@@ -29,12 +31,25 @@ public class RentaBeanUI implements Serializable {
     public void init() {
         nuevaRenta = new Renta();
 
-        obtenerTodasLasCotizaciones();
+        listaEstadosRenta = new ArrayList<>();
+        listaEstadosRenta.add("Aprobado");
+        listaEstadosRenta.add("Confirmado");
+        listaEstadosRenta.add("Pendiente a reparto");
+        listaEstadosRenta.add("En reparto");
+        listaEstadosRenta.add("Entregado");
+        listaEstadosRenta.add("Pendiente a recoleccion");
+        listaEstadosRenta.add("En recoleccion");
+        listaEstadosRenta.add("Finalizada");
     }
 
     public void obtenerTodasLasCotizaciones() {
         rentas = rentaHelper.obtenerTodasCotizaciones();
     }
+
+    public void obtenerTodasLasRentas() {
+        rentas = rentaHelper.obtenerTodasRentas();
+    }
+
 
     public String seleccionarRenta(Renta renta) {
         this.rentaSeleccionada = renta;
@@ -63,6 +78,20 @@ public class RentaBeanUI implements Serializable {
                 rentaSeleccionada.setEstado("Pendiente por aprobar");
                 mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo aprobar la cotización: " + e.getMessage());
                 e.printStackTrace();
+            }
+        }
+    }
+
+    public void actualizarEstadoRenta() {
+        if (rentaSeleccionada != null) {
+            try {
+                rentaHelper.actualizarRenta(rentaSeleccionada);
+                mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Estado actualizado a: " + rentaSeleccionada.getEstado());
+            } catch (Exception e) {
+                mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo actualizar el estado: " + e.getMessage());
+                e.printStackTrace();
+
+                cargarRentaSeleccionada();
             }
         }
     }
@@ -97,6 +126,10 @@ public class RentaBeanUI implements Serializable {
 
     public void setIdRentaSeleccionada(Integer idRentaSeleccionada) {
         this.idRentaSeleccionada = idRentaSeleccionada;
+    }
+
+    public List<String> getListaEstadosRenta() {
+        return listaEstadosRenta;
     }
 
     private void mostrarMensaje(FacesMessage.Severity severity, String resumen, String detalle) {
