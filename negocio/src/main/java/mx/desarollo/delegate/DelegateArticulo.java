@@ -1,37 +1,22 @@
 package mx.desarollo.delegate;
 
-import mx.avanti.desarollo.dao.ArticuloDAO;
-import mx.desarollo.entity.Articulo;
 import mx.avanti.desarollo.integration.ServiceLocator;
+import mx.desarollo.entity.Articulo;
+import mx.desarollo.entity.Imagen;
 
 import java.util.List;
 
 public class DelegateArticulo {
 
-    public List<Articulo> findAllArticulos(){
-        return ServiceLocator.getInstanceArticuloDAO().findAll();
+    public List<Articulo> listarCatalogoCliente() {
+        return ServiceLocator.getInstanceArticuloDAO().listarActivosConStock();
     }
 
-    public void saveArticulo(Articulo articulo){
-    ServiceLocator.getInstanceArticuloDAO().save(articulo);}
-
-    public void deleteArticulo(Integer id) {
-        try {
-
-            Articulo articulo = ServiceLocator.getInstanceArticuloDAO()
-                    .find(id)
-                    .orElseThrow(() -> new RuntimeException("Artículo no encontrado con ID: " + id));
-
-            ServiceLocator.getInstanceArticuloDAO().delete(articulo);
-        } catch (Exception e) {
-            System.err.println("Error en deleteArticulo: " + e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
+    public List<Articulo> findAllArticulos() {
+        return ServiceLocator.getInstanceArticuloDAO().obtenerTodos();
     }
 
-    public void updateArticulo(Articulo art) {
-        ArticuloDAO dao = ServiceLocator.getInstanceArticuloDAO();
-        dao.update(art);
+    public void saveArticuloWithImage(Articulo articulo, Imagen imagen) {
+        ServiceLocator.getInstanceArticuloDAO().saveWithImage(articulo, imagen);
     }
 }

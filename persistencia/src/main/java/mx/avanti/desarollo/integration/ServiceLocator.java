@@ -8,7 +8,6 @@ public class ServiceLocator {
     private static AdministradorDAO administradorDAO;
     private static EmpleadoDAO empleadoDAO;
     private static ArticuloDAO articuloDAO;
-    private static RentaDAO rentaDAO;
 
     private static EntityManager getEntityManager() {
         return HibernateUtil.getEntityManager();
