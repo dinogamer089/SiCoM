@@ -58,4 +58,15 @@ public class ArticuloDAO extends AbstractDAO<Articulo> {
             return null;
         });
     }
+
+    /** Eliminar por ID (con transacción) */
+    public void deleteById(Integer id) {
+        execute(e -> {
+            Articulo a = e.find(Articulo.class, id);
+            if (a != null) {
+                e.remove(a);
+            }
+            return null;
+        });
+    }
 }
