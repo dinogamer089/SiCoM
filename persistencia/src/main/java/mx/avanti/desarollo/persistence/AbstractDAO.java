@@ -8,6 +8,7 @@ import jakarta.persistence.StoredProcedureQuery;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+
 import java.util.function.Function;
 
 public abstract class AbstractDAO<T> {
@@ -51,6 +52,8 @@ public abstract class AbstractDAO<T> {
                 em.refresh(entity);
             }
             return entity;
+
+
         }));
     }
 
@@ -82,8 +85,9 @@ public abstract class AbstractDAO<T> {
 
     public List<T> findFromWhere(String de, String campo, String criterio) {
         String jpql = "SELECT DISTINCT a FROM " + entityClass.getCanonicalName()
-                + " a JOIN a." + de + " b WHERE b." + campo + " = :value";
+                + " a JOIN a."
 
+                + de + " b WHERE b." + campo + " = :value";
         return execute(em ->
                 em.createQuery(jpql, entityClass)
                         .setParameter("value", criterio)
@@ -93,12 +97,16 @@ public abstract class AbstractDAO<T> {
 
     public T findByOneParameterUnique(String value, String field) {
         String jpql = "SELECT e FROM " + entityClass.getSimpleName()
-                + " e WHERE e." + field + " = :value";
+                + " e WHERE e."
+
+                + field + " = :value";
         return execute(em -> {
             try {
                 return em.createQuery(jpql, entityClass)
                         .setParameter("value", value)
                         .getSingleResult();
+
+
             } catch (NoResultException ex) {
                 return null;
             }
@@ -112,7 +120,9 @@ public abstract class AbstractDAO<T> {
 
     public List<T> findByOneParameter(Object value, String field) {
         String jpql = "SELECT e FROM " + entityClass.getSimpleName()
-                + " e WHERE e." + field + " = :value";
+                + " e WHERE e."
+
+                + field + " = :value";
         return execute(em ->
                 em.createQuery(jpql, entityClass)
                         .setParameter("value", value)

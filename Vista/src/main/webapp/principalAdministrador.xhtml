@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" lang="es">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eventos Campestre - Bienvenida</title>
+    <style type="text/css">
+        body {
+            background-color: #E7D9CB;
+            margin: 0;
+            font-family: "FreightText Pro", serif;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            background-color: #3D4435;
+            color: #C2C8CC;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        .topbar-left, .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topbar-center {
+            text-align: center;
+            flex-grow: 1;
+            font-style: italic;
+            font-size: 22px;
+        }
+
+        .topbar a {
+            text-decoration: none;
+            color: #C2C8CC;
+            font-size: 16px;
+            margin: 0 5px;
+            font-style: italic;
+        }
+
+        .topbar a:hover {
+            text-decoration: underline;
+        }
+
+        .topbar img {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* CONTENIDO */
+        .container {
+            text-align: center;
+            padding: 40px 10px;
+        }
+        .logo {
+            width: 100px;
+            height: auto;
+        }
+        .welcome-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        h1 {
+            font-family: "Minerva Modern", serif;
+            font-size: 80px;
+            font-style: italic;
+            color: #000;
+            margin: 0;
+        }
+        hr {
+            width: 70%;
+            border: none;
+            border-top: 1px solid #000;
+            margin: 0 auto 60px auto;
+        }
+
+        /* GRID DE TARJETAS */
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .card {
+            background-color: #000;
+            color: #FFF;
+            width: 320px;
+            height: 200px;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .card:hover {
+            transform: scale(1.05);
+            background-color: #3D4435;
+            cursor: pointer;
+        }
+        .card a {
+            display: block;
+            height: 100%;
+            width: 100%;
+            color: inherit;
+            text-decoration: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .card img {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 15px;
+        }
+        .card h2 {
+            font-size: 28px;
+            margin: 10px 0;
+        }
+        .card p {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+
+        /* RESPONSIVO */
+        @media (max-width: 700px) {
+            .grid {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            h1 {
+                font-size: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="topbar">
+    <div class="topbar-left">
+        <img src="#{request.contextPath}/resources/edicion.png" alt="Empleados" class="topbar-icon" />
+        <a href="#{request.contextPath}/AdminEmpleados.xhtml">Empleados</a>
+
+    </div>
+
+    <div class="topbar-center">
+        <a href="#"> EVENTOS CAMPESTRE</a><br />
+        <a href="Inventario.xhtml">Inventario</a>
+        <a href="Articulos.xhtml">Artículos</a>
+        <a href="Cotizaciones.xhtml">Cotizaciones</a>
+        <a href="Rentas.xhtml">Rentas</a>
+    </div>
+
+    <div class="topbar-right">
+        <span>Administrador</span>
+        <img src="#{request.contextPath}/resources/administrador.png" alt="admin" class="topbar-icon" />
+    </div>
+</div>
+
+<div class="container">
+    <div class="welcome-section">
+        <a>
+            <img src="#{request.contextPath}/resources/Elefante.png" alt="Logo" class="logo" />
+        </a>
+        <h1>¡Bienvenido!</h1>
+    </div>
+    <hr />
+
+    <div class="grid" >
+        <div class="card" >
+            <a href="Inventario.xhtml">
+                <img src="#{request.contextPath}/resources/listas-de-control.png" alt="Inventario" />
+                <h2>Inventario</h2>
+                <p>Aquí puedes ver el flujo de cambios en tu inventario</p>
+            </a>
+        </div>
+
+        <div class="card">
+            <a href="Cotizaciones.xhtml">
+                <img src="#{request.contextPath}/resources/calendario.png" alt="Cotizaciones" />
+                <h2>Cotizaciones</h2>
+                <p>Aquí puedes administrar las cotizaciones solicitadas</p>
+            </a>
+        </div>
+
+
+        <div class="card">
+            <a href="#{request.contextPath}/articulos">
+                <img src="#{request.contextPath}/resources/inventario-disponible.png" alt="Artículos" />
+                <h2>Artículos</h2>
+                <p>Aquí administrar los artículos para su cotización</p>
+            </a>
+        </div>
+
+        <div class="card">
+            <a href="#{request.contextPath}/rentas">
+                <img src="#{request.contextPath}/resources/reloj.png" alt="Rentas" />
+                <h2>Rentas</h2>
+                <p>Aquí puedes administrar las rentas realizadas</p>
+            </a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

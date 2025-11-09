@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      lang="es">
+
+<h:head>
+    <meta charset="UTF-8"/>
+    <title>EVENTOS CAMPESTRE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+    <style type="text/css">
+        /* --- INICIO: Estilos Generales (Body) --- */
+        body {
+            background-color: #E7D9CB;
+            font-family: "FreightText Pro", serif;
+            margin: 0;
+            padding: 0;
+        }
+        /* --- FIN: Estilos Generales (Body) --- */
+
+        /* --- INICIO: Estilos de la Barra de Navegacion Superior (Topbar) --- */
+        .topbar {
+            background-color: #3D4435;
+            color: #C2C8CC;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        .topbar-left, .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topbar-center {
+            text-align: center;
+            flex-grow: 1;
+            font-style: italic;
+            font-size: 22px;
+        }
+
+        .topbar a {
+            text-decoration: none;
+            color: #C2C8CC;
+            font-size: 16px;
+            margin: 0 5px;
+            font-style: italic;
+        }
+
+        .topbar a:hover {
+            text-decoration: underline;
+        }
+
+        .topbar .topbar-icon {
+            width: 20px;
+            height: 20px;
+        }
+        /* --- FIN: Estilos de la Barra de Navegacion Superior (Topbar) --- */
+
+        /* --- INICIO: Estilos del Contenido Principal de la Pagina --- */
+        .contenido {
+            padding: 30px 60px;
+        }
+
+        .titulo-empleados {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .titulo-icon {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+        }
+
+        h2 {
+            font-family: "Minerva Modern", serif;
+            font-size: 1.6em;
+            margin: 0;
+            text-align: left;
+        }
+        /* --- FIN: Estilos del Contenido Principal de la Pagina --- */
+
+        /* --- INICIO: Estilos de Botones de Acción (Alta, Eliminar, Reset) --- */
+        .botones {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .btn-alta, .btn-eliminar, .btn-reset {
+            background-color: #000000 !important;
+            color: #FFFFFF !important;
+            font-family: "FreightText Pro", serif;
+            border: none !important;
+            padding: 10px 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            box-sizing: border-box;
+            line-height: 1.5;
+            border-radius: 0 !important;
+        }
+
+        .btn-alta:hover, .btn-eliminar:hover, .btn-reset:hover {
+            opacity: 0.8;
+        }
+
+        .btn-alta i, .btn-eliminar i, .btn-reset i {
+            margin-right: 6px;
+        }
+        /* --- FIN: Estilos de Botones de Acción --- */
+
+        /* --- INICIO: Estilos de la Lista de Empleados --- */
+        .lista-empleados {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .empleado {
+            display: flex;
+            align-items: center;
+            background-color: #D9D9D9;
+            color: #000000;
+            padding: 12px 20px;
+            margin-bottom: 10px;
+            gap: 15px;
+            font-family: "FreightText Pro", serif;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            user-select: none;
+            text-decoration: none;
+        }
+
+        .empleado:hover {
+            background-color: #C2C8CC;
+            color: #000000;
+        }
+
+        .empleado.seleccionado {
+            background-color: #3D4435;
+            color: #C2C8CC;
+        }
+
+        .empleado.seleccionado:hover {
+            background-color: #3D4435;
+            color: #C2C8CC;
+        }
+
+        .empleado i {
+            font-size: 1em;
+            min-width: 16px;
+            color: inherit;
+            flex-shrink: 0;
+        }
+
+        .col-empleado {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden;
+        }
+
+        .col-empleado span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .col-empleado.nombre {
+            flex-basis: 50%;
+            flex-grow: 1;
+            min-width: 200px;
+        }
+
+        .col-empleado.usuario {
+            flex-basis: 50%;
+            flex-grow: 1;
+            min-width: 150px;
+        }
+        /* --- FIN: Estilos de la Lista de Empleados --- */
+
+        /* --- INICIO: Estilos para las Ventanas Emergentes (Modales) --- */
+        .ui-widget-overlay {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5) !important;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: #3D4435 !important;
+            color: #FFFFFF !important;
+            padding: 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            font-family: "FreightText Pro", serif;
+        }
+
+        .modal-content .ui-dialog-content {
+            background: none !important;
+            padding: 0 !important;
+            color: #FFFFFF !important;
+        }
+
+        .ui-dialog-titlebar-close {
+            color: #FFFFFF !important;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .ui-dialog-titlebar-close:hover {
+            color: #FFFFFF;
+        }
+
+        .modal-renglon,
+        .ui-dialog-titlebar {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #FFFFFF !important;
+        }
+
+        .modal-renglon:first-child,
+        .ui-dialog-titlebar {
+            border-bottom: 1px solid rgba(194, 200, 204, 0.2);
+            background-color: #3D4435 !important;
+            color: #FFFFFF !important;
+        }
+
+        .modal-renglon:last-child {
+            border-bottom: none;
+        }
+
+        .modal-titulo,
+        .ui-dialog-title {
+            justify-content: flex-start;
+            gap: 10px;
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #FFFFFF !important;
+        }
+
+        .modal-titulo i,
+        .ui-dialog-title i {
+            color: #FFFFFF;
+            font-size: 1.2em;
+        }
+
+        .modal-campos,
+        .modal-correo-contrasena {
+            justify-content: left;
+            gap: 10px;
+            flex-wrap: wrap;
+            color: #000000 !important;
+        }
+
+        .modal-campos input,
+        .modal-correo-contrasena input {
+            width: calc(33.33% - (20px / 3));
+            box-sizing: border-box;
+            flex: none;
+            min-width: 150px;
+            padding: 8px 12px;
+            border: none;
+            background-color: #D9D9D9 !important;
+            color: #000000 !important;
+            font-family: "FreightText Pro", serif;
+            font-size: 1em;
+            border-radius: 0 !important;
+        }
+
+        .modal-campos input::placeholder,
+        .modal-correo-contrasena input::placeholder {
+            color: rgba(0, 0, 0, 0.5) !important;
+            opacity: 1;
+        }
+
+        .modal-campos input::-webkit-input-placeholder,
+        .modal-correo-contrasena input::-webkit-input-placeholder {
+            color: rgba(0, 0, 0, 0.5) !important;
+        }
+
+        .modal-campos input::-moz-placeholder,
+        .modal-correo-contrasena input::-moz-placeholder {
+            color: rgba(0, 0, 0, 0.5) !important;
+            opacity: 1;
+        }
+
+        .modal-campos input::-ms-input-placeholder,
+        .modal-correo-contrasena input::-ms-input-placeholder {
+            color: rgba(0, 0, 0, 0.5) !important;
+        }
+
+        .modal-botones {
+            justify-content: flex-end;
+            gap: 15px;
+            padding: 15px 20px;
+        }
+
+        .btn-cancelar {
+            background-color: transparent !important;
+            color: #FFFFFF !important;
+            border: 1px solid #FFFFFF !important;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 1em;
+            font-family: "FreightText Pro", serif;
+            transition: 0.2s;
+            min-width: 120px;
+            text-align: center;
+            box-sizing: border-box;
+            text-decoration: none;
+            display: inline-block;
+            border-radius: 0 !important;
+        }
+
+        .btn-cancelar:hover {
+            background-color: rgba(194, 200, 204, 0.1) !important;
+        }
+
+        .btn-listo {
+            background-color: #000000 !important;
+            color: #FFFFFF !important;
+            border: none !important;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 1em;
+            font-family: "FreightText Pro", serif;
+            transition: 0.2s;
+            min-width: 120px;
+            text-align: center;
+            box-sizing: border-box;
+            text-decoration: none;
+            display: inline-block;
+            border-radius: 0 !important;
+        }
+
+        .btn-listo:hover {
+            background-color: rgba(0, 0, 0, 0.3) !important;
+        }
+
+        .modal-cuerpo-texto {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+            font-size: 1.1em;
+            padding-top: 25px;
+            padding-bottom: 25px;
+            color: #FFFF !important;
+        }
+
+        .nombre-empleado-bold {
+            font-weight: bold;
+        }
+
+        .error-message {
+            color: #FFFFFF;
+            font-size: 0.9em;
+            width: 100%;
+            margin-top: -5px;
+            margin-bottom: 5px;
+            flex-basis: 100%;
+        }
+
+        .error-message-unico {
+            color: #FFFFFF !important;
+            font-size: 1em;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .modal-campos input:hover,
+        .modal-correo-contrasena input:hover {
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0);
+        }
+
+        .modal-campos input:focus,
+        .modal-correo-contrasena input:focus {
+            box-shadow: 0 0 8px rgba(61, 68, 53, 0.7);
+            outline: none;
+            border: none;
+        }
+        /* --- FIN: Estilos para las Ventanas Emergentes (Modales) --- */
+
+        /* --- INICIO: ESTILOS DE TOAST --- */
+        .toast-base {
+            display: none;
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: #f9f1e7 !important;
+            color: #333;
+            border: 1px solid #ccc;
+            z-index: 2000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            font-family: "FreightText Pro", serif;
+        }
+
+        .toast-notification {
+            padding: 15px;
+            width: 400px;
+        }
+
+        .toast-notification .progress-bar-container {
+            background: #ddd;
+            height: 5px;
+            margin: 10px 0;
+
+        }
+
+        .toast-notification .progress-bar {
+            background: #5d5c47;
+            height: 5px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .toast-notification a {
+            font-weight: bold;
+            color: #333;
+            text-decoration: none;
+        }
+        .toast-notification a:hover {
+            text-decoration: underline;
+        }
+
+        .toast-simple {
+            padding: 15px 20px;
+            font-size: 1.1em;
+        }
+        /* --- FIN: ESTILOS DE TOAST --- */
+
+        /* --- INICIO: Media Queries (Responsivo) --- */
+        @media (max-width: 768px) {
+            .modal-content {
+                margin: 5% auto;
+                width: 95%;
+                max-width: 95%;
+            }
+
+            .modal-campos, .modal-correo-contrasena {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .modal-campos input, .modal-correo-contrasena input {
+                width: 100%;
+                min-width: auto;
+            }
+
+            .modal-botones {
+                justify-content: center;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-cancelar, .btn-listo {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .btn-listo {
+                order: -1;
+            }
+
+            .contenido {
+                padding: 20px;
+            }
+
+            .botones {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .empleado {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                text-align: left;
+            }
+
+            .col-empleado.nombre,
+            .col-empleado.usuario {
+                width: 100%;
+                min-width: 0;
+                flex-basis: auto;
+            }
+
+            .toast-base {
+                width: 90%;
+                left: 5%;
+                right: 5%;
+                top: 60px;
+            }
+        }
+        /* --- FIN: Media Queries (Responsivo) --- */
+
+        /* --- INICIO: Keyframes (Animaciones) --- */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        /* --- FIN: Keyframes (Animaciones) --- */
+    </style>
+</h:head>
+<h:body>
+    <div class="topbar">
+        <div class="topbar-left">
+            <h:graphicImage name="edicion.png" alt="Empleados" styleClass="topbar-icon"/>
+            <h:outputLink value="AdminEmpleados.xhtml"> Empleados </h:outputLink>
+        </div>
+        <div class="topbar-center">
+            <div><h:outputLink value="#"> EVENTOS CAMPESTRE </h:outputLink></div>
+            <div>
+                <a href="Inventario.xhtml">Inventario</a>
+                <a href="Articulos.xhtml">Artículos</a>
+                <a href="Cotizaciones.xhtml">Cotizaciones</a>
+                <a href="Rentas.xhtml">Rentas</a>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <span>Administrador</span>
+            <h:graphicImage name="administrador.png" alt="admin" styleClass="topbar-icon"/>
+        </div>
+    </div>
+    <h:form id="mainForm">
+        <div class="contenido">
+            <div class="titulo-empleados">
+                <h:graphicImage name="edicionN.png" alt="Icono Empleados" styleClass="titulo-icon"/>
+                <h2>Empleados</h2>
+            </div>
+
+            <div class="botones">
+                <p:commandButton value="Alta"
+                                 icon="fa-solid fa-plus"
+                                 styleClass="btn-alta"
+                                 action="#{empleadoUI.prepararNuevoEmpleado}"
+                                 process="@this"
+                                 update="modalAltaForm"
+                                 oncomplete="PF('dialogAlta').show()" />
+
+                <p:commandButton
+                        styleClass="btn-reset"
+                        value="Restablecer Contraseña"
+                        icon="fa-solid fa-key"
+                        rendered="#{empleadoUI.empleadoSeleccionado != null}"
+                        action="#{empleadoUI.prepararModalReset}"
+                        oncomplete="PF('dialogReset').show()"
+                        process="@this"
+                        update="modalResetForm" />
+
+                <p:commandButton
+                        styleClass="btn-reset"
+                        value="Restablecer Contraseña"
+                        icon="fa-solid fa-key"
+                        rendered="#{empleadoUI.empleadoSeleccionado == null}"
+                        disabled="true"
+                        style="opacity: 0.6; cursor: not-allowed;" />
+
+                <p:commandButton
+                        styleClass="btn-eliminar"
+                        value="Eliminar"
+                        icon="fa-solid fa-trash"
+                        rendered="#{empleadoUI.empleadoSeleccionado != null}"
+                        process="@this"
+                        update="modalEliminarContent"
+                        oncomplete="PF('dialogEliminar').show()" />
+
+                <p:commandButton
+                        styleClass="btn-eliminar"
+                        value="Eliminar"
+                        icon="fa-solid fa-trash"
+                        rendered="#{empleadoUI.empleadoSeleccionado == null}"
+                        disabled="true"
+                        style="opacity: 0.6; cursor: not-allowed;" />
+            </div>
+            <div id="toastNotification" class="toast-notification toast-base">
+                <span id="toastDeleteMessage">Empleado eliminado:</span>
+                <div style="font-style: italic; font-size: 0.9em;">(<span id="countdown">5</span> segundos)</div>
+                <div class="progress-bar-container">
+                    <div id="progressBar" class="progress-bar"></div>
+                </div>
+                <a href="#" onclick="deshacerEliminacion(); return false;">Deshacer</a>
+            </div>
+
+            <div id="toastSimple" class="toast-simple toast-base">
+                <span id="toastSimpleMessage"></span>
+            </div>
+            <h:panelGroup id="listaEmpleadosPanel" layout="block" styleClass="lista-empleados">
+                <ui:repeat value="#{empleadoUI.empleados}" var="emp">
+                    <h:commandLink
+                            styleClass="empleado #{empleadoUI.empleadoSeleccionado.id == emp.id ? 'seleccionado' : ''}">
+                        <f:setPropertyActionListener target="#{empleadoUI.empleadoSeleccionado}" value="#{emp}"/>
+                        <f:ajax render="mainForm"/>
+
+                        <div class="col-empleado nombre">
+                            <i class="fa-solid fa-id-card"></i>
+                            <span>#{emp.apellidoPaterno} #{emp.apellidoMaterno} #{emp.nombre}</span>
+                        </div>
+
+                        <div class="col-empleado usuario">
+                            <i class="fa-solid fa-user"></i>
+                            <span>#{emp.correo}</span>
+                        </div>
+                    </h:commandLink>
+                </ui:repeat>
+            </h:panelGroup>
+            <p:dialog id="modalAltaForm"
+                      widgetVar="dialogAlta"
+                      modal="true"
+                      resizable="false"
+                      closable="true"
+                      closeOnEscape="true"
+                      styleClass="modal-content"
+                      draggable="false"
+                      style="max-width: 700px; width: 90%;">
+                <f:facet name="header">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>Nuevo empleado</span>
+                </f:facet>
+
+                <div class="modal-renglon">
+                    <p:messages id="modalMessages" showSummary="true" showDetail="false" closable="true" style="width: 100%;" />
+                </div>
+                <div class="modal-renglon modal-campos">
+                    <p:inputText id="paterno" value="#{empleadoUI.nuevoEmpleado.apellidoPaterno}"
+                                 placeholder="Apellido Paterno" required="true"
+                                 requiredMessage="Apellido paterno es obligatorio." />
+                    <p:inputText id="materno" value="#{empleadoUI.nuevoEmpleado.apellidoMaterno}"
+                                 placeholder="Apellido Materno" required="true"
+                                 requiredMessage="Apellido materno es obligatorio." />
+                    <p:inputText id="nombre" value="#{empleadoUI.nuevoEmpleado.nombre}"
+                                 placeholder="Nombre" required="true"
+                                 requiredMessage="Nombre es obligatorio." />
+                </div>
+
+                <div class="modal-renglon modal-correo-contrasena">
+                    <p:inputText id="correo" value="#{empleadoUI.nuevoEmpleado.correo}"
+                                 placeholder="Correo Electrónico" required="true"
+                                 requiredMessage="Correo es obligatorio." />
+                    <p:password id="pass" value="#{empleadoUI.nuevoEmpleado.contrasena}"
+                                placeholder="Contraseña" required="true"
+                                requiredMessage="Contraseña es obligatoria." />
+                </div>
+
+                <div class="modal-renglon modal-botones">
+                    <p:commandButton value="Cancelar"
+                                     styleClass="btn-cancelar"
+                                     oncomplete="PF('dialogAlta').hide()"
+                                     process="@this"
+                                     immediate="true" />
+                    <p:commandButton value="Listo"
+                                     styleClass="btn-listo"
+                                     action="#{empleadoUI.guardarEmpleado}"
+                                     process="modalAltaForm"
+                                     update="mainForm:listaEmpleadosPanel modalMessages"
+                                     oncomplete="if (!args.validationFailed) { PF('dialogAlta').hide(); mostrarToastSimple('¡Empleado guardado exitosamente!'); }"/>
+                </div>
+            </p:dialog>
+            <p:dialog id="modalEliminar"
+                      widgetVar="dialogEliminar"
+                      modal="true"
+                      resizable="false"
+                      closable="true"
+                      closeOnEscape="true"
+                      styleClass="modal-content"
+                      draggable="false"
+                      style="max-width: 700px; width: 90%;">
+                <h:panelGroup id="modalEliminarContent">
+                    <div class="modal-renglon modal-titulo">
+                        <i class="fa-solid fa-trash"></i>
+                        <span>Eliminar empleado</span>
+                    </div>
+
+                    <div class="modal-renglon modal-cuerpo-texto">
+                        <span>Confirma que desea eliminar al empleado:</span>
+                        <span class="nombre-empleado-bold">
+                            #{empleadoUI.empleadoSeleccionado.nombre} #{empleadoUI.empleadoSeleccionado.apellidoPaterno}
+                        </span>
+                    </div>
+
+                    <div class="modal-renglon modal-botones">
+                        <p:commandButton value="Cancelar"
+                                         styleClass="btn-cancelar"
+                                         type="button"
+                                         onclick="PF('dialogEliminar').hide()" />
+                        <p:commandButton value="Confirmar"
+                                         styleClass="btn-listo"
+                                         type="button"
+                                         onclick="PF('dialogEliminar').hide(); mostrarToastEliminar('#{empleadoUI.empleadoSeleccionado.nombre} #{empleadoUI.empleadoSeleccionado.apellidoPaterno}');" />
+                    </div>
+                </h:panelGroup>
+            </p:dialog>
+            <p:dialog id="modalResetForm"
+                      widgetVar="dialogReset"
+                      modal="true"
+                      resizable="false"
+                      closable="true"
+                      closeOnEscape="true"
+                      styleClass="modal-content"
+                      draggable="false"
+                      style="max-width: 700px; width: 90%;">
+                <f:facet name="header">
+                    <i class="fa-solid fa-key"></i>
+                    <span>Restablecer Contraseña</span>
+                </f:facet>
+
+                <div class="modal-renglon modal-cuerpo-texto">
+                    <span>Establecer nueva contraseña para el empleado:</span>
+                    <span class="nombre-empleado-bold">
+                        #{empleadoUI.empleadoSeleccionado.nombre} #{empleadoUI.empleadoSeleccionado.apellidoPaterno}
+                    </span>
+                </div>
+
+                <div class="modal-renglon modal-correo-contrasena" style="justify-content: center; flex-direction: column;">
+                    <p:password id="newPass" value="#{empleadoUI.nuevaContrasena}"
+                                placeholder="Escribir nueva contraseña"
+                                required="true"
+                                requiredMessage="La contraseña no puede estar vacía."
+                                style="width: 50%; min-width: 200px;"/>
+                    <p:message for="newPass" styleClass="error-message"/>
+                </div>
+
+                <div class="modal-renglon modal-botones">
+                    <p:commandButton value="Cancelar"
+                                     styleClass="btn-cancelar"
+                                     oncomplete="PF('dialogReset').hide()"
+                                     process="@this"
+                                     immediate="true" />
+                    <p:commandButton value="Confirmar"
+                                     styleClass="btn-listo"
+                                     action="#{empleadoUI.restablecerContrasena}"
+                                     process="modalResetForm"
+                                     update="mainForm"
+                                     oncomplete="if (!args.validationFailed) { PF('dialogReset').hide(); mostrarToastSimple('¡Contraseña actualizada!'); }"/>
+                </div>
+            </p:dialog>
+            <h:commandButton id="btnResetModal" style="display:none;"
+                             action="#{empleadoUI.prepararNuevoEmpleado}">
+                <f:ajax render="modalAltaForm"
+                        onerror="alert('Error de AJAX al resetear modal. Revisa la consola.');"/>
+            </h:commandButton>
+
+            <h:commandButton id="btnConfirmarEliminacionReal" style="display:none;"
+                             action="#{empleadoUI.eliminarEmpleado}">
+                <f:ajax execute="@this" render="mainForm"/>
+            </h:commandButton>
+        </div>
+    </h:form>
+    <script type="text/javascript">
+        //<![CDATA[
+
+        var deleteTimer;
+        var progressInterval;
+        var simpleToastTimer;
+
+        // --- INICIO: mostrarToastSimple ---
+        /**
+         * Muestra una notificación simple que desaparece sola.
+         */
+        function mostrarToastSimple(mensaje) {
+            clearTimeout(simpleToastTimer);
+            var toast = document.getElementById('toastSimple');
+            var message = document.getElementById('toastSimpleMessage');
+
+            message.innerText = mensaje;
+            toast.style.display = 'block';
+
+            simpleToastTimer = setTimeout(function() {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+        // --- FIN: mostrarToastSimple ---
+
+        // --- INICIO: mostrarToastEliminar ---
+        /**
+         * Muestra la notificación de eliminación con contador y opción "Deshacer".
+         */
+        function mostrarToastEliminar(nombreEmpleado) {
+            clearTimeout(deleteTimer);
+            clearInterval(progressInterval);
+
+            var toast = document.getElementById('toastNotification');
+            var progressBar = document.getElementById('progressBar');
+            var countdown = document.getElementById('countdown');
+            var messageElement = document.getElementById('toastDeleteMessage');
+            if (nombreEmpleado) {
+                messageElement.innerHTML = 'Empleado eliminado: <strong style="font-style: italic; padding-left: 5px;">' + nombreEmpleado + '</strong>';
+            } else {
+                messageElement.innerText = 'Empleado eliminado:';
+            }
+
+            toast.style.display = 'block';
+            progressBar.style.width = '0%';
+            countdown.innerText = '3';
+
+            var timeLeft = 3;
+            var totalTime = 3000;
+            var updateInterval = 100;
+            var steps = totalTime / updateInterval;
+            var currentStep = 0;
+
+            progressInterval = setInterval(function() {
+                currentStep++;
+                var percentage = (currentStep / steps) * 100;
+                progressBar.style.width = percentage + '%';
+
+                var newTimeLeft = Math.ceil((totalTime - (currentStep * updateInterval)) / 1000);
+
+                if (newTimeLeft < timeLeft) {
+                    timeLeft = newTimeLeft;
+                    countdown.innerText = timeLeft;
+                }
+
+                if (currentStep >= steps) {
+                    clearInterval(progressInterval);
+                }
+            }, updateInterval);
+            deleteTimer = setTimeout(function() {
+                toast.style.display = 'none';
+                document.getElementById('mainForm:btnConfirmarEliminacionReal').click();
+            }, totalTime);
+        }
+        // --- FIN: mostrarToastEliminar ---
+
+        // --- INICIO: deshacerEliminacion ---
+        function deshacerEliminacion() {
+            clearTimeout(deleteTimer);
+            clearInterval(progressInterval);
+            document.getElementById('toastNotification').style.display = 'none';
+            mostrarToastSimple('Eliminación cancelada');
+        }
+        // --- FIN: deshacerEliminacion ---
+
+        // --- INICIO: DOMContentLoaded ---
+        document.addEventListener('DOMContentLoaded', function () {
+            window.onclick = function (event) {
+                var modalEliminar = document.getElementById('modalEliminar');
+                if (event.target == modalEliminar) {
+                    cerrarModalEliminar();
+                }
+            }
+        });
+        // --- FIN: DOMContentLoaded ---
+        //]]>
+    </script>
+</h:body>
+</html>
