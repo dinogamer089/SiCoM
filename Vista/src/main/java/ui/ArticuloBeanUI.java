@@ -11,6 +11,7 @@ import org.primefaces.model.file.UploadedFile;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Base64;
 import java.util.List;
 
@@ -88,10 +89,12 @@ public class ArticuloBeanUI implements Serializable {
                 return;
             }
 
-            if (nuevoArticulo.getPrecio() == null || nuevoArticulo.getPrecio() <= 0) {
+            if (nuevoArticulo.getPrecio() == null
+                    || nuevoArticulo.getPrecio().compareTo(BigDecimal.ZERO) <= 0) {
                 mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "El precio debe ser mayor a 0");
                 return;
             }
+
 
             if (nuevoArticulo.getTipo() == null || nuevoArticulo.getTipo().trim().isEmpty()) {
                 mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "El tipo es obligatorio");
