@@ -27,4 +27,8 @@ public class FacadeEmpleado {
     public void deleteEmpleado(Empleado empleado) {
         delegateEmpleado.deleteEmpleado(empleado);
     }
+
+    public Empleado findById(Integer id) {
+        return delegateEmpleado.findById(id);
+    }
 }

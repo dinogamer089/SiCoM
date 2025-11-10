@@ -86,6 +86,7 @@
             display: flex;
             margin-bottom: 15px;
             font-family: 'Minerva Modern', serif;
+            align-items: center;
         }
 
         .cliente-label {
@@ -223,6 +224,30 @@
             padding: 8px 10px;
         }
 
+        .dialog-asignar .ui-dialog-titlebar {
+            background-color: #3D4435 !important;
+            border-color: #3D4435 !important;
+        }
+
+        .dialog-asignar .ui-dialog-title {
+            color: white !important;
+        }
+
+        .dialog-asignar .ui-dialog-content {
+            background-color: #3D4435 !important;
+            color: white !important;
+        }
+
+        .dialog-asignar .ui-dialog-content .ui-button {
+            background-color: black !important;
+            color: white !important;
+            border: none !important;
+        }
+
+        .dialog-asignar .ui-dialog-content .ui-button-flat {
+            margin-left: 10px !important;
+        }
+
     </style>
 </h:head>
 <h:body>
@@ -250,132 +275,158 @@
     </div>
 
     <div class="content">
-        <h:form>
+        <h:form id="formDetalle">
             <p:growl id="growl" showDetail="true" life="5000" />
-            <div class="detalle-container">
-                <div class="cliente-info-box">
-                    <div class="cliente-row">
-                        <div style="margin-bottom: 20px;">
-                            <h:commandLink action="Cotizaciones.xhtml" title="Regresar">
-                                <h:graphicImage value="resources/retornar.png"
-                                                alt="Regresar"
-                                                width="40"
-                                                height="40"
-                                                style="cursor: pointer;" /> </h:commandLink>
+                <div class="detalle-container">
+                    <div class="cliente-info-box">
+                        <div class="cliente-row">
+                            <div style="margin-bottom: 20px;">
+                                <h:commandLink action="Cotizaciones.xhtml" title="Regresar" rendered="#{rentaUI.rentaSeleccionada.estado eq 'Pendiente por aprobar'}">
+                                    <h:graphicImage value="resources/retornar.png"
+                                                    alt="Regresar"
+                                                    width="40"
+                                                    height="40"
+                                                    style="cursor: pointer;" /> </h:commandLink>
+
+                                <h:commandLink action="Rentas.xhtml" title="Regresar" rendered="#{rentaUI.rentaSeleccionada.estado ne 'Pendiente por aprobar'}">
+                                    <h:graphicImage value="resources/retornar.png"
+                                                    alt="Regresar"
+                                                    width="40"
+                                                    height="40"
+                                                    style="cursor: pointer;" /> </h:commandLink>
+                            </div>
+                        </div>
+                        <div class="cliente-info">
+                            <div class="cliente-row">
+                                <span class="cliente-label">Nombre:</span>
+                                <span class="cliente-value">#{rentaUI.rentaSeleccionada.idCliente.nombre}</span>
+                            </div>
+
+                            <div class="cliente-row">
+                                <span class="cliente-label">Dirección:</span>
+                                <span class="cliente-value">#{rentaUI.rentaSeleccionada.idCliente.direccion}</span>
+                            </div>
+
+                            <div class="cliente-row">
+                                <span class="cliente-label">Telefono:</span>
+                                <span class="cliente-value">#{rentaUI.rentaSeleccionada.idCliente.telefono}</span>
+                            </div>
+
+                            <div class="cliente-row">
+                                <span class="cliente-label">Estado:</span>
+                                <span class="cliente-value">#{rentaUI.rentaSeleccionada.estado}</span>
+                            </div>
+
+                            <div class="cliente-row">
+                                <span class="cliente-label">Fecha:</span>
+                                <span class="cliente-value">
+                                    <h:outputText value="#{rentaUI.rentaSeleccionada.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" type="localDate" />
+                                    </h:outputText>
+                                </span>
+                            </div>
+
+                            <div class="cliente-row">
+                                <span class="cliente-label">Hora:</span>
+                                <span class="cliente-value">
+                                    <h:outputText value="#{rentaUI.rentaSeleccionada.hora}">
+                                        <f:convertDateTime pattern="HH:mm" type="localTime" />
+                                    </h:outputText>
+                                </span>
+                            </div>
+
+                            <h:panelGroup class="cliente-row" layout="block" rendered="#{rentaUI.rentaSeleccionada.estado eq 'En reparto' and rentaUI.rentaSeleccionada.idEmpleado != null}">
+                                <span class="cliente-label">Pendiente a entregar por:</span>
+                                <span class="cliente-value" style="vertical-align: bottom">#{rentaUI.rentaSeleccionada.idEmpleado.nombre}</span> </h:panelGroup>
+
+                            <h:panelGroup class="cliente-row" layout="block" rendered="#{rentaUI.rentaSeleccionada.entregado != null}">
+                                <span class="cliente-label">Entregado por:</span>
+                                <span class="cliente-value" style="vertical-align: bottom">#{rentaUI.rentaSeleccionada.entregado}</span>
+                            </h:panelGroup>
+
+                            <h:panelGroup class="cliente-row" layout="block" rendered="#{rentaUI.rentaSeleccionada.estado eq 'En recoleccion' and rentaUI.rentaSeleccionada.idEmpleado != null}">
+                                <span class="cliente-label">Pendiente a recoger por:</span>
+                                <span class="cliente-value" style="vertical-align: bottom">#{rentaUI.rentaSeleccionada.idEmpleado.nombre}</span>
+                            </h:panelGroup>
+
+                            <h:panelGroup class="cliente-row" layout="block" rendered="#{rentaUI.rentaSeleccionada.recogido != null}">
+                                <span class="cliente-label">Recogido por:</span>
+                                <span class="cliente-value" style="vertical-align: bottom">#{rentaUI.rentaSeleccionada.recogido}</span>
+                            </h:panelGroup>
+                        </div>
+
+                        <div class="boton-centrado">
+                            <p:commandButton value="Aprobar"
+                                             styleClass="btn"
+                                             action="#{rentaUI.aprobarCotizacion()}"
+                                             update="@form :growl"
+                                             rendered="#{rentaUI.rentaSeleccionada.estado eq 'Pendiente por aprobar'}">
+
+                                <p:confirm header="Confirmación de Aprobación"
+                                           message="¿Está seguro de que desea aprobar esta cotización y convertirla en Renta?"
+                                           icon="pi pi-exclamation-triangle" />
+                            </p:commandButton>
+
+                            <p:selectOneMenu value="#{rentaUI.rentaSeleccionada.estado}"
+                                             styleClass="estado-dropdown"
+                                             rendered="#{rentaUI.rentaSeleccionada.estado ne 'Pendiente por aprobar'}">
+
+                                <f:selectItems value="#{rentaUI.listaEstadosRenta}" />
+
+                                <p:ajax event="change"
+                                        listener="#{rentaUI.onEstadoChange}"
+                                        update="formDetalle" />
+                            </p:selectOneMenu>
                         </div>
                     </div>
-                    <div class="cliente-info">
-                        <div class="cliente-row">
-                            <span class="cliente-label">Nombre:</span>
-                            <span class="cliente-value">#{rentaUI.rentaSeleccionada.idCliente.nombre}</span>
+
+                        <div class="articulos-section">
+                            <div class="articulos-title">Artículos</div>
+
+                            <div class="articulos-card">
+                                <p:dataTable var="detalle"
+                                             value="#{rentaUI.rentaSeleccionada.detallesRenta}"
+                                             styleClass="custom-datatable"
+                                             emptyMessage="No hay artículos en esta renta."
+                                             style="border-spacing: 0 10px; border-collapse: separate;">
+
+                                    <p:column headerText="Nombre del Artículo">
+                                        <h:outputText value="#{detalle.idArticulo.nombre}" />
+                                    </p:column>
+
+                                    <p:column headerText="Tipo">
+                                        <h:outputText value="#{detalle.idArticulo.tipo}" />
+                                    </p:column>
+
+                                    <p:column headerText="Imagen">
+                                        <h:panelGroup rendered="#{detalle.idArticulo.imagen != null and detalle.idArticulo.imagen.length > 0}">
+                                            <h:graphicImage value="#{articuloUI.getImagenBase64(detalle.idArticulo.imagen)}"
+                                                            width="40"
+                                                            height="40"
+                                                            style="object-fit: cover;"/>
+                                        </h:panelGroup>
+                                    </p:column>
+
+                                    <p:column headerText="Precio Unitario" style="text-align: right;">
+                                        <h:outputText value="#{detalle.idArticulo.precio}">
+                                            <f:convertNumber type="currency" currencySymbol="$" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column headerText="Cantidad Rentada" style="text-align: right;">
+                                        <h:outputText value="#{detalle.cantidadRentada}" />
+                                    </p:column>
+
+                                    <p:column headerText="Subtotal" style="text-align: right;">
+                                        <h:outputText value="#{detalle.cantidadRentada * detalle.idArticulo.precio}">
+                                            <f:convertNumber type="currency" currencySymbol="$" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                </p:dataTable>
+                            </div>
                         </div>
-
-                        <div class="cliente-row">
-                            <span class="cliente-label">Dirección:</span>
-                            <span class="cliente-value">#{rentaUI.rentaSeleccionada.idCliente.direccion}</span>
-                        </div>
-
-                        <div class="cliente-row">
-                            <span class="cliente-label">Telefono:</span>
-                            <span class="cliente-value">#{rentaUI.rentaSeleccionada.idCliente.telefono}</span>
-                        </div>
-
-                        <div class="cliente-row">
-                            <span class="cliente-label">Estado:</span>
-                            <span class="cliente-value">#{rentaUI.rentaSeleccionada.estado}</span>
-                        </div>
-
-                        <div class="cliente-row">
-                            <span class="cliente-label">Fecha:</span>
-                            <span class="cliente-value">
-                                <h:outputText value="#{rentaUI.rentaSeleccionada.fecha}">
-                                    <f:convertDateTime pattern="dd/MM/yyyy" type="localDate" />
-                                </h:outputText>
-                            </span>
-                        </div>
-
-                        <div class="cliente-row">
-                            <span class="cliente-label">Hora:</span>
-                            <span class="cliente-value">
-                                <h:outputText value="#{rentaUI.rentaSeleccionada.hora}">
-                                    <f:convertDateTime pattern="HH:mm" type="localTime" />
-                                </h:outputText>
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="boton-centrado">
-                        <p:commandButton value="Aprobar"
-                                         styleClass="btn"
-                                         action="#{rentaUI.aprobarCotizacion()}"
-                                         update="@form :growl"
-                                         rendered="#{rentaUI.rentaSeleccionada.estado eq 'Pendiente por aprobar'}">
-
-                            <p:confirm header="Confirmación de Aprobación"
-                                       message="¿Está seguro de que desea aprobar esta cotización y convertirla en Renta?"
-                                       icon="pi pi-exclamation-triangle" />
-                        </p:commandButton>
-
-                        <p:selectOneMenu value="#{rentaUI.rentaSeleccionada.estado}"
-                                         styleClass="estado-dropdown"
-                                         rendered="#{rentaUI.rentaSeleccionada.estado ne 'Pendiente por aprobar'}">
-
-                            <f:selectItems value="#{rentaUI.listaEstadosRenta}" />
-
-                            <p:ajax event="change"
-                                    listener="#{rentaUI.actualizarEstadoRenta}"
-                                    update="@form :growl" />
-                        </p:selectOneMenu>
-                    </div>
                 </div>
-
-                    <div class="articulos-section">
-                        <div class="articulos-title">Artículos</div>
-
-                        <div class="articulos-card">
-                            <p:dataTable var="detalle"
-                                         value="#{rentaUI.rentaSeleccionada.detallesRenta}"
-                                         styleClass="custom-datatable"
-                                         emptyMessage="No hay artículos en esta renta."
-                                         style="border-spacing: 0 10px; border-collapse: separate;">
-
-                                <p:column headerText="Nombre del Artículo">
-                                    <h:outputText value="#{detalle.idArticulo.nombre}" />
-                                </p:column>
-
-                                <p:column headerText="Tipo">
-                                    <h:outputText value="#{detalle.idArticulo.tipo}" />
-                                </p:column>
-
-                                <p:column headerText="Imagen">
-                                    <h:panelGroup rendered="#{detalle.idArticulo.imagen != null and detalle.idArticulo.imagen.length > 0}">
-                                        <h:graphicImage value="#{articuloUI.getImagenBase64(detalle.idArticulo.imagen)}"
-                                                        width="40"
-                                                        height="40"
-                                                        style="object-fit: cover;"/>
-                                    </h:panelGroup>
-                                </p:column>
-
-                                <p:column headerText="Precio Unitario" style="text-align: right;">
-                                    <h:outputText value="#{detalle.idArticulo.precio}">
-                                        <f:convertNumber type="currency" currencySymbol="$" />
-                                    </h:outputText>
-                                </p:column>
-
-                                <p:column headerText="Cantidad Rentada" style="text-align: right;">
-                                    <h:outputText value="#{detalle.cantidadRentada}" />
-                                </p:column>
-
-                                <p:column headerText="Subtotal" style="text-align: right;">
-                                    <h:outputText value="#{detalle.cantidadRentada * detalle.idArticulo.precio}">
-                                        <f:convertNumber type="currency" currencySymbol="$" />
-                                    </h:outputText>
-                                </p:column>
-
-                            </p:dataTable>
-                        </div>
-                    </div>
-            </div>
         </h:form>
     </div>
 
@@ -383,5 +434,28 @@
         <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
         <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" />
     </p:confirmDialog>
+
+    <p:dialog widgetVar="dialogAsignarEmpleado" modal="true"
+              header="Asignar Empleado de Entrega/Recolección"
+              resizable="false" closable="false" appendTo="@(body)" styleClass="dialog-asignar">
+        <h:form id="formDialog">
+            <h:panelGrid columns="2" cellpadding="5">
+                <p:outputLabel for="empId" value="ID Empleado:" />
+                <p:inputText id="empId" value="#{rentaUI.idEmpleadoInput}" required="true"
+                             requiredMessage="El ID es requerido."/>
+            </h:panelGrid>
+            <hr />
+            <div style="text-align: right; padding-top: 10px;">
+                <p:commandButton value="Asignar"
+                                 actionListener="#{rentaUI.asignarEmpleadoYActualizarEstado}"
+                                 process="@form"
+                                 update="formDetalle"
+                                 oncomplete="if (!args.validationFailed) PF('dialogAsignarEmpleado').hide();" />
+                <p:commandButton value="Cancelar" type="button"
+                                 styleClass="ui-button-flat"
+                                 onclick="PF('dialogAsignarEmpleado').hide();" />
+            </div>
+        </h:form>
+    </p:dialog>
 </h:body>
 </html>

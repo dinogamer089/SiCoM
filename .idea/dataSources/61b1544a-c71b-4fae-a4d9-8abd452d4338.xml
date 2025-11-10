@@ -1003,7 +1003,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <AutoIntrospectionLevel>3</AutoIntrospectionLevel>
       <Current>1</Current>
       <LastIntrospectionLevel>3</LastIntrospectionLevel>
-      <LastIntrospectionLocalTimestamp>2025-11-02.00:25:56</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2025-11-10.01:50:44</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <schema id="289" parent="1" name="information_schema">
@@ -1094,7 +1094,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="308" parent="298" name="idarticulo">
-      <AutoIncrement>6</AutoIncrement>
+      <AutoIncrement>3</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int|0s</StoredType>
@@ -1234,7 +1234,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <StoredType>varchar(45)|0s</StoredType>
     </column>
     <column id="336" parent="301" name="idEmpleado">
-      <AutoIncrement>5</AutoIncrement>
+      <AutoIncrement>17</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>5</Position>
       <StoredType>int|0s</StoredType>
@@ -1244,60 +1244,95 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <Position>6</Position>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <index id="338" parent="301" name="PRIMARY">
+    <index id="338" parent="301" name="correo_UNIQUE">
+      <ColNames>correo</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <index id="339" parent="301" name="PRIMARY">
       <ColNames>idEmpleado</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="339" parent="301" name="PRIMARY">
+    <key id="340" parent="301" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="340" parent="302" name="idRenta">
-      <AutoIncrement>3</AutoIncrement>
+    <key id="341" parent="301" name="correo_UNIQUE">
+      <UnderlyingIndexName>correo_UNIQUE</UnderlyingIndexName>
+    </key>
+    <column id="342" parent="302" name="idRenta">
+      <AutoIncrement>5</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="341" parent="302" name="fecha">
+    <column id="343" parent="302" name="estado">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(45)|0s</StoredType>
     </column>
-    <column id="342" parent="302" name="hora">
+    <column id="344" parent="302" name="idCliente">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="343" parent="302" name="estado">
-      <NotNull>1</NotNull>
+    <column id="345" parent="302" name="hora">
       <Position>4</Position>
-      <StoredType>varchar(45)|0s</StoredType>
+      <StoredType>time|0s</StoredType>
     </column>
-    <column id="344" parent="302" name="idCliente">
-      <NotNull>1</NotNull>
+    <column id="346" parent="302" name="fecha">
       <Position>5</Position>
+      <StoredType>date|0s</StoredType>
+    </column>
+    <column id="347" parent="302" name="idEmpleado">
+      <Position>6</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <foreign-key id="345" parent="302" name="fk_renta_cliente">
+    <column id="348" parent="302" name="Entregado">
+      <Position>7</Position>
+      <StoredType>varchar(45)|0s</StoredType>
+    </column>
+    <column id="349" parent="302" name="Recogido">
+      <Position>8</Position>
+      <StoredType>varchar(45)|0s</StoredType>
+    </column>
+    <foreign-key id="350" parent="302" name="fk_renta_cliente">
       <ColNames>idCliente</ColNames>
+      <OnDelete>cascade</OnDelete>
+      <OnUpdate>cascade</OnUpdate>
       <RefColNames>idCliente</RefColNames>
       <RefTableName>cliente</RefTableName>
     </foreign-key>
-    <index id="346" parent="302" name="PRIMARY">
+    <foreign-key id="351" parent="302" name="fk_renta_empleado">
+      <ColNames>idEmpleado</ColNames>
+      <OnDelete>cascade</OnDelete>
+      <OnUpdate>cascade</OnUpdate>
+      <RefColNames>idEmpleado</RefColNames>
+      <RefTableName>empleado</RefTableName>
+    </foreign-key>
+    <index id="352" parent="302" name="PRIMARY">
       <ColNames>idRenta</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="347" parent="302" name="fk_renta_cliente">
+    <index id="353" parent="302" name="idEmpleado_UNIQUE">
+      <ColNames>idEmpleado</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <index id="354" parent="302" name="fk_renta_cliente">
       <ColNames>idCliente</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="348" parent="302" name="PRIMARY">
+    <key id="355" parent="302" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <key id="356" parent="302" name="idEmpleado_UNIQUE">
+      <UnderlyingIndexName>idEmpleado_UNIQUE</UnderlyingIndexName>
     </key>
   </database-model>
 </dataSource>

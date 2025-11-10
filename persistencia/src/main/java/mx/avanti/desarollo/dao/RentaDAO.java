@@ -41,6 +41,7 @@ public class RentaDAO extends AbstractDAO<Renta> {
                             "LEFT JOIN FETCH r.idCliente " +
                             "LEFT JOIN FETCH r.detallesRenta dr " +
                             "LEFT JOIN FETCH dr.idArticulo " +
+                            "LEFT JOIN FETCH r.idEmpleado " +
                             "WHERE r.id = :id", Renta.class)
                     .setParameter("id", idRenta)
                     .getSingleResult();
