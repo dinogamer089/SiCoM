@@ -43,7 +43,7 @@
     </context-param>
 
     <welcome-file-list>
-        <welcome-file>Inventario.xhtml</welcome-file>
+        <welcome-file>alta.xhtml</welcome-file>
     </welcome-file-list>
 
 </web-app>
