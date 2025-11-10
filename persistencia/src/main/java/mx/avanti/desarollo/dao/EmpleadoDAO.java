@@ -28,4 +28,16 @@ public class EmpleadoDAO extends AbstractDAO<Empleado> {
             return null;
         }
     }
+
+    public Empleado findById(Integer id) {
+        try {
+
+            return entityManager.createQuery(
+                            "SELECT e FROM Empleado e WHERE e.id = :id", Empleado.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 }

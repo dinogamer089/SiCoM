@@ -128,14 +128,13 @@
             font-size: 14px;
             font-style: italic;
             margin-top: 5px;
+            color: lightblue;
         }
 
         .icon-bill {
             font-size: 40px;
             margin-right: 15px;
         }
-
-        .status-encotizacion { color: lightblue; }
 
     </style>
 </h:head>
@@ -179,8 +178,7 @@
                                         <h:outputText value="#{cot.idCliente.telefono}" style="font-size: 14px;"/>
 
                                         <h:outputText value="#{cot.estado}"
-                                                      styleClass="cotizacion-status
-                                  #{cot.estado eq 'Pendiente por aprobar' ? 'status-encotizacion' : ''}"/>
+                                                      styleClass="cotizacion-status"/>
                                     </div>
                                 </div>
                             </div>

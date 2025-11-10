@@ -65,4 +65,8 @@ public class DelegateEmpleado {
     public void deleteEmpleado(Empleado empleado) {
         empleadoDAO.delete(empleado);
     }
+
+    public Empleado findById(Integer id) {
+        return ServiceLocator.getInstanceEmpleadoDAO().findById(id);
+    }
 }
