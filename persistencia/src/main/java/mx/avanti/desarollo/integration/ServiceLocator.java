@@ -21,4 +21,8 @@ public class ServiceLocator {
     public static ArticuloDAO getInstanceArticuloDAO() {
         return new ArticuloDAO(getEntityManager());
     }
+
+    public static RentaDAO getInstanceRentaDAO() {
+        return new RentaDAO(getEntityManager());
+    }
 }
