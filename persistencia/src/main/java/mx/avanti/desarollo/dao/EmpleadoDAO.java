@@ -16,4 +16,8 @@ public class EmpleadoDAO extends AbstractDAO<Empleado> {
     public EntityManager getEntityManager() {
         return entityManager;
     }
+
+    public Empleado findByCorreo(String correo) {
+        return entityManager.find(Empleado.class, correo);
+    }
 }

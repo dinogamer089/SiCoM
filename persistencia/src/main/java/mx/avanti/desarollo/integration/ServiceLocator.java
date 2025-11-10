@@ -9,6 +9,10 @@ public class ServiceLocator {
     private static EmpleadoDAO empleadoDAO;
     private static ArticuloDAO articuloDAO;
 
+    private static ClienteDAO clienteDAO;
+    private static RentaDAO rentaDAO;
+    private static DetallerentaDAO detallerentaDAO;
+
     private static EntityManager getEntityManager() {
         return HibernateUtil.getEntityManager();
     }
@@ -32,5 +36,27 @@ public class ServiceLocator {
             articuloDAO = new ArticuloDAO(getEntityManager());
         }
         return articuloDAO;
+    }
+
+
+    public static ClienteDAO getInstanceClienteDAO() {
+        if (clienteDAO == null) {
+            clienteDAO = new ClienteDAO(getEntityManager());
+        }
+        return clienteDAO;
+    }
+
+    public static RentaDAO getInstanceRentaDAO() {
+        if (rentaDAO == null) {
+            rentaDAO = new RentaDAO(getEntityManager());
+        }
+        return rentaDAO;
+    }
+
+    public static DetallerentaDAO getInstanceDetallerentaDAO() {
+        if (detallerentaDAO == null) {
+            detallerentaDAO = new DetallerentaDAO(getEntityManager());
+        }
+        return detallerentaDAO;
     }
 }
