@@ -2,28 +2,31 @@ package mx.desarollo.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "detallerenta")
 public class Detallerenta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idDetalle", nullable = false)
+    @Column(name = "iddetalle", nullable = false)
     private Integer id;
 
     @NotNull
-    @Column(name = "cantidadRentada", nullable = false)
-    private Integer cantidadRentada;
-
-    @NotNull
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "idArticulo", nullable = false)
-    private Articulo idArticulo;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "idrenta", nullable = false)
+    private Renta idrenta;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "idRenta", nullable = false)
-    private Renta idRenta;
+    @JoinColumn(name = "idarticulo", nullable = false)
+    private Articulo idarticulo;
+
+    @NotNull
+    @Column(name = "cantidad", nullable = false)
+    private Integer cantidad;
 
     public Integer getId() {
         return id;
@@ -33,28 +36,28 @@ public class Detallerenta {
         this.id = id;
     }
 
-    public Integer getCantidadRentada() {
-        return cantidadRentada;
+    public Renta getIdrenta() {
+        return idrenta;
     }
 
-    public void setCantidadRentada(Integer cantidadRentada) {
-        this.cantidadRentada = cantidadRentada;
+    public void setIdrenta(Renta idrenta) {
+        this.idrenta = idrenta;
     }
 
-    public Articulo getIdArticulo() {
-        return idArticulo;
+    public Articulo getIdarticulo() {
+        return idarticulo;
     }
 
-    public void setIdArticulo(Articulo idArticulo) {
-        this.idArticulo = idArticulo;
+    public void setIdarticulo(Articulo idarticulo) {
+        this.idarticulo = idarticulo;
     }
 
-    public Renta getIdRenta() {
-        return idRenta;
+    public Integer getCantidad() {
+        return cantidad;
     }
 
-    public void setIdRenta(Renta idRenta) {
-        this.idRenta = idRenta;
+    public void setCantidad(Integer cantidad) {
+        this.cantidad = cantidad;
     }
 
 }

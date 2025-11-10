@@ -133,6 +133,7 @@
             border-color: #000000 !important;
             color: #000000 !important;
             font-family: "FreightTextCmp Pro Semibold" !important;
+            text-align: center !important;
         }
 
         .custom-datatable .ui-datatable-data tr {
@@ -150,51 +151,6 @@
 
         .custom-datatable .ui-widget-content {
             border: none !important;
-        }
-
-        .boton-centrado {
-            display: flex;
-            justify-content: center;
-            padding-top: 20px;
-            width: 100%;
-        }
-
-        .ui-button.btn {
-            background-color: black !important;
-            color: white !important;
-            border: none !important;
-            border-radius: 0 !important;
-            padding: 10px 20px !important;
-        }
-
-        .ui-confirm-dialog.ui-widget-content,
-        .ui-confirm-dialog .ui-dialog-titlebar {
-            background-color: #3D4435 !important;
-            border-color: #3D4435 !important;
-        }
-
-        .ui-confirm-dialog .ui-dialog-content,
-        .ui-confirm-dialog .ui-dialog-buttonpane {
-            background-color: #3D4435 !important;
-        }
-
-        .ui-confirm-dialog .ui-dialog-title,
-        .ui-confirm-dialog .ui-confirm-dialog-message,
-        .ui-confirm-dialog .ui-icon {
-            color: white !important;
-        }
-
-        .ui-confirm-dialog .ui-confirmdialog-yes,
-        .ui-confirm-dialog .ui-confirmdialog-no.ui-button-flat {
-            background-color: black !important;
-            color: white !important;
-        }
-
-        .ui-confirm-dialog .ui-dialog-titlebar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 15px !important;
         }
 
     </style>
@@ -277,19 +233,6 @@
                             </span>
                         </div>
                     </div>
-
-                    <div class="boton-centrado">
-                        <p:commandButton value="Aprobar"
-                                         styleClass="btn"
-                                         action="#{rentaUI.aprobarCotizacion()}"
-                                         update="@form :growl"
-                                         rendered="#{rentaUI.rentaSeleccionada.estado eq 'Pendiente por aprobar'}">
-
-                            <p:confirm header="Confirmación de Aprobación"
-                                       message="¿Está seguro de que desea aprobar esta cotización y convertirla en Renta?"
-                                       icon="pi pi-exclamation-triangle" />
-                        </p:commandButton>
-                    </div>
                 </div>
 
                     <div class="articulos-section">
@@ -303,34 +246,32 @@
                                          style="border-spacing: 0 10px; border-collapse: separate;">
 
                                 <p:column headerText="Nombre del Artículo">
-                                    <h:outputText value="#{detalle.idArticulo.nombre}" />
+                                    <h:outputText value="#{detalle.idarticulo.nombre}" />
                                 </p:column>
 
-                                <p:column headerText="Tipo">
-                                    <h:outputText value="#{detalle.idArticulo.tipo}" />
+                                <p:column headerText="Categoria">
+                                    <h:outputText value="#{detalle.idarticulo.categoria}" />
                                 </p:column>
-
                                 <p:column headerText="Imagen">
-                                    <h:panelGroup rendered="#{detalle.idArticulo.imagen != null and detalle.idArticulo.imagen.length > 0}">
-                                        <h:graphicImage value="#{articuloUI.getImagenBase64(detalle.idArticulo.imagen)}"
+                                    <h:panelGroup>
+                                        <h:graphicImage value="#{articuloUI.getImagenBase64(detalle.idarticulo)}"
                                                         width="40"
                                                         height="40"
                                                         style="object-fit: cover;"/>
                                     </h:panelGroup>
                                 </p:column>
-
                                 <p:column headerText="Precio Unitario" style="text-align: right;">
-                                    <h:outputText value="#{detalle.idArticulo.precio}">
+                                    <h:outputText value="#{detalle.idarticulo.precio}">
                                         <f:convertNumber type="currency" currencySymbol="$" />
                                     </h:outputText>
                                 </p:column>
 
                                 <p:column headerText="Cantidad Rentada" style="text-align: right;">
-                                    <h:outputText value="#{detalle.cantidadRentada}" />
+                                    <h:outputText value="#{detalle.cantidad}" />
                                 </p:column>
 
                                 <p:column headerText="Subtotal" style="text-align: right;">
-                                    <h:outputText value="#{detalle.cantidadRentada * detalle.idArticulo.precio}">
+                                    <h:outputText value="#{detalle.cantidad * detalle.idarticulo.precio}">
                                         <f:convertNumber type="currency" currencySymbol="$" />
                                     </h:outputText>
                                 </p:column>
@@ -341,10 +282,5 @@
             </div>
         </h:form>
     </div>
-
-    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
-        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
-        <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" />
-    </p:confirmDialog>
 </h:body>
 </html>
