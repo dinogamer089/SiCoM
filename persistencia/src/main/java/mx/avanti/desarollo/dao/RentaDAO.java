@@ -10,7 +10,6 @@ import mx.desarollo.entity.Articulo;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.LocalDateTime;
 import java.util.List;
 
 // DAO para gestionar operaciones de la entidad Renta
@@ -50,8 +49,8 @@ public class RentaDAO extends AbstractDAO<Renta> {
 
             // Crea y configura la renta
             Renta renta = new Renta();
-            LocalDateTime fechaHora = LocalDateTime.of(fecha, hora);
-            renta.setFecha(fechaHora);
+            renta.setFecha(fecha);
+            renta.setHora(hora);
             renta.setCliente(clienteEntity);
 
             // Calcula total y añade detalles
@@ -65,8 +64,13 @@ public class RentaDAO extends AbstractDAO<Renta> {
                 renta.addDetalle(det);
             }
             renta.setTotal(totalRenta);
+            renta.setEstado(estado);
 
             // Persiste la renta
+            // Si BD requiere estado no nulo, ponemos valor por defecto
+            if (renta.getEstado() == null || renta.getEstado().isBlank()) {
+                renta.setEstado("PENDIENTE");
+            }
             em.persist(renta);
             em.flush();
             return renta;
@@ -88,7 +92,8 @@ public class RentaDAO extends AbstractDAO<Renta> {
             // Configura renta actual
             Renta renta = new Renta();
             renta.setCliente(clienteEntity);
-            renta.setFecha(java.time.LocalDateTime.now());
+            renta.setFecha(java.time.LocalDate.now());
+            renta.setHora(java.time.LocalTime.now());
 
             // Procesa detalles y calcula total
             java.math.BigDecimal total = java.math.BigDecimal.ZERO;

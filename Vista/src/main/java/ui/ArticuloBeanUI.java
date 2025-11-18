@@ -42,8 +42,15 @@ public class ArticuloBeanUI implements Serializable {
     }
 
     public void seleccionar(Articulo art) {
+        if (art == null) {
+            art = this.seleccionada;
+        }
         this.seleccionada = art;
-        System.out.println("Seleccionada: " + art.getNombre());
+        if (art != null) {
+            System.out.println("Seleccionada: " + art.getNombre());
+        } else {
+            System.out.println("Seleccionada: null");
+        }
     }
 
     public Articulo getSeleccionada() {
@@ -84,7 +91,7 @@ public class ArticuloBeanUI implements Serializable {
                 return;
             }
 
-            if (nuevoArticulo.getCantidad() == null || nuevoArticulo.getCantidad() <= 0) {
+            if (nuevoArticulo.getUnidades() == null || nuevoArticulo.getUnidades() <= 0) {
                 mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "La cantidad debe ser mayor a 0");
                 return;
             }
