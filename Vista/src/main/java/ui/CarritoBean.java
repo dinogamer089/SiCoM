@@ -81,7 +81,7 @@ public class CarritoBean implements Serializable {
                         catalogoSimulado.add(art);
                         System.out.println("Artículo agregado al catálogo simulado desde BD: "
                                 + art.getIdarticulo() + " - " + art.getNombre()
-                                + " (stock=" + art.getCantidad() + ")");
+                                + " (stock=" + art.getUnidades() + ")");
                         break;
                     }
                 }
@@ -117,7 +117,7 @@ public class CarritoBean implements Serializable {
                 boolean added = carrito.agregarArticulo(art);
                 if (added) {
                     System.out.println("Artículo id=" + idArticulo
-                            + " agregado al carrito (stock=" + art.getCantidad() + ").");
+                            + " agregado al carrito (stock=" + art.getUnidades() + ").");
                 } else {
                     System.out.println("No se pudo agregar al carrito el artículo id=" + idArticulo
                             + " (posible falta de stock).");

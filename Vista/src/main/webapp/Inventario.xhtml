@@ -275,7 +275,7 @@
 
                 <p:column headerText="ID">#{art.idarticulo}</p:column>
                 <p:column headerText="Nombre">#{art.nombre}</p:column>
-                <p:column headerText="Cantidad">#{art.cantidad}</p:column>
+                <p:column headerText="Cantidad">#{art.unidades}</p:column>
                 <p:column headerText="Precio">#{art.precio}$</p:column>
                 <p:column headerText="Tipo">#{art.tipo}</p:column>
                 <p:column headerText="Imágenes">
@@ -327,7 +327,7 @@
 
                         <h:outputLabel value="Cantidad:" for="cantidad"/>
                         <p:inputNumber id="cantidad"
-                                       value="#{articuloUI.nuevoArticulo.cantidad}"
+                                       value="#{articuloUI.nuevoArticulo.unidades}"
                                        decimalPlaces="0"
                                        required="true"
                                        requiredMessage="La cantidad es obligatoria"/>
@@ -388,7 +388,7 @@
                     <p:inputText id="precio" value="#{articuloUI.seleccionada.precio}" style="width:180px;" />
 
                     <h:outputLabel for="cantidad" value="Cantidad" />
-                    <p:inputText id="cantidad" value="#{articuloUI.seleccionada.cantidad}" style="width:180px;" />
+                    <p:inputText id="cantidad" value="#{articuloUI.seleccionada.unidades}" style="width:180px;" />
 
                     <h:outputLabel for="tipo" value="Tipo" />
                     <p:inputText id="tipo" value="#{articuloUI.seleccionada.tipo}" style="width:180px;" />

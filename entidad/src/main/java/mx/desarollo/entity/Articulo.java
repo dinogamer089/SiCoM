@@ -26,8 +26,8 @@ public class Articulo implements Serializable {
     private BigDecimal precio;
 
     @NotNull
-    @Column(name = "cantidad", nullable = false)
-    private Integer cantidad;
+    @Column(name = "unidades", nullable = false)
+    private Integer unidades;
 
     @Size(max = 45)
     @Column(name = "tipo", length = 45)
@@ -48,8 +48,8 @@ public class Articulo implements Serializable {
     public BigDecimal getPrecio() { return precio; }
     public void setPrecio(BigDecimal precio) { this.precio = precio; }
 
-    public Integer getCantidad() { return cantidad; }
-    public void setCantidad(Integer cantidad) { this.cantidad = cantidad; }
+    public Integer getUnidades() { return unidades; }
+    public void setUnidades(Integer unidades) { this.unidades = unidades; }
 
     public String getTipo() { return tipo; }
     public void setTipo(String tipo) { this.tipo = tipo; }
