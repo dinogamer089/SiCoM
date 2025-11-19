@@ -53,19 +53,11 @@
     </context-param>
 
     <welcome-file-list>
-        <welcome-file>alta.xhtml</welcome-file>
+        <welcome-file>AutenticacionUsuario.xhtml</welcome-file>
     </welcome-file-list>
 
     <listener>
         <listener-class>config.UploadInitListener</listener-class>
     </listener>
 
-  <session-config>
-    <session-timeout>
-      30
-    </session-timeout>
-  </session-config>
-  <welcome-file-list>
-    <welcome-file>Cotizaciones.xhtml</welcome-file>
-  </welcome-file-list>
 </web-app>

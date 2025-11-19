@@ -19,7 +19,7 @@ public class RentaDAO extends AbstractDAO<Renta> {
         return entityManager
                 .createQuery("SELECT r FROM Renta r " +
                         "LEFT JOIN FETCH r.detallesRenta dr " +
-                        "LEFT JOIN FETCH dr.idArticulo " +
+                        "LEFT JOIN FETCH dr.idarticulo " +
                         "WHERE r.estado = 'Pendiente por aprobar' " +
                         "ORDER BY r.id", Renta.class)
                 .getResultList();
@@ -30,7 +30,7 @@ public class RentaDAO extends AbstractDAO<Renta> {
             return entityManager.createQuery("SELECT r FROM Renta r " +
                             "LEFT JOIN FETCH r.idCliente " +
                             "LEFT JOIN FETCH r.detallesRenta dr " +
-                            "LEFT JOIN FETCH dr.idArticulo " +
+                            "LEFT JOIN FETCH dr.idarticulo " +
                             "WHERE r.id = :id", Renta.class)
                     .setParameter("id", idRenta)
                     .getSingleResult();

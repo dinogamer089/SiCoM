@@ -3,9 +3,6 @@
   <component name="WebContextManager">
     <option name="state">
       <map>
-        <entry key="file://$PROJECT_DIR$/Vista/src/main/webapp/AdminEmpleados.xhtml" value="file://$PROJECT_DIR$/Vista/src/main/webapp" />
-        <entry key="file://$PROJECT_DIR$/Vista/src/main/webapp/WEB-INF/AdminEmpleados.xhtml" value="file://$PROJECT_DIR$/Vista/src/main/webapp/WEB-INF" />
-        <entry key="file://$PROJECT_DIR$/Vista/src/main/webapp/principalAdministrador.xhtml" value="file://$PROJECT_DIR$/Vista/src/main/webapp" />
         <entry key="file://$PROJECT_DIR$/Vista/src/main/webapp" value="file://$PROJECT_DIR$/Vista/src/main/webapp" />
       </map>
     </option>

@@ -12,14 +12,16 @@
         <class>mx.desarollo.entity.Empleado</class>
         <class>mx.desarollo.entity.Imagen</class>
         <class>mx.desarollo.entity.Articulo</class>
-        <class>mx.desarollo.entity.Imagen</class>
+        <class>mx.desarollo.entity.Renta</class>
+        <class>mx.desarollo.entity.Detallerenta</class>
+        <class>mx.desarollo.entity.Cliente</class>
 
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3307/desarrollo?useSSL=false&amp;serverTimezone=UTC"/>
             <property name="jakarta.persistence.jdbc.user" value="root"/>
-            <property name="jakarta.persistence.jdbc.password" value="root"/>
+            <property name="jakarta.persistence.jdbc.password" value="dino0899"/>
 
 
             <property name="hibernate.show_sql" value="true"/>
