@@ -12,6 +12,12 @@
     <title>Gestion de Cotizaciones</title>
     <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{rentaUI.obtenerTodasLasCotizaciones}" />
+    </f:metadata>
+
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style type="text/css">
         @font-face {
             font-family: "Minerva Modern";
@@ -122,14 +128,13 @@
             font-size: 14px;
             font-style: italic;
             margin-top: 5px;
+            color: lightblue;
         }
 
         .icon-bill {
             font-size: 40px;
             margin-right: 15px;
         }
-
-        .status-encotizacion { color: lightblue; }
 
     </style>
 </h:head>
@@ -141,7 +146,7 @@
         </div>
         <div class="topbar-center">
             <a href="#"> EVENTOS CAMPESTRE</a><br />
-            <a href="Inventario.xhtml">Inventario</a>
+            <a href="alta.xhtml">Inventario</a>
             <a href="Articulos.xhtml">Artículos</a>
             <a href="Cotizaciones.xhtml">Cotizaciones</a>
             <a href="Rentas.xhtml">Rentas</a>
@@ -173,8 +178,7 @@
                                         <h:outputText value="#{cot.idCliente.telefono}" style="font-size: 14px;"/>
 
                                         <h:outputText value="#{cot.estado}"
-                                                      styleClass="cotizacion-status
-                                  #{cot.estado eq 'Pendiente por aprobar' ? 'status-encotizacion' : ''}"/>
+                                                      styleClass="cotizacion-status"/>
                                     </div>
                                 </div>
                             </div>
