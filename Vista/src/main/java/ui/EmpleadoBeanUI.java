@@ -26,15 +26,13 @@ public class EmpleadoBeanUI implements Serializable
 
     private boolean operacionExitosa = false;
     private FacadeEmpleado facadeEmpleado;
-/*
-    // --- INICIO: init ---
+
     @PostConstruct
     public void init() {
         facadeEmpleado = ServiceFacadeLocator.getInstanceFacadeEmpleado();
         cargarEmpleados();
         this.nuevoEmpleado = new Empleado();
-    } */
-    // --- FIN: init ---
+    }
 
     // --- INICIO: cargarEmpleados ---
     private void cargarEmpleados() {
