@@ -33,4 +33,9 @@ public class FacadeArticulo {
     public void eliminarArticuloPorId(Integer id) {
         delegateArticulo.deleteArticuloById(id);
     }
+
+    // Obtener por ID
+    public java.util.Optional<Articulo> obtenerArticuloPorId(Integer id) {
+        return delegateArticulo.findById(id);
+    }
 }
