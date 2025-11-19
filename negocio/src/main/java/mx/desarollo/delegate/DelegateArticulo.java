@@ -25,4 +25,9 @@ public class DelegateArticulo {
         var dao = ServiceLocator.getInstanceArticuloDAO();
         dao.find(id).ifPresent(dao::delete);
     }
+
+    // Obtener por ID
+    public java.util.Optional<Articulo> findById(Integer id) {
+        return ServiceLocator.getInstanceArticuloDAO().find(id);
+    }
 }

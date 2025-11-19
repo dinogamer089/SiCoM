@@ -21,4 +21,8 @@ public class ServiceLocator {
     public static ArticuloDAO getInstanceArticuloDAO() {
         return new ArticuloDAO(getEntityManager());
     }
+
+    public static CombinacionMesaDAO getInstanceCombinacionMesaDAO() {
+        return new CombinacionMesaDAO(getEntityManager());
+    }
 }
