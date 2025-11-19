@@ -166,6 +166,7 @@
             border: none !important;
             border-radius: 0 !important;
             padding: 10px 20px !important;
+            font-family: 'Minerva Modern', serif;
         }
 
         .ui-confirm-dialog.ui-widget-content,
@@ -317,17 +318,17 @@
                                                         style="object-fit: cover;"/>
                                     </h:panelGroup>
                                 </p:column>
-                                <p:column headerText="Precio Unitario" style="text-align: right;">
+                                <p:column headerText="Precio Unitario">
                                     <h:outputText value="#{detalle.idarticulo.precio}">
                                         <f:convertNumber type="currency" currencySymbol="$" />
                                     </h:outputText>
                                 </p:column>
 
-                                <p:column headerText="Cantidad Rentada" style="text-align: right;">
+                                <p:column headerText="Cantidad Rentada">
                                     <h:outputText value="#{detalle.cantidad}" />
                                 </p:column>
 
-                                <p:column headerText="Subtotal" style="text-align: right;">
+                                <p:column headerText="Subtotal">
                                     <h:outputText value="#{detalle.cantidad * detalle.idarticulo.precio}">
                                         <f:convertNumber type="currency" currencySymbol="$" />
                                     </h:outputText>
