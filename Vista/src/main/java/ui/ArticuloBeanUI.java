@@ -36,7 +36,6 @@ public class ArticuloBeanUI implements Serializable {
     public ArticuloBeanUI() {
         articuloHelper = new ArticuloHelper();
     }
-    private Articulo seleccionada;
 
     @PostConstruct
     public void init() {
