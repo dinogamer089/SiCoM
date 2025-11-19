@@ -133,6 +133,7 @@
             border-color: #000000 !important;
             color: #000000 !important;
             font-family: "FreightTextCmp Pro Semibold" !important;
+            text-align: center !important;
         }
 
         .custom-datatable .ui-datatable-data tr {
@@ -165,6 +166,7 @@
             border: none !important;
             border-radius: 0 !important;
             padding: 10px 20px !important;
+            font-family: 'Minerva Modern', serif;
         }
 
         .ui-confirm-dialog.ui-widget-content,
@@ -277,7 +279,6 @@
                             </span>
                         </div>
                     </div>
-
                     <div class="boton-centrado">
                         <p:commandButton value="Aprobar"
                                          styleClass="btn"
@@ -303,34 +304,32 @@
                                          style="border-spacing: 0 10px; border-collapse: separate;">
 
                                 <p:column headerText="Nombre del Artículo">
-                                    <h:outputText value="#{detalle.idArticulo.nombre}" />
+                                    <h:outputText value="#{detalle.idarticulo.nombre}" />
                                 </p:column>
 
-                                <p:column headerText="Tipo">
-                                    <h:outputText value="#{detalle.idArticulo.tipo}" />
+                                <p:column headerText="Categoria">
+                                    <h:outputText value="#{detalle.idarticulo.categoria}" />
                                 </p:column>
-
                                 <p:column headerText="Imagen">
-                                    <h:panelGroup rendered="#{detalle.idArticulo.imagen != null and detalle.idArticulo.imagen.length > 0}">
-                                        <h:graphicImage value="#{articuloUI.getImagenBase64(detalle.idArticulo.imagen)}"
+                                    <h:panelGroup>
+                                        <h:graphicImage value="#{articuloUI.getImagenBase64(detalle.idarticulo)}"
                                                         width="40"
                                                         height="40"
                                                         style="object-fit: cover;"/>
                                     </h:panelGroup>
                                 </p:column>
-
-                                <p:column headerText="Precio Unitario" style="text-align: right;">
-                                    <h:outputText value="#{detalle.idArticulo.precio}">
+                                <p:column headerText="Precio Unitario">
+                                    <h:outputText value="#{detalle.idarticulo.precio}">
                                         <f:convertNumber type="currency" currencySymbol="$" />
                                     </h:outputText>
                                 </p:column>
 
-                                <p:column headerText="Cantidad Rentada" style="text-align: right;">
-                                    <h:outputText value="#{detalle.cantidadRentada}" />
+                                <p:column headerText="Cantidad Rentada">
+                                    <h:outputText value="#{detalle.cantidad}" />
                                 </p:column>
 
-                                <p:column headerText="Subtotal" style="text-align: right;">
-                                    <h:outputText value="#{detalle.cantidadRentada * detalle.idArticulo.precio}">
+                                <p:column headerText="Subtotal">
+                                    <h:outputText value="#{detalle.cantidad * detalle.idarticulo.precio}">
                                         <f:convertNumber type="currency" currencySymbol="$" />
                                     </h:outputText>
                                 </p:column>
@@ -339,12 +338,11 @@
                         </div>
                     </div>
             </div>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+                <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" />
+            </p:confirmDialog>
         </h:form>
     </div>
-
-    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
-        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
-        <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" />
-    </p:confirmDialog>
 </h:body>
 </html>

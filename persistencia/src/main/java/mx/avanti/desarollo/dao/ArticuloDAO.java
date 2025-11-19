@@ -24,16 +24,6 @@ public class ArticuloDAO extends AbstractDAO<Articulo> {
         this.em = HibernateUtil.getEntityManager();
     }
 
-    public void saveWithImage(Articulo articulo, Imagen imagen) {
-        execute(em -> {
-            em.persist(imagen);
-            em.flush();
-            articulo.setImagen(imagen);
-            em.persist(articulo);
-            return null;
-        });
-    }
-
     @Override
     protected EntityManager getEntityManager() {
         return em;
