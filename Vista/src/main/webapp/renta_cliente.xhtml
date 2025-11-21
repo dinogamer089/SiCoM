@@ -64,7 +64,7 @@
         /* Catálogo 3 columnas */
         .grid-3{ display:grid; grid-template-columns: 250px 1fr 260px; gap:22px; }
 
-        /* === NUEVO: sidebar de catálogo en forma de cuadricula === */
+        /* === Sidebar catálogo === */
         .catalog-left{
             max-height:72vh;
             overflow-y:auto;
@@ -79,7 +79,6 @@
             margin-bottom:8px;
         }
 
-        /* cuadricula interna: mínimo 110px, se rellena sola */
         .catalog-grid{
             display:grid;
             grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
@@ -125,6 +124,27 @@
             .footer{ grid-template-columns:1fr; text-align:center; }
             .footer__right{ text-align:center; }
             .catalog-left{ max-height:none; overflow:visible; }
+        }
+
+        #formRenta .ui-selectonemenu,
+        #formRenta .ui-selectonemenu .ui-selectonemenu-trigger,
+        #formRenta .ui-selectonemenu .ui-selectonemenu-label{
+            background-color:#ffffff !important;
+            border:1px solid #ccc !important;
+        }
+        #formRenta .ui-selectonemenu-panel,
+        #formRenta .ui-selectonemenu-panel .ui-selectonemenu-items{
+            background-color:#ffffff !important;
+        }
+        #formRenta .ui-selectonemenu-panel .ui-selectonemenu-item{
+            background-color:#ffffff !important;
+            color:#000000 !important;
+        }
+        #formRenta .ui-selectonemenu-panel .ui-selectonemenu-item:hover{
+            background-color:#f0f0f0 !important;
+        }
+        #formRenta .ui-selectonemenu{
+            width:100%;
         }
         /*]]>*/
     </style>
@@ -224,9 +244,15 @@
 
                     <p:messages id="msgs" showDetail="true" closable="true" />
 
+                    <!-- RemoteCommand para notificar mesa seleccionada al bean de combinaciones -->
+                    <p:remoteCommand name="rcMesaCombinacion"
+                                     actionListener="#{combinacionMesaClienteUI.onMesaSeleccion}"
+                                     process="@this"
+                                     update=":formRenta:panelDerecha :formRenta:preview" />
+
                     <div class="grid-3" style="margin-top:18px;">
 
-                        <!-- IZQUIERDA: Mobiliario en cuadricula -->
+                        <!-- IZQUIERDA: Mobiliario -->
                         <div class="catalog-left">
                             <h3 style="margin:0 0 10px;">Mobiliario</h3>
 
@@ -238,6 +264,7 @@
                                         <p:commandLink process="@this"
                                                        update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
                                                        actionListener="#{articuloCatalogoUI.ver(mR)}"
+                                                       oncomplete="rcMesaCombinacion([{name:'mesaId', value:'#{mR.id}'}]);"
                                                        styleClass="catalog-item">
                                             <h:panelGroup rendered="#{not empty mR.imagenDataUrl}">
                                                 <h:graphicImage value="#{mR.imagenDataUrl}" alt="#{mR.nombre}"/>
@@ -259,6 +286,7 @@
                                         <p:commandLink process="@this"
                                                        update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
                                                        actionListener="#{articuloCatalogoUI.ver(mRec)}"
+                                                       oncomplete="rcMesaCombinacion([{name:'mesaId', value:'#{mRec.id}'}]);"
                                                        styleClass="catalog-item">
                                             <h:panelGroup rendered="#{not empty mRec.imagenDataUrl}">
                                                 <h:graphicImage value="#{mRec.imagenDataUrl}" alt="#{mRec.nombre}"/>
@@ -399,18 +427,28 @@
                             </div>
                         </div>
 
-                        <!-- CENTRO -->
+                        <!-- CENTRO: Vista previa -->
                         <div>
                             <p:panel header="Vista previa" styleClass="panel-shadow">
                                 <h:panelGroup id="preview">
-                                    <h:panelGroup rendered="#{not empty articuloCatalogoUI.seleccionado and not empty articuloCatalogoUI.seleccionado.imagenDataUrl}">
-                                        <h:graphicImage value="#{articuloCatalogoUI.seleccionado.imagenDataUrl}"
+
+                                    <!-- Si hay combinación seleccionada, se muestra su imagen -->
+                                    <h:panelGroup rendered="#{not empty combinacionMesaClienteUI.imagenPreview}">
+                                        <h:graphicImage value="#{combinacionMesaClienteUI.imagenPreview}"
                                                         style="width:100%;min-height:430px;background:#e5e5e5;border-radius:6px;object-fit:contain;display:block"/>
                                     </h:panelGroup>
-                                    <h:panelGroup rendered="#{empty articuloCatalogoUI.seleccionado or empty articuloCatalogoUI.seleccionado.imagenDataUrl}">
-                                        <div style="width:100%;min-height:430px;background:#e5e5e5;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#666;">
-                                            Selecciona un artículo para previsualizarlo
-                                        </div>
+
+                                    <!-- Si no hay combinación, se muestra la imagen del artículo -->
+                                    <h:panelGroup rendered="#{empty combinacionMesaClienteUI.imagenPreview}">
+                                        <h:panelGroup rendered="#{not empty articuloCatalogoUI.seleccionado and not empty articuloCatalogoUI.seleccionado.imagenDataUrl}">
+                                            <h:graphicImage value="#{articuloCatalogoUI.seleccionado.imagenDataUrl}"
+                                                            style="width:100%;min-height:430px;background:#e5e5e5;border-radius:6px;object-fit:contain;display:block"/>
+                                        </h:panelGroup>
+                                        <h:panelGroup rendered="#{empty articuloCatalogoUI.seleccionado or empty articuloCatalogoUI.seleccionado.imagenDataUrl}">
+                                            <div style="width:100%;min-height:430px;background:#e5e5e5;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#666;">
+                                                Selecciona un artículo para previsualizarlo
+                                            </div>
+                                        </h:panelGroup>
                                     </h:panelGroup>
 
                                     <h:panelGroup rendered="#{not empty articuloCatalogoUI.seleccionado}">
@@ -451,12 +489,90 @@
                             </p:outputPanel>
                         </div>
 
-                        <!-- DERECHA -->
+                        <!-- DERECHA: Textiles + combinación -->
                         <p:outputPanel id="panelDerecha">
                             <p:panel header="Textiles" styleClass="panel-shadow">
-                                <div style="font-size:.9rem;color:#666;">
-                                    Esta sección se habilitará en la siguiente US para combinar textiles con mesas.
-                                </div>
+
+                                <!-- Si no hay mesa seleccionada -->
+                                <h:panelGroup rendered="#{empty combinacionMesaClienteUI.mesaId}">
+                                    <div style="font-size:.9rem;color:#666;">
+                                        Selecciona una <strong>mesa</strong> del catálogo (izquierda) para ver
+                                        los manteles y extras disponibles.
+                                    </div>
+                                </h:panelGroup>
+
+                                <!-- Controles cuando ya hay mesa -->
+                                <h:panelGroup rendered="#{not empty combinacionMesaClienteUI.mesaId}">
+
+                                    <!-- Mantel -->
+                                    <h:panelGroup layout="block" style="margin-bottom:10px;">
+                                        <p:outputLabel for="mantelSel" value="Mantel:"
+                                                       style="display:block;margin-bottom:4px;" />
+                                        <p:selectOneMenu id="mantelSel"
+                                                         value="#{combinacionMesaClienteUI.mantelId}">
+                                            <f:selectItem itemLabel="-- Seleccione mantel --" itemValue="#{null}" />
+                                            <f:selectItems value="#{combinacionMesaClienteUI.mantelesDisponibles}"
+                                                           var="mt"
+                                                           itemLabel="#{mt.nombre}"
+                                                           itemValue="#{mt.id}" />
+                                            <p:ajax process="@this"
+                                                    listener="#{combinacionMesaClienteUI.onMantelChange}"
+                                                    update=":formRenta:panelDerecha :formRenta:preview" />
+                                        </p:selectOneMenu>
+                                    </h:panelGroup>
+
+                                    <!-- Camino -->
+                                    <h:panelGroup layout="block" style="margin-bottom:10px;">
+                                        <p:outputLabel for="caminoSel"
+                                                       value="Camino (opcional):"
+                                                       style="display:block;margin-bottom:4px;" />
+                                        <p:selectOneMenu id="caminoSel"
+                                                         value="#{combinacionMesaClienteUI.caminoId}"
+                                                         disabled="#{empty combinacionMesaClienteUI.mantelId or not empty combinacionMesaClienteUI.cubreId}">
+                                            <f:selectItem itemLabel="-- Ninguno --" itemValue="#{null}" />
+                                            <f:selectItems value="#{combinacionMesaClienteUI.caminosDisponibles}"
+                                                           var="cm"
+                                                           itemLabel="#{cm.nombre}"
+                                                           itemValue="#{cm.id}" />
+                                            <p:ajax process="@this"
+                                                    listener="#{combinacionMesaClienteUI.onCaminoChange}"
+                                                    update=":formRenta:panelDerecha :formRenta:preview" />
+                                        </p:selectOneMenu>
+                                    </h:panelGroup>
+
+                                    <!-- Cubre -->
+                                    <h:panelGroup layout="block">
+                                        <p:outputLabel for="cubreSel"
+                                                       value="Cubremantel (opcional):"
+                                                       style="display:block;margin-bottom:4px;" />
+                                        <p:selectOneMenu id="cubreSel"
+                                                         value="#{combinacionMesaClienteUI.cubreId}"
+                                                         disabled="#{empty combinacionMesaClienteUI.mantelId or not empty combinacionMesaClienteUI.caminoId}">
+                                            <f:selectItem itemLabel="-- Ninguno --" itemValue="#{null}" />
+                                            <f:selectItems value="#{combinacionMesaClienteUI.cubresDisponibles}"
+                                                           var="cb"
+                                                           itemLabel="#{cb.nombre}"
+                                                           itemValue="#{cb.id}" />
+                                            <p:ajax process="@this"
+                                                    listener="#{combinacionMesaClienteUI.onCubreChange}"
+                                                    update=":formRenta:panelDerecha :formRenta:preview" />
+                                        </p:selectOneMenu>
+                                    </h:panelGroup>
+
+                                    <h:panelGroup rendered="#{empty combinacionMesaClienteUI.combinacionSeleccionada}">
+                                        <div style="font-size:.8rem;color:#999;margin-top:8px;">
+                                            Elige un mantel y opcionalmente <strong>un solo extra</strong>
+                                            (camino o cubremantel) para ver si existe una combinación registrada.
+                                        </div>
+                                    </h:panelGroup>
+
+                                    <h:panelGroup rendered="#{not empty combinacionMesaClienteUI.combinacionSeleccionada}">
+                                        <div style="font-size:.8rem;color:#333;margin-top:8px;">
+                                            Mostrando la <strong>combinación registrada</strong> para la mesa seleccionada.
+                                        </div>
+                                    </h:panelGroup>
+                                </h:panelGroup>
+
                             </p:panel>
                         </p:outputPanel>
 

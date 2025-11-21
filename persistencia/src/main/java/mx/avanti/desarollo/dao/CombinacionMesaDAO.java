@@ -13,21 +13,41 @@ public class CombinacionMesaDAO extends AbstractDAO<CombinacionMesa> {
 
     private final EntityManager em;
 
+    /**
+     * Constructor que recibe un EntityManager para operar sobre CombinacionMesa.
+     * @Throws Si el EntityManager proporcionado es nulo o invalido.
+     * @Params Objeto de tipo EntityManager em
+     */
     public CombinacionMesaDAO(EntityManager em) {
         super(CombinacionMesa.class);
         this.em = em;
     }
 
+    /**
+     * Constructor por defecto que obtiene el EntityManager desde HibernateUtil.
+     * @Throws Si no se puede obtener un EntityManager valido.
+     */
     public CombinacionMesaDAO() {
         super(CombinacionMesa.class);
         this.em = HibernateUtil.getEntityManager();
     }
 
+    /**
+     * Metodo protegido para obtener el EntityManager interno.
+     * @return El EntityManager asociado al DAO.
+     */
     @Override
     protected EntityManager getEntityManager() {
         return em;
     }
 
+    /**
+     * Metodo para buscar una combinacion de mesa y textiles por sus IDs usando JPQL.
+     * Incluye fetch de imagen, mesa y manteles para evitar problemas de lazy loading.
+     * @Throws Si la base de datos rechaza la consulta o hay error al ejecutar la query.
+     * @Params Objetos de tipo Integer idMesa, Integer idMantel, Integer idCamino, Integer idCubre
+     * @return Un Optional con la combinacion encontrada o vacio si no existe resultado.
+     */
     public Optional<CombinacionMesa> buscarPorMesaYTextiles(Integer idMesa, Integer idMantel, Integer idCamino, Integer idCubre) {
         StringBuilder jpql = new StringBuilder();
         jpql.append("SELECT c FROM CombinacionMesa c ")
@@ -60,6 +80,12 @@ public class CombinacionMesaDAO extends AbstractDAO<CombinacionMesa> {
         });
     }
 
+    /**
+     * Metodo para listar todas las combinaciones de mesa con sus relaciones cargadas.
+     * Hace LEFT JOIN FETCH con mesa, mantel, camino, cubre e imagen para optimizar las consultas.
+     * @Throws Si la base de datos rechaza la consulta o falla la ejecucion de la query.
+     * @return Una lista con todas las combinaciones de mesa ordenadas por ID.
+     */
     public List<CombinacionMesa> listarTodas() {
         final String jpql = "SELECT c FROM CombinacionMesa c " +
                 "LEFT JOIN FETCH c.mesa " +
@@ -71,6 +97,12 @@ public class CombinacionMesaDAO extends AbstractDAO<CombinacionMesa> {
         return execute(em -> em.createQuery(jpql, CombinacionMesa.class).getResultList());
     }
 
+    /**
+     * Metodo para guardar una combinacion de mesa junto con su imagen asociada.
+     * Primero persiste la imagen si es nueva y luego referencia los articulos por ID.
+     * @Throws Si la base de datos rechaza la transaccion o no se pueden persistir las entidades.
+     * @Params Objeto de tipo CombinacionMesa combo
+     */
     public void saveWithImage(CombinacionMesa combo) {
         execute(e -> {
             if (combo.getImagen() != null && combo.getImagen().getId() == null) {
@@ -90,6 +122,12 @@ public class CombinacionMesaDAO extends AbstractDAO<CombinacionMesa> {
         });
     }
 
+    /**
+     * Metodo para eliminar una combinacion de mesa por su ID.
+     * Si la combinacion tiene una imagen asociada, tambien se elimina la imagen.
+     * @Throws Si la base de datos rechaza la eliminacion o la transaccion falla.
+     * @Params Objeto de tipo Integer id
+     */
     public void deleteById(Integer id) {
         execute(e -> {
             // Obtener id de imagen asociado antes de eliminar la combinacion

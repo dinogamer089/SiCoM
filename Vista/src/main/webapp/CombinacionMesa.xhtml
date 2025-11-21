@@ -11,6 +11,7 @@
     <title>Combinación de Mesa</title>
     <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <style type="text/css">
         @font-face {
             font-family: "Minerva Modern";
@@ -18,84 +19,208 @@
             font-weight: bold;
             font-style: normal;
         }
-        body, html { margin:0; padding:0; height:100%; background:#E7D9CB; }
-        .topbar { background-color:#3D4435; color:#C2C8CC; display:flex; justify-content:space-between; align-items:center; padding:10px 20px; }
-        .topbar-left, .topbar-right { display:flex; align-items:center; gap:10px; }
-        .topbar-center { text-align:center; flex-grow:1; font-style:italic; font-size:22px; }
-        .topbar a { text-decoration:none; color:#C2C8CC; font-size:16px; margin:0 5px; font-style:italic; }
-        .topbar a:hover { text-decoration:underline; }
-        .topbar img { width:20px; height:20px; }
-        .content { padding:20px 60px; font-family:'Minerva Modern', serif; }
-        .title { font-size:26px; margin-bottom:20px; color:#000; }
-        .button-bar { display:flex; gap:10px; margin-bottom:25px; }
-        .btn { background-color:black; color:white; border:none; padding:10px 20px; font-size:15px; cursor:pointer; transition:.2s; font-family:'Minerva Modern', serif; }
-        .btn:hover { background-color:#444; }
-        .table-container { background-color:white; border:1px solid #ccc; max-height:350px; overflow-y:auto; border-radius:5px; }
-        .inventory-table { width:100%; border-collapse:collapse; }
-        .inventory-table thead th { background-color:black; color:white; padding:10px; position:sticky; top:0; z-index:2; }
-        .inventory-table tbody td { background-color:#e9e9e9; text-align:center; padding:8px; }
-        .inventory-table tbody tr:nth-child(even) td { background-color:#f3f3f3; }
-        .inventory-table tbody tr:hover td { background-color:#dcdcdc; }
-        .ui-datatable thead th, .inventory-table thead th {
-            background-color:black !important;
-            color:white !important;
-            text-align:center !important;
-            font-weight:bold !important;
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: #E7D9CB;
+            font-family: "FreightText Pro", serif;
         }
-        .ui-datatable tbody td, .inventory-table tbody td {
-            color:black !important;
-            font-weight:bold !important;
+
+        /* ---------- TOPBAR ---------- */
+        .topbar {
+            background-color: #3D4435;
+            color: #C2C8CC;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
         }
+        .topbar-left, .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .topbar-center {
+            text-align: center;
+            flex-grow: 1;
+            font-style: italic;
+            font-size: 22px;
+        }
+        .topbar a {
+            text-decoration: none;
+            color: #C2C8CC;
+            font-size: 16px;
+            margin: 0 5px;
+            font-style: italic;
+        }
+        .topbar a:hover {
+            text-decoration: underline;
+        }
+        .topbar img,
+        .topbar .topbar-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .content {
+            padding: 30px 60px;
+        }
+        .title {
+            font-family: "Minerva Modern", serif;
+            font-size: 1.6em;
+            margin: 0 0 20px 0;
+        }
+
+        /* ---------- BOTONERA SUPERIOR ---------- */
+        .button-bar {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background-color: #000000 !important;
+            color: #FFFFFF !important;
+            font-family: "FreightText Pro", serif;
+            border: none !important;
+            padding: 10px 25px !important;
+            cursor: pointer;
+            font-size: 1em !important;
+            transition: 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            box-sizing: border-box;
+            line-height: 1.5;
+            border-radius: 0 !important;
+        }
+        .btn:hover {
+            opacity: 0.8;
+        }
+
+        /* ---------- TABLA COMBINACIONES ---------- */
+        .table-container {
+            background-color: white;
+            border: 1px solid #ccc;
+            max-height: 350px;
+            overflow-y: auto;
+            border-radius: 5px;
+        }
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .inventory-table thead th {
+            background-color: black;
+            color: white;
+            padding: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        .inventory-table tbody td {
+            background-color: #e9e9e9;
+            text-align: center;
+            padding: 8px;
+        }
+        .inventory-table tbody tr:nth-child(even) td {
+            background-color: #f3f3f3;
+        }
+        .inventory-table tbody tr:hover td {
+            background-color: #dcdcdc;
+        }
+
+        .ui-datatable thead th,
+        .inventory-table thead th {
+            background-color: black !important;
+            color: white !important;
+            text-align: center !important;
+            font-weight: bold !important;
+        }
+
+        .ui-datatable tbody td,
+        .inventory-table tbody td {
+            color: black !important;
+            font-weight: bold !important;
+        }
+
         .ui-datatable .ui-state-highlight,
         .ui-datatable .ui-state-highlight td,
         .inventory-table .ui-state-highlight td {
-            background-color:#b7e6b3 !important;
+            background-color: #b7e6b3 !important;
         }
-        .ui-dialog .ui-dialog-content { background-color:#E7D9CB !important; padding:20px !important; }
-        .ui-dialog .ui-dialog-titlebar { background-color:#3D4435 !important; color:white !important; }
-        .ui-panelgrid td { padding:8px !important; }
-        .ui-selectonemenu,
-        .ui-selectonemenu .ui-selectonemenu-trigger,
-        .ui-selectonemenu .ui-selectonemenu-label {
-            background-color:white !important;
-            border:1px solid #ccc !important;
+
+        /* ---------- DIALOGOS ---------- */
+        .ui-dialog .ui-dialog-content {
+            background-color: #E7D9CB !important;
+            padding: 20px !important;
         }
-        .ui-inputtext, .ui-inputnumber input {
-            background-color:white !important;
-            border:1px solid #ccc !important;
-            padding:5px !important;
+        .ui-dialog .ui-dialog-titlebar {
+            background-color: #3D4435 !important;
+            color: #FFFFFF !important;
         }
-        .ui-fileupload-simple { background-color:white !important; }
-        .ui-selectonemenu-panel,
-        .ui-selectonemenu-panel .ui-selectonemenu-items {
-            background-color:white !important;
+
+        /* ESTILOS NUEVOS PARA FORMULARIO MAS COMPACTO */
+        .form-compacto {
+            padding: 0 5px;
         }
-        .ui-selectonemenu-panel .ui-selectonemenu-item {
-            background-color:white !important;
-            color:black !important;
+
+        .campo-formulario {
+            margin-bottom: 12px; /* Espacio entre campos reducido */
         }
-        .ui-selectonemenu-panel .ui-selectonemenu-item:hover {
-            background-color:#f0f0f0 !important;
+
+        .campo-formulario label {
+            display: block;
+            margin-bottom: 2px !important; /* Etiqueta pegada al input */
+            font-weight: bold;
+            color: #333;
         }
+
+        .botones-dialogo {
+            margin-top: 25px;
+        }
+
+        .dialog-form .ui-inputtext,
+        .dialog-form .ui-selectonemenu,
+        .dialog-form .ui-inputnumber input {
+            width: 100%;
+            box-sizing: border-box;
+            background-color: #FFFFFF !important;
+            border: 1px solid #CCCCCC !important;
+            font-family: "FreightText Pro", serif;
+            font-size: 1em;
+        }
+
+        .dialog-form .ui-selectonemenu .ui-selectonemenu-label {
+            padding: 5px 8px !important;
+        }
+        .dialog-form .ui-selectonemenu .ui-selectonemenu-trigger {
+            width: 32px;
+        }
+
+        /* ---------- TOAST ---------- */
         .toast-base {
-            display:none;
-            position:fixed;
-            top:80px;
-            right:20px;
-            background:#f9f1e7 !important;
-            color:#333 !important;
-            border:1px solid #ccc !important;
-            border-left:4px solid #5cb85c !important;
-            z-index:9999 !important;
-            box-shadow:0 4px 10px rgba(0,0,0,0.3) !important;
-            font-family:'Minerva Modern', serif !important;
-            border-radius:4px !important;
+            display: none;
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: #f9f1e7 !important;
+            color: #333 !important;
+            border: 1px solid #ccc !important;
+            border-left: 4px solid #5cb85c !important;
+            z-index: 9999 !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
+            font-family: "FreightText Pro", serif !important;
+            border-radius: 4px !important;
         }
         .toast-simple {
-            padding:15px 20px !important;
-            font-size:1.1em !important;
-            min-width:300px !important;
-            max-width:400px !important;
+            padding: 15px 20px !important;
+            font-size: 1.1em !important;
+            min-width: 300px !important;
+            max-width: 400px !important;
         }
     </style>
 </h:head>
@@ -107,7 +232,7 @@
             <a href="AdminEmpleados.xhtml">Empleados</a>
         </div>
         <div class="topbar-center">
-            <a href="#"> EVENTOS CAMPESTRE</a><br />
+            <a href="#">EVENTOS CAMPESTRE</a><br />
             <a href="#">Inventario</a>
             <a href="#">Artículos</a>
             <a href="#">Cotizaciones</a>
@@ -122,17 +247,16 @@
     <div class="content">
         <h1 class="title">Combinación de Mesa</h1>
 
-        <!-- Barra de botones -->
         <h:form>
             <div class="button-bar">
-                <p:commandButton value="+ Nueva combinación" styleClass="btn alta"
-                                 onclick="PF('dlgAltaCombo').show();" type="button" />
-                <!-- Botón Modificar eliminado -->
+                <p:commandButton value="+ Nueva combinación"
+                                 styleClass="btn alta"
+                                 type="button"
+                                 onclick="PF('dlgAltaCombo').show();" />
                 <button class="btn eliminar" type="button">🗑 Eliminar</button>
             </div>
         </h:form>
 
-        <!-- Tabla de combinaciones -->
         <h:form id="combosForm">
             <p:growl id="msgs" showDetail="true" />
 
@@ -155,12 +279,16 @@
 
                     <p:column headerText="Mesa">#{c.mesa.nombre}</p:column>
                     <p:column headerText="Mantel">#{c.mantel.nombre}</p:column>
-                    <p:column headerText="Camino">#{c.camino != null ? c.camino.nombre : '-'}</p:column>
-                    <p:column headerText="Cubre">#{c.cubre != null ? c.cubre.nombre : '-'}</p:column>
+                    <p:column headerText="Camino">
+                        #{c.camino != null ? c.camino.nombre : '-'}
+                    </p:column>
+                    <p:column headerText="Cubre">
+                        #{c.cubre != null ? c.cubre.nombre : '-'}
+                    </p:column>
                     <p:column headerText="Imagen">
                         <h:panelGroup rendered="#{not empty combinacionMesaAdminUI.miniatura(c)}">
                             <h:graphicImage value="#{combinacionMesaAdminUI.miniatura(c)}"
-                                            style="height:50px;"/>
+                                            style="height:50px;" />
                         </h:panelGroup>
                     </p:column>
                 </p:dataTable>
@@ -172,7 +300,6 @@
         </div>
     </div>
 
-    <!-- Toast JS -->
     <script type="text/javascript">
         //<![CDATA[
         var simpleToastTimer;
@@ -183,154 +310,180 @@
             if (toast && message) {
                 message.innerText = mensaje;
                 toast.style.display = 'block';
-                simpleToastTimer = setTimeout(function(){ toast.style.display='none'; }, 3000);
+                simpleToastTimer = setTimeout(function () {
+                    toast.style.display = 'none';
+                }, 3000);
             }
         }
         //]]>
     </script>
 
-    <!-- Habilitar/deshabilitar botón Eliminar según selección -->
     <script type="text/javascript">
         //<![CDATA[
-        document.addEventListener('DOMContentLoaded', function(){
+        document.addEventListener('DOMContentLoaded', function () {
             try {
-                function updateDeleteBtn(){
+                function updateDeleteBtn() {
                     var del = document.querySelector('.button-bar > button.btn.eliminar');
-                    if (!del) return;
-                    var hasSel = document.querySelector('#combosForm .ui-datatable .ui-state-highlight') != null;
+                    if (!del) {
+                        return;
+                    }
+                    var hasSel = document.querySelector('#combosForm .ui-datatable .ui-state-highlight') !== null;
                     del.disabled = !hasSel;
                 }
 
                 updateDeleteBtn();
-                document.addEventListener('click', function(e){
+
+                document.addEventListener('click', function (e) {
                     if (e.target && e.target.closest && e.target.closest('#combosForm')) {
                         setTimeout(updateDeleteBtn, 0);
                     }
                 });
+
                 if (window.PrimeFaces && PrimeFaces.ajax && PrimeFaces.ajax.addOnEvent) {
-                    PrimeFaces.ajax.addOnEvent(function(e){
-                        if (e && e.status === 'success') updateDeleteBtn();
+                    PrimeFaces.ajax.addOnEvent(function (e) {
+                        if (e && e.status === 'success') {
+                            updateDeleteBtn();
+                        }
                     });
                 }
 
                 var btns = document.querySelectorAll('.btn.eliminar');
-                btns.forEach(function(b){
-                    b.addEventListener('click', function(){
-                        if (b.disabled) return;
+                btns.forEach(function (b) {
+                    b.addEventListener('click', function () {
+                        if (b.disabled) {
+                            return;
+                        }
                         if (typeof PF !== 'undefined' && PF('dlgEliminarCombo')) {
                             PF('dlgEliminarCombo').show();
                         }
                     });
                 });
-            } catch (e) { /* noop */ }
+            } catch (e) {
+            }
         });
         //]]>
     </script>
 
-    <!-- Diálogo: Nueva combinación -->
     <p:dialog header="Nueva combinación"
               widgetVar="dlgAltaCombo"
               modal="true"
               width="600"
               closable="true"
-              resizable="false">
+              resizable="false"
+              style="max-width:700px;"
+              contentStyle="max-height:85vh; overflow-y:auto;">
+
         <h:form id="formAltaCombo">
             <p:messages id="messagesCombo" showDetail="true" closable="true" />
 
-            <!-- TODOS LOS CAMPOS EN UNA SOLA COLUMNA -->
-            <p:panelGrid columns="1" styleClass="ui-fluid">
+            <div class="ui-fluid form-compacto dialog-form">
 
-                <!-- Mesa -->
-                <p:outputLabel for="mesa" value="Mesa: *" />
-                <p:selectOneMenu id="mesa"
-                                 value="#{combinacionMesaAdminUI.mesaId}"
-                                 required="true">
-                    <f:selectItem itemLabel="-- Seleccione mesa --" itemValue="#{null}" />
-                    <f:selectItems value="#{combinacionMesaAdminUI.mesasDisponibles}"
-                                   var="m"
-                                   itemValue="#{m.id}"
-                                   itemLabel="#{m.nombre}" />
-                    <p:ajax process="@this"
-                            listener="#{combinacionMesaAdminUI.onMesaChange}"
-                            update="mantel camino cubre messagesCombo" />
-                </p:selectOneMenu>
+                <div class="campo-formulario">
+                    <p:outputLabel for="mesa" value="Mesa: * *" />
+                    <p:selectOneMenu id="mesa"
+                                     value="#{combinacionMesaAdminUI.mesaId}"
+                                     required="true">
+                        <f:selectItem itemLabel="-- Seleccione mesa --" itemValue="#{null}" />
+                        <f:selectItems value="#{combinacionMesaAdminUI.mesasDisponibles}"
+                                       var="m"
+                                       itemValue="#{m.id}"
+                                       itemLabel="#{m.nombre}" />
+                        <p:ajax process="@this"
+                                listener="#{combinacionMesaAdminUI.onMesaChange}"
+                                update="mantel camino cubre messagesCombo" />
+                    </p:selectOneMenu>
+                </div>
 
-                <!-- Mantel -->
-                <p:outputLabel for="mantel" value="Mantel: *" />
-                <p:selectOneMenu id="mantel"
-                                 value="#{combinacionMesaAdminUI.mantelId}"
-                                 required="true">
-                    <f:selectItem itemLabel="-- Seleccione mantel --" itemValue="#{null}" />
-                    <f:selectItems value="#{combinacionMesaAdminUI.mantelesDisponibles}"
-                                   var="mt"
-                                   itemValue="#{mt.id}"
-                                   itemLabel="#{mt.nombre}" />
-                    <p:ajax process="@this"
-                            listener="#{combinacionMesaAdminUI.onMantelChange}"
-                            update="camino cubre messagesCombo" />
-                </p:selectOneMenu>
+                <div class="campo-formulario">
+                    <p:outputLabel for="mantel" value="Mantel: * *" />
+                    <p:selectOneMenu id="mantel"
+                                     value="#{combinacionMesaAdminUI.mantelId}"
+                                     required="true">
+                        <f:selectItem itemLabel="-- Seleccione mantel --" itemValue="#{null}" />
+                        <f:selectItems value="#{combinacionMesaAdminUI.mantelesDisponibles}"
+                                       var="mt"
+                                       itemValue="#{mt.id}"
+                                       itemLabel="#{mt.nombre}" />
+                        <p:ajax process="@this"
+                                listener="#{combinacionMesaAdminUI.onMantelChange}"
+                                update="camino cubre messagesCombo" />
+                    </p:selectOneMenu>
+                </div>
 
-                <!-- Camino (solo si NO hay cubre) -->
-                <p:outputLabel for="camino" value="Camino (opcional):" />
-                <p:selectOneMenu id="camino"
-                                 value="#{combinacionMesaAdminUI.caminoId}"
-                                 disabled="#{combinacionMesaAdminUI.cubreId != null}">
-                    <f:selectItem itemLabel="-- Ninguno --" itemValue="#{null}" />
-                    <f:selectItems value="#{combinacionMesaAdminUI.caminosDisponibles}"
-                                   var="cm"
-                                   itemValue="#{cm.id}"
-                                   itemLabel="#{cm.nombre}" />
-                    <p:ajax process="@this"
-                            listener="#{combinacionMesaAdminUI.onCaminoChange}"
-                            update="camino cubre messagesCombo" />
-                </p:selectOneMenu>
+                <div class="campo-formulario">
+                    <p:outputLabel for="camino" value="Camino (opcional):" />
+                    <p:selectOneMenu id="camino"
+                                     value="#{combinacionMesaAdminUI.caminoId}"
+                                     disabled="#{combinacionMesaAdminUI.cubreId != null}">
+                        <f:selectItem itemLabel="-- Ninguno --" itemValue="#{null}" />
+                        <f:selectItems value="#{combinacionMesaAdminUI.caminosDisponibles}"
+                                       var="cm"
+                                       itemValue="#{cm.id}"
+                                       itemLabel="#{cm.nombre}" />
+                        <p:ajax process="@this"
+                                listener="#{combinacionMesaAdminUI.onCaminoChange}"
+                                update="camino cubre messagesCombo" />
+                    </p:selectOneMenu>
+                </div>
 
-                <!-- Cubre (solo si NO hay camino) -->
-                <p:outputLabel for="cubre" value="Cubremantel (opcional):" />
-                <p:selectOneMenu id="cubre"
-                                 value="#{combinacionMesaAdminUI.cubreId}"
-                                 disabled="#{combinacionMesaAdminUI.caminoId != null}">
-                    <f:selectItem itemLabel="-- Ninguno --" itemValue="#{null}" />
-                    <f:selectItems value="#{combinacionMesaAdminUI.cubresDisponibles}"
-                                   var="cb"
-                                   itemValue="#{cb.id}"
-                                   itemLabel="#{cb.nombre}" />
-                    <p:ajax process="@this"
-                            listener="#{combinacionMesaAdminUI.onCubreChange}"
-                            update="camino cubre messagesCombo" />
-                </p:selectOneMenu>
+                <div class="campo-formulario">
+                    <p:outputLabel for="cubre" value="Cubremantel (opcional):" />
+                    <p:selectOneMenu id="cubre"
+                                     value="#{combinacionMesaAdminUI.cubreId}"
+                                     disabled="#{combinacionMesaAdminUI.caminoId != null}">
+                        <f:selectItem itemLabel="-- Ninguno --" itemValue="#{null}" />
+                        <f:selectItems value="#{combinacionMesaAdminUI.cubresDisponibles}"
+                                       var="cb"
+                                       itemValue="#{cb.id}"
+                                       itemLabel="#{cb.nombre}" />
+                        <p:ajax process="@this"
+                                listener="#{combinacionMesaAdminUI.onCubreChange}"
+                                update="camino cubre messagesCombo" />
+                    </p:selectOneMenu>
+                </div>
 
-                <!-- Imagen -->
-                <h:outputText value="Imagen:" />
-                <h:panelGroup>
-                    <input type="file" id="imagenComboUpload" accept="image/jpeg,image/png" />
-                    <script>
-                        (function(){
-                            var el = document.getElementById('imagenComboUpload');
-                            if (!el) return;
-                            el.addEventListener('change', function(){
-                                if (!el.files || el.files.length === 0) return;
-                                var fd = new FormData();
-                                fd.append('imagen', el.files[0]);
-                                fetch('upload-image', { method: 'POST', body: fd, credentials: 'same-origin' })
-                                    .then(function(){ /* ok */ })
-                                    .catch(function(){ /* noop */ });
-                            });
-                        })();
-                    </script>
-                </h:panelGroup>
+                <div class="campo-formulario">
+                    <p:outputLabel value="Imagen:" style="margin-bottom: 5px; display:block;" />
+                    <h:panelGroup>
+                        <input type="file" id="imagenComboUpload"
+                               accept="image/jpeg,image/png" />
+                        <script type="text/javascript">
+                            //<![CDATA[
+                            (function () {
+                                var el = document.getElementById('imagenComboUpload');
+                                if (!el) {
+                                    return;
+                                }
+                                el.addEventListener('change', function () {
+                                    if (!el.files || el.files.length === 0) {
+                                        return;
+                                    }
+                                    var fd = new FormData();
+                                    fd.append('imagen', el.files[0]);
+                                    fetch('upload-image', {
+                                        method: 'POST',
+                                        body: fd,
+                                        credentials: 'same-origin'
+                                    }).then(function () {
+                                        // ok
+                                    }).catch(function () {
+                                        // noop
+                                    });
+                                });
+                            })();
+                            //]]>
+                        </script>
+                    </h:panelGroup>
+                </div>
 
-            </p:panelGrid>
-
-            <!-- Botones -->
+            </div> <div class="botones-dialogo">
             <p:commandButton value="Guardar"
                              styleClass="btn"
                              action="#{combinacionMesaAdminUI.guardarCombinacion}"
                              process="@form"
                              update=":combosForm formAltaCombo"
                              ajax="true"
-                             oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('dlgAltaCombo').hide(); mostrarToastSimple('¡Combinación guardada!'); }"
-                             style="margin-top: 20px;" />
+                             oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('dlgAltaCombo').hide(); mostrarToastSimple('¡Combinación guardada!'); }" />
 
             <p:commandButton value="Cancelar"
                              styleClass="btn"
@@ -338,12 +491,12 @@
                              update="formAltaCombo"
                              actionListener="#{combinacionMesaAdminUI.cancelarAlta}"
                              ajax="true"
-                             oncomplete="PF('dlgAltaCombo').hide();"
-                             style="margin-top: 20px; margin-left: 10px;" />
+                             style="margin-left: 10px;"
+                             oncomplete="PF('dlgAltaCombo').hide();" />
+        </div>
         </h:form>
     </p:dialog>
 
-    <!-- Diálogo: Eliminar combinación -->
     <p:dialog header="Eliminar combinación"
               widgetVar="dlgEliminarCombo"
               modal="true"
@@ -353,9 +506,10 @@
         <h:form id="formEliminarCombo">
             <p:messages id="messagesEliminarCombo" showDetail="true" closable="true" />
 
-            <div style="padding: 10px; font-family:'Minerva Modern', serif;">
+            <div style="padding: 10px; font-family:'FreightText Pro', serif;">
                 <p style="margin:0 0 10px 0; color:#a94442;">
-                    <strong>Advertencia:</strong> Eliminar una combinación puede afectar cotizaciones o rentas existentes.
+                    <strong>Advertencia:</strong>
+                    Eliminar una combinación puede afectar cotizaciones o rentas existentes.
                 </p>
                 <p style="margin:0;">
                     ¿Desea eliminar la combinación
@@ -379,10 +533,11 @@
                              style="margin-top: 20px;"
                              oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('dlgEliminarCombo').hide(); mostrarToastSimple('Combinación eliminada'); }" />
 
-            <p:commandButton value="Cancelar" type="button"
-                             onclick="PF('dlgEliminarCombo').hide();"
+            <p:commandButton value="Cancelar"
+                             type="button"
                              styleClass="btn"
-                             style="margin-top: 20px; margin-left: 10px;" />
+                             style="margin-top: 20px; margin-left: 10px;"
+                             onclick="PF('dlgEliminarCombo').hide();" />
         </h:form>
     </p:dialog>
 
