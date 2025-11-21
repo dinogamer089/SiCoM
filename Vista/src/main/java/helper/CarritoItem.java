@@ -16,6 +16,10 @@ public class CarritoItem implements Serializable {
     private Articulo articulo;
     private int cantidad;
 
+    // Flag/aviso cuando la cantidad se ajustó por falta de stock en una fecha
+    private boolean ajustadoPorStock;
+    private String avisoAjuste;
+
     // Constructores por defecto y parametrizado
     public CarritoItem() {}
 
@@ -40,6 +44,22 @@ public class CarritoItem implements Serializable {
     // Setter con validación para asegurar que la cantidad no sea negativa
     public void setCantidad(int cantidad) {
         this.cantidad = Math.max(0, cantidad);
+    }
+
+    public boolean isAjustadoPorStock() {
+        return ajustadoPorStock;
+    }
+
+    public void setAjustadoPorStock(boolean ajustadoPorStock) {
+        this.ajustadoPorStock = ajustadoPorStock;
+    }
+
+    public String getAvisoAjuste() {
+        return avisoAjuste;
+    }
+
+    public void setAvisoAjuste(String avisoAjuste) {
+        this.avisoAjuste = avisoAjuste;
     }
 
     // Calcula el subtotal de este ítem (precio del artículo * cantidad)

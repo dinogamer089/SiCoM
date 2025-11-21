@@ -221,14 +221,22 @@
             background-color: var(--olive);
         }
 
+        /* --- Estilos de la Fila del Item (Principal) --- */
         .item-row {
             display: flex;
-            align-items: center;
+            flex-direction: column;
             padding: 15px 0;
             border-bottom: 1px solid var(--brown-lines);
             font-family: 'Lato', serif;
+            width: 100%;
         }
         .item-row:first-child { border-top: 1px solid var(--brown-lines); }
+
+        .item-row-top {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
 
         .btn-remove {
             background: transparent !important; border: none !important; box-shadow: none !important;
@@ -426,6 +434,20 @@
             font-size: 0.95rem;
         }
 
+        /* Estilo para la alerta general DENTRO del modal */
+        .modal-general-alert {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+            border: 1px solid #ffeeba;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Lato', sans-serif;
+        }
+
         /* Estilos para el Formulario de Cotización */
         .cotizar-form-content {
             padding: 25px;
@@ -462,6 +484,31 @@
             z-index: 999999 !important;
         }
 
+        /* --- STOCK ALERT BANNER (Pantalla Principal) --- */
+        .stock-alert {
+            position: fixed;
+            top: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1100;
+            background: rgba(13, 13, 13, 0.96);
+            border: 1px solid var(--brown-lines);
+            color: #f9f9f9;
+            padding: 10px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+            border-radius: 4px;
+            max-width: 900px;
+            width: calc(100% - 80px);
+            opacity: 1;
+            transition: opacity .4s ease, transform .4s ease;
+        }
+        .stock-alert i { margin-top: 2px; font-size: 1.2rem; color: #f6e2b8; }
+        .stock-alert .sa-content { flex: 1; }
+        .stock-alert .sa-actions { margin-left: 8px; }
+        .stock-alert ul { margin: 6px 0 0 18px; padding: 0; }
     </style>
 </h:head>
 
@@ -477,6 +524,19 @@
                 </div>
                 <div class="tb-brand">EVENTOS CAMPESTRE</div>
                 <div class="tb-right">
+                    <h:panelGroup layout="block" style="display:flex; align-items:center; gap:8px; margin-right:10px;">
+                        <h:outputText value="Fecha de evento:"/>
+                        <p:datePicker id="fechaCatalogo"
+                                      value="#{carritoBean.fechaCatalogoSeleccionada}"
+                                      showIcon="true"
+                                      appendTo="@(body)"
+                                      minDate="#{carritoBean.fechaActual}">
+                            <p:ajax event="dateSelect"
+                                    process="@this"
+                                    listener="#{carritoBean.actualizarFechaDesdeCatalogo(carritoBean.fechaCatalogoSeleccionada)}"
+                                    update=":formCarrito:stockAlerts :formCarrito:mainCartGrid :formCarrito:tb-count-group :formCarrito:modalCarritoContent"/>
+                        </p:datePicker>
+                    </h:panelGroup>
                     <p:commandLink onclick="PF('carritoModal').show(); return false;"
                                    style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 5px; cursor: pointer;">
                         <i class="pi pi-shopping-cart" style="font-size: 1.4rem;"/>
@@ -495,6 +555,26 @@
 
         <div class="main-layout">
             <div class="carrito-title">Mi carrito</div>
+
+            <h:panelGroup id="stockAlerts" rendered="#{carritoBean.huboAjustesStock}" layout="block" styleClass="stock-alert">
+                <i class="pi pi-exclamation-triangle"></i>
+                <div class="sa-content">
+                    <div style="font-weight:600;">Disponibilidad actualizada para la fecha seleccionada</div>
+                    <ul>
+                        <ui:repeat value="#{carritoBean.notificacionesStock}" var="msg">
+                            <li><h:outputText value="#{msg}"/></li>
+                        </ui:repeat>
+                    </ul>
+                </div>
+                <div class="sa-actions">
+                    <p:commandLink title="Ocultar"
+                                   actionListener="#{carritoBean.limpiarNotificacionesStock}"
+                                   process="@this"
+                                   update=":formCarrito:stockAlerts :formCarrito:mainCartGrid :formCarrito:modalCarritoContent :formCarrito:tb-count-group">
+                        <i class="pi pi-times" style="color:#856404;"></i>
+                    </p:commandLink>
+                </div>
+            </h:panelGroup>
 
             <h:panelGroup id="mainCartGrid" layout="block" styleClass="carrito-grid">
 
@@ -525,34 +605,41 @@
                                   style="margin-top: 15px; display:inline-block;"/>
 
                         <div class="item-row">
+                            <div class="item-row-top">
+                                <p:commandButton icon="pi pi-minus-circle" styleClass="btn-remove ui-button-flat"
+                                                 actionListener="#{carritoBean.eliminarItem(item)}"
+                                                 update=":formCarrito:stockAlerts :formCarrito:mainCartGrid :formCarrito:tb-count-group :formCarrito:modalCarritoContent"/>
 
-                            <p:commandButton icon="pi pi-minus-circle" styleClass="btn-remove ui-button-flat"
-                                             actionListener="#{carritoBean.eliminarItem(item)}"
-                                             update=":formCarrito:mainCartGrid :formCarrito:tb-count-group :formCarrito:modalCarritoContent"/>
+                                <h:panelGroup rendered="#{empty item.articulo.imagen}">
+                                    <div class="item-img-placeholder"></div>
+                                </h:panelGroup>
+                                <h:graphicImage rendered="#{not empty item.articulo.imagen}"
+                                                value="#{articuloUI.getImagenBase64(item.articulo.imagen)}"
+                                                styleClass="item-img-placeholder" style="object-fit: cover"/>
 
-                            <h:panelGroup rendered="#{empty item.articulo.imagen}">
-                                <div class="item-img-placeholder"></div>
-                            </h:panelGroup>
-                            <h:graphicImage rendered="#{not empty item.articulo.imagen}"
-                                            value="#{articuloUI.getImagenBase64(item.articulo.imagen)}"
-                                            styleClass="item-img-placeholder" style="object-fit: cover"/>
+                                <h:outputText value="#{item.articulo.nombre}" styleClass="item-name"/>
 
-                            <h:outputText value="#{item.articulo.nombre}" styleClass="item-name"/>
+                                <div class="qty-selector">
+                                    <p:commandButton icon="pi pi-minus" styleClass="qty-btn"
+                                                     actionListener="#{carritoBean.decrementarCantidad(item)}"
+                                                     update=":formCarrito:stockAlerts :formCarrito:mainCartGrid :formCarrito:tb-count-group :formCarrito:modalCarritoContent"
+                                                     disabled="#{item.cantidad le 1}"/>
+                                    <h:outputText value="#{item.cantidad}" styleClass="qty-val"/>
+                                    <p:commandButton icon="pi pi-plus" styleClass="qty-btn"
+                                                     actionListener="#{carritoBean.incrementarCantidad(item)}"
+                                                     update=":formCarrito:stockAlerts :formCarrito:mainCartGrid :formCarrito:tb-count-group :formCarrito:modalCarritoContent"/>
+                                </div>
 
-                            <div class="qty-selector">
-                                <p:commandButton icon="pi pi-minus" styleClass="qty-btn"
-                                                 actionListener="#{carritoBean.decrementarCantidad(item)}"
-                                                 update=":formCarrito:mainCartGrid :formCarrito:tb-count-group :formCarrito:modalCarritoContent"
-                                                 disabled="#{item.cantidad le 1}"/>
-                                <h:outputText value="#{item.cantidad}" styleClass="qty-val"/>
-                                <p:commandButton icon="pi pi-plus" styleClass="qty-btn"
-                                                 actionListener="#{carritoBean.incrementarCantidad(item)}"
-                                                 update=":formCarrito:mainCartGrid :formCarrito:tb-count-group :formCarrito:modalCarritoContent"/>
+                                <h:outputText value="#{item.precioTotal}" styleClass="item-price">
+                                    <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="0"/>
+                                </h:outputText>
                             </div>
 
-                            <h:outputText value="#{item.precioTotal}" styleClass="item-price">
-                                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="0"/>
-                            </h:outputText>
+                            <h:panelGroup rendered="#{item.ajustadoPorStock}" layout="block"
+                                          style="width: 100%; text-align: right; color:#a94442; font-size:0.85rem; margin-top:8px; font-style: italic;">
+                                <i class="pi pi-exclamation-triangle" style="margin-right:6px;"/>
+                                <h:outputText value="#{item.avisoAjuste}"/>
+                            </h:panelGroup>
                         </div>
                     </p:dataList>
                 </h:panelGroup>
@@ -599,11 +686,15 @@
 
             <h:panelGroup id="modalCarritoContent" layout="block" styleClass="modal-cart-content">
 
+                <h:panelGroup rendered="#{carritoBean.huboAjustesStock}" layout="block" styleClass="modal-general-alert">
+                    <i class="pi pi-exclamation-triangle"/>
+                    <span>Algunas cantidades fueron ajustadas por stock.</span>
+                </h:panelGroup>
+
                 <p:outputPanel rendered="#{carritoBean.carrito.vacio}"
                                style="display:block; text-align:center; padding: 20px 0; font-style: italic; font-family: 'Lato', serif;">
-                    Tu carrito está vacío.
+                    Tu carrito esta vacio.
                 </p:outputPanel>
-
 
                 <p:dataList value="#{carritoBean.carrito.items}" var="item" type="none" styleClass="dl-reset"
                             rendered="#{not carritoBean.carrito.vacio}">
@@ -637,6 +728,7 @@
                         <h:outputText value="#{item.precioTotal}" styleClass="modal-item-price">
                             <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="0"/>
                         </h:outputText>
+
                     </div>
                 </p:dataList>
 
@@ -660,8 +752,6 @@
 
         <h:form id="frmCotizacion">
             <div class="cotizar-form-content">
-
-                <!-- NOMBRE -->
                 <div class="form-field">
                     <p:outputLabel for="nombre" value="Nombre Completo"/>
                     <p:inputText id="nombre"
@@ -675,17 +765,16 @@
                     <p:message for="nombre" style="font-size: 0.8rem; margin-top: 3px;"/>
                 </div>
 
-                <!-- TELÉFONO -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div class="form-field">
-                        <p:outputLabel for="tel1" value="Número de Teléfono 1"/>
+                        <p:outputLabel for="tel1" value="Numero de Telefono 1"/>
                         <p:inputText id="tel1"
                                      value="#{carritoBean.telefono1}"
                                      required="true"
-                                     requiredMessage="Teléfono es obligatorio"
-                                     validatorMessage="Debe tener 10 dígitos numéricos"
+                                     requiredMessage="Telefono es obligatorio"
+                                     validatorMessage="Debe tener 10 digitos numericos"
                                      maxlength="10"
-                                     placeholder="10 dígitos"
+                                     placeholder="10 digitos"
                                      style="width: 100%">
                             <p:keyFilter mask="num"/>
                             <f:validateRegex pattern="^\d{10}$"/>
@@ -694,38 +783,19 @@
                     </div>
                 </div>
 
-                <!-- DIRECCIÓN -->
                 <div class="form-field">
-                    <p:outputLabel for="direccion" value="Dirección de Entrega"/>
+                    <p:outputLabel for="direccion" value="Direccion de Entrega"/>
                     <p:inputTextarea id="direccion"
                                      value="#{carritoBean.direccionEntrega}"
                                      rows="3" required="true"
-                                     requiredMessage="La dirección es obligatoria"
-                                     validatorMessage="La dirección es muy corta"
+                                     requiredMessage="La direccion es obligatoria"
+                                     validatorMessage="La direccion es muy corta"
                                      style="width: 100%; resize: none;">
                         <f:validateLength minimum="10"/>
                     </p:inputTextarea>
                     <p:message for="direccion" style="font-size: 0.8rem; margin-top: 3px;"/>
                 </div>
 
-                <!-- FECHA ENTREGA -->
-                <div class="form-field">
-                    <p:outputLabel for="fechaEntrega" value="Fecha de Entrega Deseada"/>
-                    <p:datePicker id="fechaEntrega"
-                                  value="#{carritoBean.fechaEntrega}"
-                                  showIcon="true"
-                                  required="true"
-                                  requiredMessage="Seleccione una fecha válida"
-                                  inputStyle="width: 100%"
-                                  minDate="#{carritoBean.fechaActual}"
-                                  showOnFocus="true"
-                                  monthNavigator="true"
-                                  yearNavigator="true"
-                                  appendTo="@(body)" />
-                    <p:message for="fechaEntrega" style="font-size: 0.8rem; margin-top: 3px;"/>
-                </div>
-
-                <!-- BOTONES -->
                 <div style="display: flex; justify-content: flex-end; margin-top: 20px; gap: 10px;">
                     <p:commandButton value="Cancelar" type="button"
                                      onclick="PF('cotizarDialog').hide()"
