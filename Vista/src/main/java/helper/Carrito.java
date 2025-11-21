@@ -2,6 +2,7 @@ package helper;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -9,41 +10,44 @@ import java.util.Optional;
 import mx.desarollo.entity.Articulo;
 import mx.desarollo.facade.FacadeCarrito;
 
-// Clase helper que gestiona el estado y operaciones del carrito de compras
+/**
+ * Clase que gestiona el estado del carrito de compras.
+ * Maneja la lista de ítems, cálculos de totales y validación de stock
+ * dependiente de una fecha seleccionada (lógica de renta/reservas).
+ */
 public class Carrito implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    // Lista interna que mantiene los ítems añadidos al carrito
+    // Lista que mantiene los artículos agregados al carrito
     private final List<CarritoItem> items = new ArrayList<>();
 
-    // Fachada para validaciones de negocio (ej. stock)
+    // Fachada para consultar disponibilidad en base de datos
     private final FacadeCarrito facadeCarrito = new FacadeCarrito();
 
-    // Retorna la lista actual de ítems
-    public List<CarritoItem> getItems() {
-        return items;
-    }
+    // Fecha clave para verificar si hay stock disponible en ese día específico
+    private LocalDate fechaSeleccionada;
 
-    // Verifica si el carrito no tiene ítems
-    public boolean isVacio() {
-        return items.isEmpty();
-    }
+    public List<CarritoItem> getItems() { return items; }
 
-    // Método auxiliar para acceso tipo propiedad JSF
-    public boolean getVacio() {
-        return isVacio();
-    }
+    // Métodos utilitarios para verificar si el carrito está vacío (útil para renderizado en JSF)
+    public boolean isVacio() { return items.isEmpty(); }
+    public boolean getVacio() { return isVacio(); }
 
-    // Cuenta la cantidad total de productos (suma de cantidades de cada ítem)
+    // Retorna la suma total de unidades de todos los artículos
     public int getConteoTotalItems() {
         return items.stream().mapToInt(CarritoItem::getCantidad).sum();
     }
 
-    // Agrega un artículo: incrementa cantidad si ya existe, o lo crea si es nuevo. Valida stock.
+    /**
+     * Agrega un artículo al carrito.
+     * 1. Si ya existe, intenta sumar +1 a la cantidad.
+     * 2. Si no existe, intenta agregarlo con cantidad 1.
+     * En ambos casos valida stock con 'fechaSeleccionada'.
+     */
     public boolean agregarArticulo(Articulo articulo) {
         if (articulo == null) return false;
 
-        // Busca si el artículo ya está en el carrito
+        // Busca si el artículo ya está en la lista
         Optional<CarritoItem> existente = items.stream()
                 .filter(i -> i.getArticulo() != null
                         && i.getArticulo().getIdarticulo() != null
@@ -51,37 +55,37 @@ public class Carrito implements Serializable {
                 .findFirst();
 
         if (existente.isPresent()) {
+            // Si existe, validamos si hay stock para incrementar
             CarritoItem it = existente.get();
             int nuevaCantidad = it.getCantidad() + 1;
-
-            // Valida stock antes de incrementar
-            if (!facadeCarrito.verificarStock(articulo, nuevaCantidad)) {
-                return false;
+            if (!facadeCarrito.verificarStock(articulo, nuevaCantidad, fechaSeleccionada)) {
+                return false; // No hay suficiente stock
             }
             it.setCantidad(nuevaCantidad);
         } else {
-            // Valida stock para el primer ítem
-            if (!facadeCarrito.verificarStock(articulo, 1)) {
-                return false;
+            // Si es nuevo, validamos stock para 1 unidad
+            if (!facadeCarrito.verificarStock(articulo, 1, fechaSeleccionada)) {
+                return false; // No hay stock
             }
             items.add(new CarritoItem(articulo, 1));
         }
         return true;
     }
 
-    // Elimina un ítem específico del carrito
+    // Elimina un ítem completamente del carrito
     public void eliminarItem(CarritoItem item) {
         if (item == null) return;
         items.removeIf(i -> i.equals(item));
     }
 
-    // Incrementa en 1 la cantidad de un ítem si hay stock disponible
+    // Incrementa en 1 la cantidad de un ítem existente (si hay stock)
     public void incrementarCantidad(CarritoItem item) {
         if (item == null) return;
         for (CarritoItem i : items) {
             if (i.equals(item)) {
                 int nuevaCant = i.getCantidad() + 1;
-                if (facadeCarrito.verificarStock(i.getArticulo(), nuevaCant)) {
+                // Validación de stock antes del cambio
+                if (facadeCarrito.verificarStock(i.getArticulo(), nuevaCant, fechaSeleccionada)) {
                     i.setCantidad(nuevaCant);
                 }
                 break;
@@ -89,7 +93,7 @@ public class Carrito implements Serializable {
         }
     }
 
-    // Decrementa en 1 la cantidad; elimina el ítem si llega a cero
+    // Decrementa en 1 la cantidad. Si llega a 0, elimina el ítem.
     public void decrementarCantidad(CarritoItem item) {
         if (item == null) return;
         for (CarritoItem i : new ArrayList<>(items)) {
@@ -105,12 +109,10 @@ public class Carrito implements Serializable {
         }
     }
 
-    // Limpia todos los ítems del carrito
-    public void vaciar() {
-        items.clear();
-    }
+    // Limpia todo el carrito
+    public void vaciar() { items.clear(); }
 
-    // Calcula la suma total de los precios de todos los ítems
+    // Calcula el costo total sumando los subtotales de cada ítem
     public BigDecimal getSubtotal() {
         return items.stream()
                 .map(CarritoItem::getPrecioTotal)
@@ -118,8 +120,50 @@ public class Carrito implements Serializable {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
+    public BigDecimal getTotal() { return getSubtotal(); }
 
-    public BigDecimal getTotal() {
-        return getSubtotal();
+    public LocalDate getFechaSeleccionada() { return fechaSeleccionada; }
+
+    // Método auxiliar para consultar cuánto stock real hay en la fecha
+    public int checkStock(Articulo articulo, LocalDate fecha) {
+        return facadeCarrito.obtenerDisponibleEnFecha(articulo, fecha);
+    }
+
+    /**
+     * Actualiza la fecha del carrito y revalida todos los ítems.
+     * Si al cambiar la fecha, un artículo ya no tiene stock suficiente:
+     * Se ajusta su cantidad a lo máximo disponible.
+     * O se elimina si la disponibilidad es 0.
+     * Retorna una lista de mensajes avisando al usuario de los cambios.
+     */
+    public List<String> actualizarFechaSeleccionada(LocalDate nuevaFecha) {
+        this.fechaSeleccionada = nuevaFecha;
+        List<String> mensajes = new ArrayList<>();
+        if (nuevaFecha == null) return mensajes;
+
+        List<CarritoItem> snapshot = new ArrayList<>(items);
+        for (CarritoItem it : snapshot) {
+            Articulo art = it.getArticulo();
+            if (art == null || art.getIdarticulo() == null) continue;
+
+            // Consultamos disponibilidad en la NUEVA fecha
+            int disponible = checkStock(art, nuevaFecha);
+
+            // Si lo que tenemos en el carrito supera lo disponible, ajustamos
+            if (it.getCantidad() > disponible) {
+                if (disponible <= 0) {
+                    items.remove(it);
+                    mensajes.add("Se eliminó '" + safeNombre(art) + "' por no haber stock en la nueva fecha.");
+                } else {
+                    it.setCantidad(disponible);
+                    mensajes.add("Se redujo '" + safeNombre(art) + "' a " + disponible + " por disponibilidad en la nueva fecha.");
+                }
+            }
+        }
+        return mensajes;
+    }
+
+    private String safeNombre(Articulo a) {
+        try { return a.getNombre(); } catch (Exception e) { return "articulo"; }
     }
 }

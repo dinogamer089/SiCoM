@@ -37,6 +37,7 @@ public class RentaDAO extends AbstractDAO<Renta> {
             String estado
     ) {
         return execute(em -> {
+            System.out.println("[RentaDAO] registrarRentaCompleta() fecha=" + fecha + ", hora=" + hora + ", estado=" + estado);
             // Gestiona el cliente (persiste si es nuevo, mezcla si existe)
             Cliente clienteEntity;
             if (cliente.getIdCliente() == null || cliente.getIdCliente() == 0) {
@@ -66,13 +67,12 @@ public class RentaDAO extends AbstractDAO<Renta> {
             renta.setTotal(totalRenta);
             renta.setEstado(estado);
 
-            // Persiste la renta
-            // Si BD requiere estado no nulo, ponemos valor por defecto
             if (renta.getEstado() == null || renta.getEstado().isBlank()) {
                 renta.setEstado("PENDIENTE");
             }
             em.persist(renta);
             em.flush();
+            System.out.println("[RentaDAO] Renta creada id=" + renta.getIdrenta() + ", total=" + renta.getTotal());
             return renta;
         });
     }

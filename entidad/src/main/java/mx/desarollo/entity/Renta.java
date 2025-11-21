@@ -62,7 +62,6 @@ public class Renta implements Serializable {
     public void setCliente(Cliente cliente) { this.cliente = cliente; }
     public List<Detallerenta> getDetalles() { return detalles; }
     public void setDetalles(List<Detallerenta> detalles) { this.detalles = detalles; }
-
     public LocalTime getHora() { return hora; }
     public void setHora(LocalTime hora) { this.hora = hora; }
 }

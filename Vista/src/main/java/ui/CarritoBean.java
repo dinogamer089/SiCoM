@@ -7,6 +7,7 @@ import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
+import org.primefaces.PrimeFaces;
 
 import mx.desarollo.entity.Articulo;
 import mx.desarollo.entity.Cliente;
@@ -19,6 +20,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,7 +41,11 @@ public class CarritoBean implements Serializable {
     private String nombreCliente;
     private String telefono1;
     private String direccionEntrega;
-    private Date fechaEntrega;
+    // Fecha seleccionada previamente en el catálogo
+    private Date fechaCatalogoSeleccionada;
+
+    // Notificaciones/flags por ajustes de stock al cambiar la fecha
+    private List<String> notificacionesStock;
 
 
     private FacadeRenta facadeRenta;
@@ -46,6 +54,7 @@ public class CarritoBean implements Serializable {
     public void init() {
         carrito = new Carrito();
         aceptaTerminos = false;
+        notificacionesStock = new ArrayList<>();
         inicializarCatalogoSimulado();
         precargarArticulosDeEjemplo();
 
@@ -190,15 +199,38 @@ public class CarritoBean implements Serializable {
                 detalles.add(det);
             }
 
-            LocalDate fecha = (fechaEntrega != null)
-                    ? fechaEntrega.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-                    : LocalDate.now();
+            LocalDate fecha = (carrito.getFechaSeleccionada() != null)
+                    ? carrito.getFechaSeleccionada()
+                    : (fechaCatalogoSeleccionada != null
+                        ? fechaCatalogoSeleccionada.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                        : null);
+
+            if (fecha == null) {
+                ctx.addMessage(null, new FacesMessage(
+                        FacesMessage.SEVERITY_WARN,
+                        "Fecha requerida",
+                        "Seleccione una fecha en el catálogo antes de cotizar."
+                ));
+                ctx.validationFailed();
+                return;
+            }
             LocalTime hora = LocalTime.now();
 
             String estado = "SOLICITADA";
+            System.out.println("[CarritoBean] Confirmar cotizacion con fecha=" + fecha + ", items=" + carrito.getItems().size());
 
 
             facadeRenta.registrarRenta(cliente, detalles, fecha, hora, estado);
+
+            // Abrir WhatsApp Web con mensaje prellenado para la cotización
+            try {
+                String whatsappMsg = buildWhatsappMessage(cliente, fecha, carrito.getTotal());
+                String encoded = URLEncoder.encode(whatsappMsg, StandardCharsets.UTF_8);
+                String url = "https://wa.me/526862715636?text=" + encoded;
+                PrimeFaces.current().executeScript("window.open('" + url + "', '_blank');");
+            } catch (Exception wex) {
+                wex.printStackTrace();
+            }
 
 
             carrito.vaciar();
@@ -206,7 +238,7 @@ public class CarritoBean implements Serializable {
             nombreCliente = null;
             telefono1 = null;
             direccionEntrega = null;
-            fechaEntrega = null;
+            fechaCatalogoSeleccionada = null;
 
             ctx.addMessage(null, new FacesMessage(
                     FacesMessage.SEVERITY_INFO,
@@ -226,6 +258,24 @@ public class CarritoBean implements Serializable {
     }
 
 
+
+    private String buildWhatsappMessage(Cliente cliente, LocalDate fecha, BigDecimal total) {
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String fechaStr = fecha != null ? fecha.format(fmt) : "";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Hola, deseo una cotización para Evento Campestre.\n");
+        sb.append("Nombre: ").append(safe(cliente != null ? cliente.getNombre() : null)).append("\n");
+        sb.append("Teléfono: ").append(safe(cliente != null ? cliente.getTelefono() : null)).append("\n");
+        sb.append("Dirección de entrega: ").append(safe(cliente != null ? cliente.getDireccion() : null)).append("\n");
+        sb.append("Fecha del evento: ").append(fechaStr).append("\n");
+        if (total != null) {
+            sb.append("Total estimado: $").append(total.toPlainString()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    private String safe(String v) { return v == null ? "" : v.trim(); }
 
     public Carrito getCarrito() {
         return carrito;
@@ -248,8 +298,39 @@ public class CarritoBean implements Serializable {
         return catalogoSimulado;
     }
 
-    public Date getFechaActual() {
-        return new Date();
+    public Date getFechaActual() { return new Date(); }
+
+    // Setter para que el catálogo actualice la fecha seleccionada
+    public void actualizarFechaDesdeCatalogo(Date nuevaFecha) {
+        this.fechaCatalogoSeleccionada = nuevaFecha;
+        LocalDate f = (nuevaFecha != null)
+                ? nuevaFecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                : null;
+
+        // Snapshot de cantidades previas por ID de artículo
+        java.util.Map<Integer, Integer> prevCantidades = new java.util.HashMap<>();
+        for (CarritoItem it : carrito.getItems()) {
+            if (it.getArticulo() != null && it.getArticulo().getIdarticulo() != null) {
+                prevCantidades.put(it.getArticulo().getIdarticulo(), it.getCantidad());
+            }
+        }
+
+        java.util.List<String> mensajes = carrito.actualizarFechaSeleccionada(f);
+        // Actualiza notificaciones en estado (se mostrarán en un banner dedicado)
+        notificacionesStock = new ArrayList<>(mensajes);
+
+        // Marca flags en ítems cuyo stock fue ajustado hacia abajo
+        for (CarritoItem it : carrito.getItems()) {
+            if (it.getArticulo() == null || it.getArticulo().getIdarticulo() == null) continue;
+            Integer id = it.getArticulo().getIdarticulo();
+            Integer prev = prevCantidades.get(id);
+            if (prev != null && it.getCantidad() < prev) {
+                it.setAjustadoPorStock(true);
+                it.setAvisoAjuste("La cantidad de '" + it.getArticulo().getNombre() + "' se ajustó a " + it.getCantidad() + " por falta de stock para la fecha seleccionada.");
+            }
+        }
+
+        // Evitar spam de FacesMessages; las notificaciones se muestran agregadas en la vista
     }
 
 
@@ -262,6 +343,16 @@ public class CarritoBean implements Serializable {
     public String getDireccionEntrega() { return direccionEntrega; }
     public void setDireccionEntrega(String direccionEntrega) { this.direccionEntrega = direccionEntrega; }
 
-    public Date getFechaEntrega() { return fechaEntrega; }
-    public void setFechaEntrega(Date fechaEntrega) { this.fechaEntrega = fechaEntrega; }
+    public Date getFechaCatalogoSeleccionada() { return fechaCatalogoSeleccionada; }
+    public void setFechaCatalogoSeleccionada(Date fechaCatalogoSeleccionada) { actualizarFechaDesdeCatalogo(fechaCatalogoSeleccionada); }
+
+    public List<String> getNotificacionesStock() { return notificacionesStock; }
+    public boolean isHuboAjustesStock() { return notificacionesStock != null && !notificacionesStock.isEmpty(); }
+
+    // Permite ocultar/limpiar el banner de notificaciones desde la vista
+    public void limpiarNotificacionesStock() {
+        if (notificacionesStock != null) {
+            notificacionesStock.clear();
+        }
+    }
 }
