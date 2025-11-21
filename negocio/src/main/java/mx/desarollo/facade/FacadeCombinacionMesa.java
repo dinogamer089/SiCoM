@@ -14,14 +14,33 @@ public class FacadeCombinacionMesa {
 
     private final DelegateCombinacionMesa delegate = new DelegateCombinacionMesa();
 
+    /**
+     * Metodo para obtener una combinacion de mesa y textiles por sus IDs.
+     * Aplica la logica de acceso mediante el delegate.
+     * @Throws Si la base de datos rechaza la busqueda o hay un error en la capa de datos.
+     * @Params Objetos de tipo Integer idMesa, Integer idMantel, Integer idCamino, Integer idCubre
+     * @return Un Optional con la combinacion encontrada o vacio si no existe.
+     */
     public Optional<CombinacionMesa> obtenerPorMesaYTextiles(Integer idMesa, Integer idMantel, Integer idCamino, Integer idCubre) {
         return delegate.buscarPorMesaYTextiles(idMesa, idMantel, idCamino, idCubre);
     }
 
+    /**
+     * Metodo para obtener todas las combinaciones de mesa registradas.
+     * @Throws Si la base de datos rechaza la consulta de listado o hay un error en el DAO.
+     * @return Una lista con todas las combinaciones de mesa.
+     */
     public List<CombinacionMesa> obtenerTodas() {
         return delegate.listarTodas();
     }
 
+    /**
+     * Metodo para crear o actualizar una combinacion de mesa aplicando reglas de negocio.
+     * Valida que existan mesa, mantel e imagen, y que no se dupliquen combinaciones.
+     * @Throws Si los datos de la combinacion son invalidos o ya existe una combinacion igual,
+     *         o si la base de datos rechaza la operacion de guardado.
+     * @Params Objeto de tipo CombinacionMesa c
+     */
     public void crearOActualizar(CombinacionMesa c) {
         // Validaciones de negocio
         if (c.getMesa() == null || c.getMantel() == null || c.getImagen() == null) {
@@ -43,10 +62,21 @@ public class FacadeCombinacionMesa {
         delegate.guardar(c);
     }
 
+    /**
+     * Metodo para eliminar una combinacion de mesa por su ID.
+     * @Throws Si la base de datos rechaza la eliminacion o la combinacion esta referenciada.
+     * @Params Objeto de tipo Integer id
+     */
     public void eliminar(Integer id) {
         delegate.eliminarPorId(id);
     }
 
+    /**
+     * Metodo privado para validar que las categorias y formas de los articulos
+     * de la combinacion (mesa, mantel, camino, cubre) cumplan las reglas de negocio.
+     * @Throws Si la categoria o forma de alguno de los articulos no coincide con lo esperado.
+     * @Params Objetos de tipo Articulo mesa, Articulo mantel, Articulo camino, Articulo cubre
+     */
     private void validarCategoriasYFormas(Articulo mesa, Articulo mantel, Articulo camino, Articulo cubre) {
         if (mesa.getCategoria() != Categoria.MESA) {
             throw new IllegalArgumentException("La mesa debe tener categoria MESA");

@@ -11,7 +11,14 @@ import java.util.Base64;
 
 public class ArticuloHelper {
 
-    /* ======= Catalogo: mapeo a DTO ======= */
+    /**
+     * Metodo estatico para convertir una lista de entidades Articulo
+     * a una lista de objetos ArticuloCardDTO para el catalogo.
+     * Incluye informacion de stock, categoria, forma y una imagen en Data URL.
+     * @Throws Si ocurre un error al convertir los datos de imagen a base64.
+     * @Params Lista de objetos de tipo Articulo entidades
+     * @return Una lista de objetos ArticuloCardDTO listos para usarse en la vista.
+     */
     public static List<ArticuloCardDTO> toCardDTOs(List<Articulo> entidades) {
         List<ArticuloCardDTO> out = new ArrayList<>();
         if (entidades == null) return out;
@@ -42,16 +49,30 @@ public class ArticuloHelper {
         return out;
     }
 
-    /* ======= Alta ======= */
+    /**
+     * Metodo para obtener todos los articulos desde la fachada de articulo.
+     * Usado en pantallas de administracion/alta.
+     * @Throws Si la base de datos rechaza la consulta o hay error en la capa fachada.
+     * @return Una lista con todos los articulos existentes.
+     */
     public List<Articulo> obtenerTodas() {
         return ServiceFacadeLocator.getInstanceFacadeArticulo().obtenerArticulos();
     }
 
+    /**
+     * Metodo para guardar un articulo junto con su imagen mediante la fachada.
+     * @Throws Si la base de datos rechaza la operacion de guardado o falla la transaccion.
+     * @Params Objetos de tipo Articulo articulo, Imagen imagen
+     */
     public void guardarConImagen(Articulo articulo, Imagen imagen) {
         ServiceFacadeLocator.getInstanceFacadeArticulo().crearArticuloConImagen(articulo, imagen);
     }
 
-    /* ======= Eliminación ======= */
+    /**
+     * Metodo para eliminar un articulo por su ID usando la fachada.
+     * @Throws Si la base de datos rechaza la eliminacion o el articulo esta referenciado.
+     * @Params Objeto de tipo Integer id
+     */
     public void eliminarPorId(Integer id) {
         ServiceFacadeLocator.getInstanceFacadeArticulo().eliminarArticuloPorId(id);
     }
