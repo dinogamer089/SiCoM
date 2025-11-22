@@ -3,11 +3,14 @@ package ui;
 import helper.ArticuloHelper;
 import helper.dto.ArticuloCardDTO;
 import jakarta.annotation.PostConstruct;
-import jakarta.faces.view.ViewScoped;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -17,7 +20,7 @@ import mx.desarollo.facade.FacadeArticulo;
 import mx.desarollo.integration.ServiceFacadeLocator;
 
 @Named("articuloCatalogoUI")
-@ViewScoped
+@SessionScoped
 public class ArticuloCatalogoBeanUI implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -41,28 +44,69 @@ public class ArticuloCatalogoBeanUI implements Serializable {
     // Cantidad a agregar (ligado al <p:inputNumber>)
     private int cantidad = 1;
 
+    // Fecha seleccionada por el cliente
+    private LocalDate fechaSeleccionada;
+
     @Inject
     private CarritoBeanUI carritoBeanUI;
 
     /**
      * Metodo de inicializacion del bean de catalogo.
-     * Carga los articulos desde la fachada y construye los grupos por categoria y forma.
-     * Selecciona el primer articulo por defecto para el preview.
-     * @Throws Si la base de datos rechaza la consulta de catalogo o hay error en la capa de negocio.
+     * Inicializa las listas vacias. La carga real ocurre cuando el usuario selecciona fecha.
      */
     @PostConstruct
     public void init() {
-        FacadeArticulo facade = ServiceFacadeLocator.getInstanceFacadeArticulo();
-        var entidades = facade.listarCatalogoCliente();
-        this.articulos = ArticuloHelper.toCardDTOs(entidades);
+        this.articulos = new ArrayList<>();
         buildGroups();
-        if (!articulos.isEmpty()) {
-            this.seleccionado = articulos.get(0);
-            this.cantidad = 1; // arranque sano
-        }
     }
 
-    /* ============ Interacción ============ */
+    /**
+     * Metodo utilitario para obtener la fecha actual del sistema.
+     * Se usa en la vista (p:datePicker) para bloquear fechas pasadas (mindate).
+     * @return Fecha actual (LocalDate).
+     */
+    public LocalDate getNow() {
+        return LocalDate.now();
+    }
+
+    /**
+     * Metodo llamado cuando el usuario selecciona una fecha en el DatePicker.
+     * Recarga el catalogo calculando disponibilidad real (Total - Reservado) para ese dia.
+     * Si la fecha es valida, actualiza las listas y muestra mensaje de confirmacion.
+     */
+    public void onFechaCambio() {
+        if (fechaSeleccionada == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Debe seleccionar una fecha."));
+            return;
+        }
+
+        // 1. Validar que sea fecha futura o presente
+        if (fechaSeleccionada.isBefore(LocalDate.now())) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Fecha inválida", "No puedes reservar en el pasado."));
+            this.articulos = new ArrayList<>();
+            buildGroups();
+            return;
+        }
+
+        // 2. Cargar catalogo calculando stock RESTANDO reservas para la fecha seleccionada
+        FacadeArticulo facade = ServiceFacadeLocator.getInstanceFacadeArticulo();
+        var entidades = facade.listarCatalogoCliente();
+
+        // Usamos el Helper modificado que recibe la fecha
+        this.articulos = ArticuloHelper.toCardDTOs(entidades, fechaSeleccionada);
+
+        // 3. Reconstruir los grupos visuales
+        buildGroups();
+
+        // 4. Resetear seleccion
+        this.seleccionado = null;
+        this.cantidad = 1;
+
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "Fecha Establecida", "Catálogo actualizado para: " + fechaSeleccionada));
+    }
 
     /**
      * Metodo que se ejecuta al hacer clic en una tarjeta de articulo.
@@ -90,24 +134,38 @@ public class ArticuloCatalogoBeanUI implements Serializable {
      */
     public void agregarSeleccion() {
         if (seleccionado != null && seleccionado.isDisponible()) {
-            // Si tu CarritoBeanUI ya soporta cantidad, usa: carritoBeanUI.agregar(seleccionado, cantidad);
-            // Fallback compatible: agregar N veces
             int n = Math.min(Math.max(1, cantidad), getMaxCantidad());
             for (int i = 0; i < n; i++) {
                 carritoBeanUI.agregar(seleccionado);
             }
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Agregado", n + " articulos al carrito."));
         }
     }
 
     /**
      * Metodo para indicar si el boton de "Agregar" debe estar deshabilitado.
-     * @return true si no hay articulo seleccionado o no esta disponible; false en caso contrario.
+     * @return true si no hay articulo seleccionado, no esta disponible o no hay fecha; false en caso contrario.
      */
     public boolean isAgregarDeshabilitado() {
-        return (seleccionado == null) || !seleccionado.isDisponible();
+        return (seleccionado == null) || !seleccionado.isDisponible() || fechaSeleccionada == null;
     }
 
-    /* ============ Agrupaciones para la vista ============ */
+    /**
+     * Busca un articulo en la lista cargada (que ya tiene stock calculado) por su ID.
+     * Usado por la vista (XHTML) para mostrar detalles ricos (precio, stock) de manteles/caminos seleccionados.
+     * @param id ID del articulo a buscar
+     * @return El DTO encontrado o null si no existe.
+     */
+    public ArticuloCardDTO buscarPorId(Integer id) {
+        if (id == null || articulos == null) return null;
+        return articulos.stream()
+                .filter(a -> a.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /* ============ Agrupaciones ============ */
 
     /**
      * Metodo privado para construir las listas de articulos agrupados
@@ -191,7 +249,15 @@ public class ArticuloCatalogoBeanUI implements Serializable {
         return n.toLowerCase(Locale.ROOT).contains(kw);
     }
 
-    /* ============ Getters para la vista ============ */
+    /* ============ Getters/Setters ============ */
+
+    public LocalDate getFechaSeleccionada() {
+        return fechaSeleccionada;
+    }
+
+    public void setFechaSeleccionada(LocalDate fechaSeleccionada) {
+        this.fechaSeleccionada = fechaSeleccionada;
+    }
 
     /**
      * Metodo getter para obtener la lista de mesas redondas del catalogo.
@@ -259,7 +325,6 @@ public class ArticuloCatalogoBeanUI implements Serializable {
      * @Params Objeto de tipo int cantidad
      */
     public void setCantidad(int cantidad) {
-        // clamp: entre 1 y stock disponible
         int max = getMaxCantidad();
         if (max <= 0) {
             this.cantidad = 1;
