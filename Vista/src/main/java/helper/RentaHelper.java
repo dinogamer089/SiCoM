@@ -40,14 +40,16 @@ public class RentaHelper {
         }
     }
 
-    public void actualizarRenta(Renta renta) throws Exception {
-        System.out.println("=== RentaHelper.actualizarRenta() ===");
+    public boolean cambiarEstado(Integer idRenta, String nuevoEstado) {
+        System.out.println("=== RentaHelper.cambiarEstado() ===");
         try {
-            ServiceFacadeLocator.getInstanceFacadeRenta().actualizarRenta(renta);
-            System.out.println("✓ Renta actualizada correctamente.");
+            ServiceFacadeLocator.getInstanceFacadeRenta().cambiarEstado(idRenta, nuevoEstado);
+            System.out.println("✓ Estado cambiado correctamente vía Stored Procedure.");
+            return true;
         } catch (Exception e) {
-            System.err.println("✗ ERROR al actualizar renta en RentaHelper:");
+            System.err.println("✗ ERROR al cambiar estado:");
             e.printStackTrace();
+            return false;
         }
     }
 

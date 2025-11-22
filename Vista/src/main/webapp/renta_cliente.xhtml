@@ -1,0 +1,497 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>EVENTOS CAMPESTRE — Renta</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/primeicons@6.0.1/primeicons.css"/>
+
+    <style type="text/css">
+        /*<![CDATA[*/
+        :root{ --olive:#3f4737; --paper:#ffffff; --ink:#1d1d1b; --muted:#c5c8c0; }
+        *{ box-sizing:border-box; }
+        html, body{ height:100%; }
+        body{ margin:0; font-family:"Minerva Modern", serif; color:var(--ink); background:var(--paper); }
+        .layout{ min-height:100vh; display:flex; flex-direction:column; }
+
+        /* TOPBAR */
+        .topbar{ background:var(--olive); color:#e8ebe3; padding:14px 20px 0; box-shadow:0 2px 6px rgba(0,0,0,.15); }
+        .tb-row1{ display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:16px; }
+        .tb-left{ display:flex; align-items:center; gap:18px; }
+        .tb-left a{ color:inherit; text-decoration:none; display:inline-flex; }
+        .tb-brand{ text-align:center; letter-spacing:.06em; font-style:italic; font-weight:600; font-size:clamp(18px,2.2vw,28px); }
+        .tb-right{ display:flex; justify-content:flex-end; align-items:center; gap:10px; }
+        .tb-row2{ display:flex; justify-content:center; gap:72px; padding:14px 0 10px; font-style:italic; }
+        .tb-row2 a{ color:#e8ebe3; text-decoration:none; opacity:.9; }
+        .tb-row2 a:hover{ opacity:1; text-decoration:underline; }
+        .tb-divider{ height:3px; background:#ffffff; opacity:.85; border-radius:2px; }
+
+        .brand-strip{ background:#fff; border-bottom:1px solid #eee; display:flex; align-items:center; justify-content:center; padding:22px 18px; }
+        .hero{ width:100%; overflow:hidden; }
+        .hero__bg{ max-height:520px; height:52vw; min-height:280px; }
+        .hero__bg img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+        /* Carrusel */
+        .work{ background:#fff; padding:28px 0 44px; }
+        .container{ max-width:1100px; margin:0 auto; padding:0 18px; }
+        .title{ display:inline-block; background:var(--olive); color:#fff; padding:12px 16px; margin:0; font-weight:700; letter-spacing:.04em; }
+        .work-title{ background:#fff; color:var(--olive); }
+
+        /* Paquetes */
+        .packages{ background:var(--olive); padding:28px 0 44px; color:#fff; }
+        .packages .title{ background:transparent; color:#fff; border:1px solid rgba(255,255,255,.6); }
+        .packages-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:28px; margin-top:18px; }
+        .pkg-card{ background:#fff; color:#1d1d1b; border-radius:6px; overflow:hidden; height:auto; display:flex; flex-direction:column; }
+        .pkg-img{ width:100%; height:180px; object-fit:cover; display:block; }
+        .pkg-body{ padding:12px 12px 14px; }
+        .pkg-name{ font-weight:700; margin-bottom:6px; }
+        .pkg-list{ font-size:.9rem; color:#333; line-height:1.3; }
+        .pkg-price{ margin:12px 0; font-weight:700; }
+        .pkg-btn{ background:#000; color:#fff; border:none; padding:10px 16px; cursor:pointer; display:inline-block; }
+        .pkg-btn:hover{ background:#222; }
+
+        /* Botón CTA unificado (preview + footer) */
+        .cta-btn{ background:#000 !important; border:1px solid #000 !important; color:#fff !important; }
+        .cta-btn:hover{ background:#222 !important; border-color:#222 !important; }
+        @media (max-width:1100px){ .packages-grid{ grid-template-columns:repeat(2, 1fr);} }
+        @media (max-width:640px){ .packages-grid{ grid-template-columns:1fr;} }
+
+        /* Catálogo 3 columnas */
+        .grid-3{ display:grid; grid-template-columns: 250px 1fr 260px; gap:22px; }
+
+        /* === NUEVO: sidebar de catálogo en forma de cuadricula === */
+        .catalog-left{
+            max-height:72vh;
+            overflow-y:auto;
+            padding-right:4px;
+        }
+        .catalog-left::-webkit-scrollbar{ width:6px; }
+        .catalog-left::-webkit-scrollbar-thumb{ background:rgba(0,0,0,.25); border-radius:4px; }
+
+        .catalog-section{ margin-bottom:18px; }
+        .catalog-section .thumb-title{
+            font-weight:600;
+            margin-bottom:8px;
+        }
+
+        /* cuadricula interna: mínimo 110px, se rellena sola */
+        .catalog-grid{
+            display:grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap:10px;
+        }
+
+        .catalog-item{
+            border:1px solid #e3e3e3;
+            border-radius:8px;
+            background:#fff;
+            overflow:hidden;
+            text-align:center;
+            transition:box-shadow .15s ease;
+        }
+        .catalog-item:hover{
+            box-shadow:0 2px 8px rgba(0,0,0,.12);
+        }
+        .catalog-item img{
+            width:100%;
+            height:90px;
+            object-fit:cover;
+            display:block;
+        }
+        .catalog-item .thumb-caption{
+            font-size:.7rem;
+            padding:6px 4px 8px;
+            line-height:1.2;
+        }
+
+        .panel-shadow{ box-shadow:0 2px 8px rgba(0,0,0,.08); border-radius:8px; }
+
+        .preview-meta{ display:flex; justify-content:space-between; align-items:center; padding:10px 8px 0; font-size:1rem; }
+        .preview-name{ font-weight:700; }
+        .preview-price{ font-weight:700; }
+        .add-bar{ display:flex; gap:12px; align-items:center; justify-content:center; margin-top:10px; }
+        .stock-note{ font-size:.85rem; color:#666; margin-left:4px; }
+
+        .footer{ background:var(--olive); color:#e9eadf; display:grid; grid-template-columns:1fr auto 1fr; gap:26px; align-items:center; padding:22px 18px; margin-top:auto; }
+        .footer__right{ text-align:right; }
+
+        @media (max-width:1100px){
+            .grid-3{ grid-template-columns:1fr; }
+            .footer{ grid-template-columns:1fr; text-align:center; }
+            .footer__right{ text-align:center; }
+            .catalog-left{ max-height:none; overflow:visible; }
+        }
+        /*]]>*/
+    </style>
+</h:head>
+
+<h:body>
+    <h:form id="formRenta">
+
+        <div class="layout">
+
+            <!-- TOPBAR -->
+            <header class="topbar">
+                <div class="tb-row1">
+                    <div class="tb-left">
+                        <a href="https://www.facebook.com/cositastanbellas" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="pi pi-facebook"/></a>
+                        <a href="https://wa.me/526861250250" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="pi pi-whatsapp"/></a>
+                        <i class="pi pi-home" title="Inicio"></i>
+                    </div>
+                    <div class="tb-brand">EVENTOS CAMPESTRE</div>
+                    <div class="tb-right">
+                        <span class="tb-cart"><i class="pi pi-shopping-cart"></i><span class="tb-count">0</span></span>
+                    </div>
+                </div>
+                <nav class="tb-row2">
+                    <a href="#acerca">Acerca de</a>
+                    <a href="#renta">Renta</a>
+                    <a href="#contacto">Contacto</a>
+                </nav>
+                <div class="tb-divider"></div>
+            </header>
+
+            <!-- LOGO -->
+            <section class="brand-strip">
+                <h:graphicImage library="img" name="logo-eventos-campestre.webp" alt="Eventos Campestre"/>
+            </section>
+
+            <!-- HERO -->
+            <section class="hero">
+                <div class="hero__bg">
+                    <h:graphicImage library="img" name="hero-jardin.png" alt="Jardín con mesas" />
+                </div>
+            </section>
+
+            <!-- PAQUETES -->
+            <section class="packages">
+                <div class="container">
+                    <h2 class="title">Paquetes</h2>
+                    <div class="packages-grid">
+                        <div class="pkg-card panel-shadow">
+                            <h:graphicImage library="img" name="trabajo-1.png" alt="Juego redonda garden" styleClass="pkg-img"/>
+                            <div class="pkg-body">
+                                <div class="pkg-name">Juego redonda garden</div>
+                                <div class="pkg-list">Mesa redonda *1</div>
+                                <div class="pkg-list">Sillas garden *10</div>
+                                <div class="pkg-price">$350.00</div>
+                                <button type="button" class="pkg-btn">Agregar al carrito</button>
+                            </div>
+                        </div>
+                        <div class="pkg-card panel-shadow">
+                            <h:graphicImage library="img" name="trabajo-2.png" alt="Juego rectangular garden" styleClass="pkg-img"/>
+                            <div class="pkg-body">
+                                <div class="pkg-name">Juego rectangular garden</div>
+                                <div class="pkg-list">Mesa rectangular *1</div>
+                                <div class="pkg-list">Sillas garden *8</div>
+                                <div class="pkg-price">$300.00</div>
+                                <button type="button" class="pkg-btn">Agregar al carrito</button>
+                            </div>
+                        </div>
+                        <div class="pkg-card panel-shadow">
+                            <h:graphicImage library="img" name="trabajo-3.png" alt="Juego rectangular" styleClass="pkg-img"/>
+                            <div class="pkg-body">
+                                <div class="pkg-name">Juego rectangular</div>
+                                <div class="pkg-list">Mesa rectangular *1</div>
+                                <div class="pkg-list">Sillas lifetime *8</div>
+                                <div class="pkg-price">$200.00</div>
+                                <button type="button" class="pkg-btn">Agregar al carrito</button>
+                            </div>
+                        </div>
+                        <div class="pkg-card panel-shadow">
+                            <h:graphicImage library="img" name="trabajo-1.png" alt="Juego redonda" styleClass="pkg-img"/>
+                            <div class="pkg-body">
+                                <div class="pkg-name">Juego redonda</div>
+                                <div class="pkg-list">Mesa redonda *1</div>
+                                <div class="pkg-list">Sillas lifetime *10</div>
+                                <div class="pkg-price">$250.00</div>
+                                <button type="button" class="pkg-btn">Agregar al carrito</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CATALOGO -->
+            <section class="work" id="catalogo" style="padding-top:10px;">
+                <div class="container">
+                    <h2 class="title work-title">Catálogo</h2>
+
+                    <p:messages id="msgs" showDetail="true" closable="true" />
+
+                    <div class="grid-3" style="margin-top:18px;">
+
+                        <!-- IZQUIERDA: Mobiliario en cuadricula -->
+                        <div class="catalog-left">
+                            <h3 style="margin:0 0 10px;">Mobiliario</h3>
+
+                            <!-- Mesas redondas -->
+                            <div class="catalog-section">
+                                <div class="thumb-title">Mesas redondas</div>
+                                <div class="catalog-grid">
+                                    <ui:repeat value="#{articuloCatalogoUI.mesasRedondas}" var="mR">
+                                        <p:commandLink process="@this"
+                                                       update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
+                                                       actionListener="#{articuloCatalogoUI.ver(mR)}"
+                                                       styleClass="catalog-item">
+                                            <h:panelGroup rendered="#{not empty mR.imagenDataUrl}">
+                                                <h:graphicImage value="#{mR.imagenDataUrl}" alt="#{mR.nombre}"/>
+                                            </h:panelGroup>
+                                            <h:panelGroup rendered="#{empty mR.imagenDataUrl}">
+                                                <div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div>
+                                            </h:panelGroup>
+                                            <div class="thumb-caption">#{mR.nombre}</div>
+                                        </p:commandLink>
+                                    </ui:repeat>
+                                </div>
+                            </div>
+
+                            <!-- Mesas rectangulares -->
+                            <div class="catalog-section">
+                                <div class="thumb-title">Mesas rectangulares</div>
+                                <div class="catalog-grid">
+                                    <ui:repeat value="#{articuloCatalogoUI.mesasRectangulares}" var="mRec">
+                                        <p:commandLink process="@this"
+                                                       update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
+                                                       actionListener="#{articuloCatalogoUI.ver(mRec)}"
+                                                       styleClass="catalog-item">
+                                            <h:panelGroup rendered="#{not empty mRec.imagenDataUrl}">
+                                                <h:graphicImage value="#{mRec.imagenDataUrl}" alt="#{mRec.nombre}"/>
+                                            </h:panelGroup>
+                                            <h:panelGroup rendered="#{empty mRec.imagenDataUrl}">
+                                                <div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div>
+                                            </h:panelGroup>
+                                            <div class="thumb-caption">#{mRec.nombre}</div>
+                                        </p:commandLink>
+                                    </ui:repeat>
+                                </div>
+                            </div>
+
+                            <!-- Sillas Garden -->
+                            <div class="catalog-section">
+                                <div class="thumb-title">Sillas Garden</div>
+                                <div class="catalog-grid">
+                                    <ui:repeat value="#{articuloCatalogoUI.sillasGarden}" var="sG">
+                                        <p:commandLink process="@this"
+                                                       update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
+                                                       actionListener="#{articuloCatalogoUI.ver(sG)}"
+                                                       styleClass="catalog-item">
+                                            <h:panelGroup rendered="#{not empty sG.imagenDataUrl}">
+                                                <h:graphicImage value="#{sG.imagenDataUrl}" alt="#{sG.nombre}"/>
+                                            </h:panelGroup>
+                                            <h:panelGroup rendered="#{empty sG.imagenDataUrl}">
+                                                <div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div>
+                                            </h:panelGroup>
+                                            <div class="thumb-caption">#{sG.nombre}</div>
+                                        </p:commandLink>
+                                    </ui:repeat>
+                                </div>
+                            </div>
+
+                            <!-- Sillas Lifetime -->
+                            <div class="catalog-section">
+                                <div class="thumb-title">Sillas Lifetime</div>
+                                <div class="catalog-grid">
+                                    <ui:repeat value="#{articuloCatalogoUI.sillasLifetime}" var="sL">
+                                        <p:commandLink process="@this"
+                                                       update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
+                                                       actionListener="#{articuloCatalogoUI.ver(sL)}"
+                                                       styleClass="catalog-item">
+                                            <h:panelGroup rendered="#{not empty sL.imagenDataUrl}">
+                                                <h:graphicImage value="#{sL.imagenDataUrl}" alt="#{sL.nombre}"/>
+                                            </h:panelGroup>
+                                            <h:panelGroup rendered="#{empty sL.imagenDataUrl}">
+                                                <div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div>
+                                            </h:panelGroup>
+                                            <div class="thumb-caption">#{sL.nombre}</div>
+                                        </p:commandLink>
+                                    </ui:repeat>
+                                </div>
+                            </div>
+
+                            <!-- Carpas chicas -->
+                            <div class="catalog-section">
+                                <div class="thumb-title">Carpas (chicas)</div>
+                                <div class="catalog-grid">
+                                    <ui:repeat value="#{articuloCatalogoUI.carpasChicas}" var="cCh">
+                                        <p:commandLink process="@this"
+                                                       update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
+                                                       actionListener="#{articuloCatalogoUI.ver(cCh)}"
+                                                       styleClass="catalog-item">
+                                            <h:panelGroup rendered="#{not empty cCh.imagenDataUrl}">
+                                                <h:graphicImage value="#{cCh.imagenDataUrl}" alt="#{cCh.nombre}"/>
+                                            </h:panelGroup>
+                                            <h:panelGroup rendered="#{empty cCh.imagenDataUrl}">
+                                                <div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div>
+                                            </h:panelGroup>
+                                            <div class="thumb-caption">#{cCh.nombre}</div>
+                                        </p:commandLink>
+                                    </ui:repeat>
+                                </div>
+                            </div>
+
+                            <!-- Carpas grandes -->
+                            <div class="catalog-section">
+                                <div class="thumb-title">Carpas (grandes)</div>
+                                <div class="catalog-grid">
+                                    <ui:repeat value="#{articuloCatalogoUI.carpasGrandes}" var="cGr">
+                                        <p:commandLink process="@this"
+                                                       update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
+                                                       actionListener="#{articuloCatalogoUI.ver(cGr)}"
+                                                       styleClass="catalog-item">
+                                            <h:panelGroup rendered="#{not empty cGr.imagenDataUrl}">
+                                                <h:graphicImage value="#{cGr.imagenDataUrl}" alt="#{cGr.nombre}"/>
+                                            </h:panelGroup>
+                                            <h:panelGroup rendered="#{empty cGr.imagenDataUrl}">
+                                                <div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div>
+                                            </h:panelGroup>
+                                            <div class="thumb-caption">#{cGr.nombre}</div>
+                                        </p:commandLink>
+                                    </ui:repeat>
+                                </div>
+                            </div>
+
+                            <!-- Coolers -->
+                            <div class="catalog-section">
+                                <div class="thumb-title">Coolers</div>
+                                <div class="catalog-grid">
+                                    <ui:repeat value="#{articuloCatalogoUI.coolers}" var="cool">
+                                        <p:commandLink process="@this"
+                                                       update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
+                                                       actionListener="#{articuloCatalogoUI.ver(cool)}"
+                                                       styleClass="catalog-item">
+                                            <h:panelGroup rendered="#{not empty cool.imagenDataUrl}">
+                                                <h:graphicImage value="#{cool.imagenDataUrl}" alt="#{cool.nombre}"/>
+                                            </h:panelGroup>
+                                            <h:panelGroup rendered="#{empty cool.imagenDataUrl}">
+                                                <div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div>
+                                            </h:panelGroup>
+                                            <div class="thumb-caption">#{cool.nombre}</div>
+                                        </p:commandLink>
+                                    </ui:repeat>
+                                </div>
+                            </div>
+
+                            <!-- Calentones -->
+                            <div class="catalog-section" style="margin-bottom:4px;">
+                                <div class="thumb-title">Calentones</div>
+                                <div class="catalog-grid">
+                                    <ui:repeat value="#{articuloCatalogoUI.calentones}" var="cal">
+                                        <p:commandLink process="@this"
+                                                       update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
+                                                       actionListener="#{articuloCatalogoUI.ver(cal)}"
+                                                       styleClass="catalog-item">
+                                            <h:panelGroup rendered="#{not empty cal.imagenDataUrl}">
+                                                <h:graphicImage value="#{cal.imagenDataUrl}" alt="#{cal.nombre}"/>
+                                            </h:panelGroup>
+                                            <h:panelGroup rendered="#{empty cal.imagenDataUrl}">
+                                                <div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div>
+                                            </h:panelGroup>
+                                            <div class="thumb-caption">#{cal.nombre}</div>
+                                        </p:commandLink>
+                                    </ui:repeat>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CENTRO -->
+                        <div>
+                            <p:panel header="Vista previa" styleClass="panel-shadow">
+                                <h:panelGroup id="preview">
+                                    <h:panelGroup rendered="#{not empty articuloCatalogoUI.seleccionado and not empty articuloCatalogoUI.seleccionado.imagenDataUrl}">
+                                        <h:graphicImage value="#{articuloCatalogoUI.seleccionado.imagenDataUrl}"
+                                                        style="width:100%;min-height:430px;background:#e5e5e5;border-radius:6px;object-fit:contain;display:block"/>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{empty articuloCatalogoUI.seleccionado or empty articuloCatalogoUI.seleccionado.imagenDataUrl}">
+                                        <div style="width:100%;min-height:430px;background:#e5e5e5;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#666;">
+                                            Selecciona un artículo para previsualizarlo
+                                        </div>
+                                    </h:panelGroup>
+
+                                    <h:panelGroup rendered="#{not empty articuloCatalogoUI.seleccionado}">
+                                        <div class="preview-meta">
+                                            <div class="preview-name">#{articuloCatalogoUI.seleccionado.nombre}</div>
+                                            <div class="preview-price">
+                                                <h:outputText value="#{articuloCatalogoUI.seleccionado.precio}">
+                                                    <f:convertNumber type="currency" currencySymbol="$" locale="es_MX"/>
+                                                </h:outputText>
+                                            </div>
+                                        </div>
+                                    </h:panelGroup>
+                                </h:panelGroup>
+                            </p:panel>
+
+                            <p:outputPanel id="barraAgregar" style="margin-top:10px;text-align:center;">
+                                <h:panelGroup rendered="#{not empty articuloCatalogoUI.seleccionado}">
+                                    <div class="add-bar">
+                                        <div>
+                                            <p:inputNumber id="qty"
+                                                           value="#{articuloCatalogoUI.cantidad}"
+                                                           decimalPlaces="0"
+                                                           minValue="1"
+                                                           maxValue="#{articuloCatalogoUI.maxCantidad}"
+                                                           disabled="#{articuloCatalogoUI.agregarDeshabilitado}"
+                                                           style="width:120px"/>
+                                            <span class="stock-note">Disponibles: #{articuloCatalogoUI.maxCantidad}</span>
+                                        </div>
+
+                                        <p:commandButton value="Agregar"
+                                                         styleClass="p-button-lg cta-btn"
+                                                         process="@this"
+                                                         actionListener="#{articuloCatalogoUI.agregarSeleccion}"
+                                                         disabled="#{articuloCatalogoUI.agregarDeshabilitado}"
+                                                         update=":formRenta:msgs"/>
+                                    </div>
+                                </h:panelGroup>
+                            </p:outputPanel>
+                        </div>
+
+                        <!-- DERECHA -->
+                        <p:outputPanel id="panelDerecha">
+                            <p:panel header="Textiles" styleClass="panel-shadow">
+                                <div style="font-size:.9rem;color:#666;">
+                                    Esta sección se habilitará en la siguiente US para combinar textiles con mesas.
+                                </div>
+                            </p:panel>
+                        </p:outputPanel>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- FOOTER -->
+            <footer class="footer">
+                <div>
+                    <div style="font-weight:700;"><i class="pi pi-briefcase"></i> EVENTOS CAMPESTRE</div>
+                    <div>WhatsApp: 6862632183 , 6863120350</div>
+                    <div style="opacity:.8;">Copyright ©MoonSoftware · Todos los derechos reservados.</div>
+                </div>
+                <div>
+                    <p:commandButton value="Acerca de" styleClass="p-button-lg cta-btn" process="@this"/>
+                </div>
+                <div class="footer__right">
+                    <div style="font-weight:700; margin-bottom:6px;">UBICACION</div>
+                    <div>Mexicali Baja California<br/>Mexico.</div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- JS carrusel -->
+        <h:outputScript target="body">
+            //<![CDATA[
+            (function(){
+                var root = document.getElementById('workCarousel');
+                if(!root) return;
+            })();
+            //]]>
+        </h:outputScript>
+
+    </h:form>
+</h:body>
+</html>
