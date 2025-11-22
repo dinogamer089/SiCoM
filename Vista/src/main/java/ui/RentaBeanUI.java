@@ -185,6 +185,12 @@ public class RentaBeanUI implements Serializable {
         }
     }
 
+    public void cancelarAsignacion() {
+        this.idEmpleadoSeleccionado = null;
+
+        cargarRentaSeleccionada();
+    }
+
     public void obtenerTodasLasCotizaciones() {
         rentas = rentaHelper.obtenerTodasCotizaciones();
     }

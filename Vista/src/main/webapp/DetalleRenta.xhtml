@@ -451,9 +451,13 @@
                                  process="@form"
                                  update=":formDetalle"
                                  oncomplete="if (!args.validationFailed) PF('dialogAsignarEmpleado').hide();" />
-                <p:commandButton value="Cancelar" type="button"
-                                 styleClass="ui-button-flat"
-                                 onclick="PF('dialogAsignarEmpleado').hide();" />
+
+                <p:commandButton value="Cancelar"
+                                 actionListener="#{rentaUI.cancelarAsignacion}"
+                                 process="@this"
+                                 update=":formDetalle"
+                                 oncomplete="PF('dialogAsignarEmpleado').hide();"
+                                 styleClass="ui-button-flat" />
             </div>
         </h:form>
     </p:dialog>
