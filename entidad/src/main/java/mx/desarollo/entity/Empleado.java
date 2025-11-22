@@ -88,17 +88,10 @@ public class Empleado {
         this.contrasena = contrasena;
     }
 
-    // ========== ¡AÑADIR ESTE MÉTODO! ==========
-    /**
-     * Método helper para la UI que concatena los nombres.
-     * No se mapea a la BD (no tiene @Column).
-     * @return El nombre completo del empleado.
-     */
-    @Transient // Indica a JPA que ignore este método para la persistencia
+    @Transient
     public String getNombreCompleto() {
         return (nombre != null ? nombre : "") + " " +
                 (apellidoPaterno != null ? apellidoPaterno : "") + " " +
                 (apellidoMaterno != null ? apellidoMaterno : "");
     }
-    // =============================================
 }
