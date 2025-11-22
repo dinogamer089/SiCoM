@@ -21,8 +21,4 @@ public class DelegateRenta {
     public List<Renta> findAllRentas(){
         return ServiceLocator.getInstanceRentaDAO().obtenerTodosRentas();
     }
-
-    public void actualizarRenta(Renta renta){
-        ServiceLocator.getInstanceRentaDAO().update(renta);
-    }
 }
