@@ -3,6 +3,7 @@ package mx.desarollo.delegate;
 import mx.avanti.desarollo.dao.EmpleadoDAO;
 import mx.desarollo.entity.Empleado;
 import mx.avanti.desarollo.integration.ServiceLocator;
+import mx.desarollo.entity.Renta;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.List;
@@ -64,5 +65,13 @@ public class DelegateEmpleado {
      */
     public void deleteEmpleado(Empleado empleado) {
         empleadoDAO.delete(empleado);
+    }
+
+    public Empleado findById(Integer id) {
+        return ServiceLocator.getInstanceEmpleadoDAO().findById(id);
+    }
+
+    public List<Empleado> findAllEmpleadosDisponibles(){
+        return ServiceLocator.getInstanceEmpleadoDAO().obtenerEmpleadosDisponibles();
     }
 }

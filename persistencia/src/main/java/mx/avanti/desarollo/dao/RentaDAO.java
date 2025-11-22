@@ -20,7 +20,7 @@ public class RentaDAO extends AbstractDAO<Renta> {
                 .createQuery("SELECT r FROM Renta r " +
                         "LEFT JOIN FETCH r.detallesRenta dr " +
                         "LEFT JOIN FETCH dr.idarticulo " +
-                        "WHERE r.estado = 'Pendiente por aprobar' " +
+                        "WHERE r.estado = 'SOLICITADA' " +
                         "ORDER BY r.id", Renta.class)
                 .getResultList();
     }
@@ -38,6 +38,34 @@ public class RentaDAO extends AbstractDAO<Renta> {
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    public void cambiarEstadoRenta(Integer idRenta, String nuevoEstado) {
+        try {
+            entityManager.getTransaction().begin();
+
+            entityManager.createNativeQuery("CALL cambiar_estado_renta(:idRent, :nuevoEst)")
+                    .setParameter("idRent", idRenta)
+                    .setParameter("nuevoEst", nuevoEstado)
+                    .executeUpdate();
+
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            if (entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+            }
+            throw e;
+        }
+    }
+
+    public List<Renta> obtenerTodosRentas(){
+        return entityManager
+                .createQuery("SELECT r FROM Renta r " +
+                        "LEFT JOIN FETCH r.detallesRenta dr " +
+                        "LEFT JOIN FETCH dr.idarticulo " +
+                        "WHERE r.estado != 'SOLICITADA' " +
+                        "ORDER BY r.id", Renta.class)
+                .getResultList();
     }
 
     @Override

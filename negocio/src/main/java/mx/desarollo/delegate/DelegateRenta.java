@@ -14,6 +14,14 @@ public class DelegateRenta {
         return ServiceLocator.getInstanceRentaDAO().obtenerRentaID(idRenta);
     }
 
+    public void cambiarEstado(Integer idRenta, String nuevoEstado){
+        ServiceLocator.getInstanceRentaDAO().cambiarEstadoRenta(idRenta, nuevoEstado);
+    }
+
+    public List<Renta> findAllRentas(){
+        return ServiceLocator.getInstanceRentaDAO().obtenerTodosRentas();
+    }
+
     public void actualizarRenta(Renta renta){
         ServiceLocator.getInstanceRentaDAO().update(renta);
     }
