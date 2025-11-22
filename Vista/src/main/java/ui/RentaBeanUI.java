@@ -28,6 +28,8 @@ public class RentaBeanUI implements Serializable {
     private List<String> listaEstadosRenta;
     private String idEmpleadoInput;
     private String estadoSiguiente;
+    private List<Empleado> listaEmpleados;
+    private Integer idEmpleadoSeleccionado;
 
     public RentaBeanUI() {
         rentaHelper = new RentaHelper();
@@ -39,7 +41,7 @@ public class RentaBeanUI implements Serializable {
         nuevaRenta = new Renta();
 
         listaEstadosRenta = new ArrayList<>();
-        listaEstadosRenta.add("Aprobado");
+        listaEstadosRenta.add("Aprobada");
         listaEstadosRenta.add("Confirmado");
         listaEstadosRenta.add("Pendiente a reparto");
         listaEstadosRenta.add("En reparto");
@@ -47,6 +49,8 @@ public class RentaBeanUI implements Serializable {
         listaEstadosRenta.add("Pendiente a recoleccion");
         listaEstadosRenta.add("En recoleccion");
         listaEstadosRenta.add("Finalizada");
+
+        listaEmpleados = empleadoHelper.getAllEmpleados();
     }
 
     public void obtenerTodasLasCotizaciones() {
@@ -87,21 +91,35 @@ public class RentaBeanUI implements Serializable {
     public void actualizarEstadoRenta() {
         if (rentaSeleccionada != null) {
             String nuevoEstado = rentaSeleccionada.getEstado();
+            Integer idRenta = rentaSeleccionada.getId();
+
             try {
                 if ("Entregado".equals(nuevoEstado)) {
-                    rentaSeleccionada.setEntregado(rentaSeleccionada.getIdEmpleado().getNombre());
-                    rentaSeleccionada.setIdEmpleado(null);
+                    if (rentaSeleccionada.getIdEmpleado() != null) {
+                        rentaSeleccionada.setEntregado(rentaSeleccionada.getIdEmpleado().getNombre());
+                        rentaSeleccionada.setIdEmpleado(null);
+                    }
                 }
                 else if ("Finalizada".equals(nuevoEstado)) {
-                    rentaSeleccionada.setRecogido(rentaSeleccionada.getIdEmpleado().getNombre());
-                    rentaSeleccionada.setIdEmpleado(null);
+                    if (rentaSeleccionada.getIdEmpleado() != null) {
+                        rentaSeleccionada.setRecogido(rentaSeleccionada.getIdEmpleado().getNombre());
+                        rentaSeleccionada.setIdEmpleado(null);
+                    }
                 }
 
                 rentaHelper.actualizarRenta(rentaSeleccionada);
-                cargarRentaSeleccionada();
-                mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Estado actualizado a: " + rentaSeleccionada.getEstado());
+
+                boolean exito = rentaHelper.cambiarEstado(idRenta, nuevoEstado);
+
+                if (exito) {
+                    mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Estado actualizado correctamente.");
+                    cargarRentaSeleccionada();
+                } else {
+                    mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "Falló el procedimiento almacenado.");
+                }
+
             } catch (Exception e) {
-                mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo actualizar el estado: " + e.getMessage());
+                mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo actualizar: " + e.getMessage());
                 e.printStackTrace();
                 FacesContext.getCurrentInstance().validationFailed();
             }
@@ -113,7 +131,7 @@ public class RentaBeanUI implements Serializable {
 
         if ("En reparto".equals(nuevoEstado) || "En recoleccion".equals(nuevoEstado)) {
             this.estadoSiguiente = nuevoEstado;
-            this.idEmpleadoInput = null;
+            this.idEmpleadoSeleccionado = null;
             PrimeFaces.current().executeScript("PF('dialogAsignarEmpleado').show();");
         } else {
             actualizarEstadoRenta();
@@ -121,17 +139,16 @@ public class RentaBeanUI implements Serializable {
     }
 
     public void asignarEmpleadoYActualizarEstado() {
-        System.out.println("--- MÉTODO 'asignarEmpleadoYActualizarEstado' SÍ FUE LLAMADO ---");
-        if (idEmpleadoInput == null || idEmpleadoInput.trim().isEmpty()) {
-            mostrarMensaje(FacesMessage.SEVERITY_WARN, "Campo requerido", "Debe ingresar un ID de empleado.");
+        System.out.println("--- Asignando empleado ---");
+
+        if (idEmpleadoSeleccionado == null) {
+            mostrarMensaje(FacesMessage.SEVERITY_WARN, "Atención", "Debe seleccionar un empleado.");
             FacesContext.getCurrentInstance().validationFailed();
             return;
         }
 
         try {
-            Integer empleadoId = Integer.parseInt(idEmpleadoInput);
-            Empleado empleado = empleadoHelper.findById(empleadoId);
-            System.out.println(empleado.getId());
+            Empleado empleado = empleadoHelper.findById(idEmpleadoSeleccionado);
 
             if (empleado != null) {
                 rentaSeleccionada.setEstado(this.estadoSiguiente);
@@ -139,16 +156,14 @@ public class RentaBeanUI implements Serializable {
 
                 actualizarEstadoRenta();
 
+                this.idEmpleadoSeleccionado = null; // Limpiar
+                PrimeFaces.current().executeScript("PF('dialogAsignarEmpleado').hide();");
+
             } else {
-                mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "Empleado con ID " + empleadoId + " no encontrado.");
-                FacesContext.getCurrentInstance().validationFailed();
+                mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "Empleado no encontrado.");
             }
-        } catch (NumberFormatException e) {
-            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "El ID debe ser un número.");
-            FacesContext.getCurrentInstance().validationFailed();
         } catch (Exception e) {
-            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "Error al buscar empleado: " + e.getMessage());
-            FacesContext.getCurrentInstance().validationFailed();
+            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "Error inesperado: " + e.getMessage());
         }
     }
 
@@ -188,12 +203,20 @@ public class RentaBeanUI implements Serializable {
         return listaEstadosRenta;
     }
 
-    public String getIdEmpleadoInput() {
-        return idEmpleadoInput;
+    public List<Empleado> getListaEmpleados() {
+        return listaEmpleados;
     }
 
-    public void setIdEmpleadoInput(String idEmpleadoInput) {
-        this.idEmpleadoInput = idEmpleadoInput;
+    public void setListaEmpleados(List<Empleado> listaEmpleados) {
+        this.listaEmpleados = listaEmpleados;
+    }
+
+    public Integer getIdEmpleadoSeleccionado() {
+        return idEmpleadoSeleccionado;
+    }
+
+    public void setIdEmpleadoSeleccionado(Integer idEmpleadoSeleccionado) {
+        this.idEmpleadoSeleccionado = idEmpleadoSeleccionado;
     }
 
     private void mostrarMensaje(FacesMessage.Severity severity, String resumen, String detalle) {
