@@ -49,9 +49,9 @@ public class RentaBeanUI implements Serializable {
     }
 
     public void aprobarCotizacion(){
-        if (rentaSeleccionada != null && "Pendiente por aprobar".equals(rentaSeleccionada.getEstado())) {
+        if (rentaSeleccionada != null && "SOLICITADA".equals(rentaSeleccionada.getEstado())) {
             try {
-                rentaSeleccionada.setEstado("Aprobado");
+                rentaSeleccionada.setEstado("Aprobada");
 
                 rentaHelper.actualizarRenta(rentaSeleccionada);
 
@@ -60,7 +60,7 @@ public class RentaBeanUI implements Serializable {
                 cargarRentaSeleccionada();
 
             } catch (Exception e) {
-                rentaSeleccionada.setEstado("Pendiente por aprobar");
+                rentaSeleccionada.setEstado("SOLICITADA");
                 mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo aprobar la cotización: " + e.getMessage());
                 e.printStackTrace();
             }
