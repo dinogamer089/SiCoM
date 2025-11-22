@@ -25,4 +25,8 @@ public class ServiceLocator {
     public static CombinacionMesaDAO getInstanceCombinacionMesaDAO() {
         return new CombinacionMesaDAO(getEntityManager());
     }
+
+    public static StockReservadoDAO getInstanceStockReservadoDAO() {
+        return new StockReservadoDAO(getEntityManager());
+    }
 }
