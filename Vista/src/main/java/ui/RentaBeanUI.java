@@ -50,19 +50,14 @@ public class RentaBeanUI implements Serializable {
 
     public void aprobarCotizacion(){
         if (rentaSeleccionada != null && "SOLICITADA".equals(rentaSeleccionada.getEstado())) {
-            try {
-                rentaSeleccionada.setEstado("Aprobada");
 
-                rentaHelper.actualizarRenta(rentaSeleccionada);
+            boolean exito = rentaHelper.cambiarEstado(rentaSeleccionada.getId(), "Aprobada");
 
-                mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "La cotización ha sido aprobada.");
-
+            if (exito) {
+                mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "La cotización ha sido aprobada y el stock reservado.");
                 cargarRentaSeleccionada();
-
-            } catch (Exception e) {
-                rentaSeleccionada.setEstado("SOLICITADA");
-                mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo aprobar la cotización: " + e.getMessage());
-                e.printStackTrace();
+            } else {
+                mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo aprobar la cotización. Verifique el log.");
             }
         }
     }

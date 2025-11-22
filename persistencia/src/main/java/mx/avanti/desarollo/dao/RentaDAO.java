@@ -40,6 +40,24 @@ public class RentaDAO extends AbstractDAO<Renta> {
         }
     }
 
+    public void cambiarEstadoRenta(Integer idRenta, String nuevoEstado) {
+        try {
+            entityManager.getTransaction().begin();
+
+            entityManager.createNativeQuery("CALL cambiar_estado_renta(:idRent, :nuevoEst)")
+                    .setParameter("idRent", idRenta)
+                    .setParameter("nuevoEst", nuevoEstado)
+                    .executeUpdate();
+
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            if (entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+            }
+            throw e;
+        }
+    }
+
     @Override
     public EntityManager getEntityManager() {
         return entityManager;
