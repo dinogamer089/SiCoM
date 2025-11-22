@@ -5,6 +5,8 @@ import jakarta.persistence.NoResultException;
 import mx.avanti.desarollo.persistence.AbstractDAO;
 import mx.desarollo.entity.Empleado;
 
+import java.util.List;
+
 public class EmpleadoDAO extends AbstractDAO<Empleado> {
     private final EntityManager entityManager;
 
@@ -39,5 +41,15 @@ public class EmpleadoDAO extends AbstractDAO<Empleado> {
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    public List<Empleado> obtenerEmpleadosDisponibles() {
+        String jpql = "SELECT e FROM Empleado e " +
+                "WHERE e.id NOT IN " +
+                "(SELECT r.idEmpleado.id FROM Renta r " +
+                " WHERE r.idEmpleado IS NOT NULL " +
+                " AND r.estado NOT IN ('Finalizada'))";
+
+        return entityManager.createQuery(jpql, Empleado.class).getResultList();
     }
 }

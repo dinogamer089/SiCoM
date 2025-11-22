@@ -373,7 +373,7 @@
 
                             <p:ajax event="change"
                                     listener="#{rentaUI.onEstadoChange}"
-                                    update="formDetalle" />
+                                    update="formDetalle :formDialog" />
                         </p:selectOneMenu>
                     </div>
                 </div>
@@ -439,9 +439,7 @@
                 <p:selectOneMenu id="empSelect" value="#{rentaUI.idEmpleadoSeleccionado}"
                                  style="width: 250px;" required="true"
                                  requiredMessage="Debe seleccionar un empleado">
-
-                    <f:selectItem itemLabel="Seleccione..." itemValue="" noSelectionOption="true"/>
-
+                    <f:selectItem itemLabel="Seleccione un empleado disponible..." itemValue="" noSelectionOption="true"/>
                     <f:selectItems value="#{rentaUI.listaEmpleados}" var="e"
                                    itemLabel="#{e.nombre}" itemValue="#{e.id}"/>
                 </p:selectOneMenu>
