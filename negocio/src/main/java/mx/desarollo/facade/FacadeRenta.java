@@ -25,8 +25,4 @@ public class FacadeRenta {
     public void cambiarEstado(Integer idRenta, String nuevoEstado){
         delegateRenta.cambiarEstado(idRenta, nuevoEstado);
     }
-
-    public void actualizarRenta(Renta renta){
-        delegateRenta.actualizarRenta(renta);
-    }
 }

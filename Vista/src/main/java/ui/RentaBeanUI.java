@@ -109,7 +109,6 @@ public class RentaBeanUI implements Serializable {
                     rentaSeleccionada.setIdEmpleado(null);
                 }
 
-                rentaHelper.actualizarRenta(rentaSeleccionada);
                 boolean exito = rentaHelper.cambiarEstado(idRenta, nuevoEstado);
 
                 if (exito) {
