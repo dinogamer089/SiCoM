@@ -8,12 +8,13 @@
 
 
         <!-- Declaración manual de entidades -->
-        <class>mx.desarollo.entity.Articulo</class>
-        <class>mx.desarollo.entity.Empleado</class>
         <class>mx.desarollo.entity.Administrador</class>
+        <class>mx.desarollo.entity.Empleado</class>
+        <class>mx.desarollo.entity.Imagen</class>
+        <class>mx.desarollo.entity.Articulo</class>
         <class>mx.desarollo.entity.Renta</class>
-        <class>mx.desarollo.entity.Cliente</class>
         <class>mx.desarollo.entity.Detallerenta</class>
+        <class>mx.desarollo.entity.Cliente</class>
 
 
         <properties>

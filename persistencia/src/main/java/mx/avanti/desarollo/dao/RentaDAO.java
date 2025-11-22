@@ -19,18 +19,8 @@ public class RentaDAO extends AbstractDAO<Renta> {
         return entityManager
                 .createQuery("SELECT r FROM Renta r " +
                         "LEFT JOIN FETCH r.detallesRenta dr " +
-                        "LEFT JOIN FETCH dr.idArticulo " +
-                        "WHERE r.estado = 'Pendiente por aprobar' " +
-                        "ORDER BY r.id", Renta.class)
-                .getResultList();
-    }
-
-    public List<Renta> obtenerTodosRentas(){
-        return entityManager
-                .createQuery("SELECT r FROM Renta r " +
-                        "LEFT JOIN FETCH r.detallesRenta dr " +
-                        "LEFT JOIN FETCH dr.idArticulo " +
-                        "WHERE r.estado != 'Pendiente por aprobar' " +
+                        "LEFT JOIN FETCH dr.idarticulo " +
+                        "WHERE r.estado = 'SOLICITADA' " +
                         "ORDER BY r.id", Renta.class)
                 .getResultList();
     }
@@ -40,14 +30,31 @@ public class RentaDAO extends AbstractDAO<Renta> {
             return entityManager.createQuery("SELECT r FROM Renta r " +
                             "LEFT JOIN FETCH r.idCliente " +
                             "LEFT JOIN FETCH r.detallesRenta dr " +
-                            "LEFT JOIN FETCH dr.idArticulo " +
-                            "LEFT JOIN FETCH r.idEmpleado " +
+                            "LEFT JOIN FETCH dr.idarticulo " +
                             "WHERE r.id = :id", Renta.class)
                     .setParameter("id", idRenta)
                     .getSingleResult();
 
         } catch (NoResultException e) {
             return null;
+        }
+    }
+
+    public void cambiarEstadoRenta(Integer idRenta, String nuevoEstado) {
+        try {
+            entityManager.getTransaction().begin();
+
+            entityManager.createNativeQuery("CALL cambiar_estado_renta(:idRent, :nuevoEst)")
+                    .setParameter("idRent", idRenta)
+                    .setParameter("nuevoEst", nuevoEstado)
+                    .executeUpdate();
+
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            if (entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+            }
+            throw e;
         }
     }
 

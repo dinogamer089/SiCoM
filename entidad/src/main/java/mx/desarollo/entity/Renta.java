@@ -41,14 +41,14 @@ public class Renta {
     private Empleado idEmpleado;
 
     @Size(max = 45)
-    @Column(name = "entregado", length = 45)
+    @Column(name = "Entregado", length = 45)
     private String entregado;
 
     @Size(max = 45)
-    @Column(name = "recogido", length = 45)
+    @Column(name = "Recogido", length = 45)
     private String recogido;
 
-    @OneToMany(mappedBy = "idRenta")
+    @OneToMany(mappedBy = "idrenta")
     @OrderBy("id ASC")
     private List<Detallerenta> detallesRenta;
 
@@ -124,4 +124,5 @@ public class Renta {
     public void setDetallesRenta(List<Detallerenta> detallesRenta) {
         this.detallesRenta = detallesRenta;
     }
+
 }

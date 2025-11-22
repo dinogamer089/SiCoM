@@ -22,7 +22,7 @@ public class FacadeRenta {
         return delegateRenta.findRentaId(idRenta);
     }
 
-    public void actualizarRenta(Renta renta){
-        delegateRenta.actualizarRenta(renta);
+    public void cambiarEstado(Integer idRenta, String nuevoEstado){
+        delegateRenta.cambiarEstado(idRenta, nuevoEstado);
     }
 }

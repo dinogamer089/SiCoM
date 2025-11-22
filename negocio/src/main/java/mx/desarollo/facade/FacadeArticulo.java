@@ -1,37 +1,36 @@
 package mx.desarollo.facade;
 
-import mx.desarollo.entity.Articulo;
 import mx.desarollo.delegate.DelegateArticulo;
+import mx.desarollo.entity.Articulo;
+import mx.desarollo.entity.Imagen;
+
+import java.util.List;
 
 public class FacadeArticulo {
+
     private final DelegateArticulo delegateArticulo;
 
     public FacadeArticulo() {
         this.delegateArticulo = new DelegateArticulo();
     }
 
-    public java.util.List<Articulo> obtenerArticulos(){
+    // Catalogo
+    public List<Articulo> listarCatalogoCliente() {
+        return delegateArticulo.listarCatalogoCliente();
+    }
+
+    // Alta
+    public List<Articulo> obtenerArticulos() {
         return delegateArticulo.findAllArticulos();
     }
 
-    public void guardarArticulo(Articulo articulo){
-        delegateArticulo.saveArticulo(articulo);
+    // Alta
+    public void crearArticuloConImagen(Articulo articulo, Imagen imagen) {
+        delegateArticulo.saveArticuloWithImage(articulo, imagen);
     }
 
-    public void eliminarArticulo(Integer id) {
-        System.out.println("=== FacadeArticulo.eliminarArticulo() ===");
-        System.out.println("ID: " + id);
-        try {
-            delegateArticulo.deleteArticulo(id);
-            System.out.println("✓ Artículo eliminado en Facade");
-        } catch (Exception e) {
-            System.err.println("ERROR en FacadeArticulo.eliminarArticulo():");
-            e.printStackTrace();
-            throw e;
-        }
+    // Eliminación
+    public void eliminarArticuloPorId(Integer id) {
+        delegateArticulo.deleteArticuloById(id);
     }
-    public void modificarArticulo(Articulo art) {
-        delegateArticulo.updateArticulo(art);
-    }
-
 }
