@@ -20,7 +20,7 @@ public class RentaDAO extends AbstractDAO<Renta> {
                 .createQuery("SELECT r FROM Renta r " +
                         "LEFT JOIN FETCH r.detallesRenta dr " +
                         "LEFT JOIN FETCH dr.idarticulo " +
-                        "WHERE r.estado = 'Pendiente por aprobar' " +
+                        "WHERE r.estado = 'SOLICITADA' " +
                         "ORDER BY r.id", Renta.class)
                 .getResultList();
     }
