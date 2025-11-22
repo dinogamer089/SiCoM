@@ -25,4 +25,12 @@ public class ServiceLocator {
     public static RentaDAO getInstanceRentaDAO() {
         return new RentaDAO(getEntityManager());
     }
+
+    public static CombinacionMesaDAO getInstanceCombinacionMesaDAO() {
+        return new CombinacionMesaDAO(getEntityManager());
+    }
+
+    public static StockReservadoDAO getInstanceStockReservadoDAO() {
+        return new StockReservadoDAO(getEntityManager());
+    }
 }

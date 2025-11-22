@@ -8,7 +8,7 @@
        xml:lang="es" lang="es">
 
 <h:head>
-    <title>Gestión de Artículos</title>
+    <title>Combinación de Mesa</title>
     <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -64,7 +64,6 @@
             height: 20px;
         }
 
-        /* ---------- CONTENIDO ---------- */
         .content {
             padding: 30px 60px;
         }
@@ -100,7 +99,7 @@
             opacity: 0.8;
         }
 
-        /* ---------- TABLA INVENTARIO ---------- */
+        /* ---------- TABLA COMBINACIONES ---------- */
         .table-container {
             background-color: white;
             border: 1px solid #ccc;
@@ -184,10 +183,9 @@
             margin-top: 25px;
         }
 
-        /* Formularios dentro de los diálogos */
         .dialog-form .ui-inputtext,
-        .dialog-form .ui-inputnumber input,
-        .dialog-form .ui-selectonemenu {
+        .dialog-form .ui-selectonemenu,
+        .dialog-form .ui-inputnumber input {
             width: 100%;
             box-sizing: border-box;
             background-color: #FFFFFF !important;
@@ -247,41 +245,54 @@
     </div>
 
     <div class="content">
-        <h1 class="title">Inventario</h1>
+        <h1 class="title">Combinación de Mesa</h1>
 
         <h:form>
             <div class="button-bar">
-                <p:commandButton value="+ Alta"
+                <p:commandButton value="+ Nueva combinación"
                                  styleClass="btn alta"
                                  type="button"
-                                 onclick="PF('dlgAlta').show();" />
-
-                <button class="btn modificar" type="button">✎ Modificar</button>
+                                 onclick="PF('dlgAltaCombo').show();" />
                 <button class="btn eliminar" type="button">🗑 Eliminar</button>
             </div>
         </h:form>
 
-        <h:form id="articulosForm">
-            <p:dataTable value="#{articuloUI.articulos}" var="art"
-                         selection="#{articuloUI.seleccionada}"
-                         selectionMode="single"
-                         rowKey="#{art.id}"
-                         styleClass="inventory-table"
-                         style="width:100%;">
+        <h:form id="combosForm">
+            <p:growl id="msgs" showDetail="true" />
 
-                <p:ajax event="rowSelect"
-                        listener="#{articuloUI.seleccionar(articuloUI.seleccionada)}"
-                        update=":formEliminar" />
+            <div class="table-container">
+                <p:dataTable id="tabla"
+                             value="#{combinacionMesaAdminUI.combinaciones}"
+                             var="c"
+                             selection="#{combinacionMesaAdminUI.seleccionada}"
+                             selectionMode="single"
+                             rowKey="#{c.id}"
+                             styleClass="inventory-table"
+                             style="width:100%;">
 
-                <p:column headerText="ID">#{art.id}</p:column>
-                <p:column headerText="Nombre">#{art.nombre}</p:column>
-                <p:column headerText="Cantidad">#{art.unidades}</p:column>
-                <p:column headerText="Precio">$#{art.precio}</p:column>
-                <p:column headerText="Tipo">#{art.categoria}</p:column>
-                <p:column headerText="Imágenes">
-                    <img src="#{articuloUI.getImagenBase64(art)}" alt="img" width="50" />
-                </p:column>
-            </p:dataTable>
+                    <p:ajax event="rowSelect"
+                            listener="#{combinacionMesaAdminUI.seleccionar(combinacionMesaAdminUI.seleccionada)}"
+                            update="@form" />
+                    <p:ajax event="rowUnselect"
+                            listener="#{combinacionMesaAdminUI.limpiarSeleccion}"
+                            update="@form" />
+
+                    <p:column headerText="Mesa">#{c.mesa.nombre}</p:column>
+                    <p:column headerText="Mantel">#{c.mantel.nombre}</p:column>
+                    <p:column headerText="Camino">
+                        #{c.camino != null ? c.camino.nombre : '-'}
+                    </p:column>
+                    <p:column headerText="Cubre">
+                        #{c.cubre != null ? c.cubre.nombre : '-'}
+                    </p:column>
+                    <p:column headerText="Imagen">
+                        <h:panelGroup rendered="#{not empty combinacionMesaAdminUI.miniatura(c)}">
+                            <h:graphicImage value="#{combinacionMesaAdminUI.miniatura(c)}"
+                                            style="height:50px;" />
+                        </h:panelGroup>
+                    </p:column>
+                </p:dataTable>
+            </div>
         </h:form>
 
         <div id="toastSimple" class="toast-simple toast-base">
@@ -307,8 +318,54 @@
         //]]>
     </script>
 
-    <p:dialog header="Nuevo Artículo"
-              widgetVar="dlgAlta"
+    <script type="text/javascript">
+        //<![CDATA[
+        document.addEventListener('DOMContentLoaded', function () {
+            try {
+                function updateDeleteBtn() {
+                    var del = document.querySelector('.button-bar > button.btn.eliminar');
+                    if (!del) {
+                        return;
+                    }
+                    var hasSel = document.querySelector('#combosForm .ui-datatable .ui-state-highlight') !== null;
+                    del.disabled = !hasSel;
+                }
+
+                updateDeleteBtn();
+
+                document.addEventListener('click', function (e) {
+                    if (e.target && e.target.closest && e.target.closest('#combosForm')) {
+                        setTimeout(updateDeleteBtn, 0);
+                    }
+                });
+
+                if (window.PrimeFaces && PrimeFaces.ajax && PrimeFaces.ajax.addOnEvent) {
+                    PrimeFaces.ajax.addOnEvent(function (e) {
+                        if (e && e.status === 'success') {
+                            updateDeleteBtn();
+                        }
+                    });
+                }
+
+                var btns = document.querySelectorAll('.btn.eliminar');
+                btns.forEach(function (b) {
+                    b.addEventListener('click', function () {
+                        if (b.disabled) {
+                            return;
+                        }
+                        if (typeof PF !== 'undefined' && PF('dlgEliminarCombo')) {
+                            PF('dlgEliminarCombo').show();
+                        }
+                    });
+                });
+            } catch (e) {
+            }
+        });
+        //]]>
+    </script>
+
+    <p:dialog header="Nueva combinación"
+              widgetVar="dlgAltaCombo"
               modal="true"
               width="600"
               closable="true"
@@ -316,82 +373,84 @@
               style="max-width:700px;"
               contentStyle="max-height:85vh; overflow-y:auto;">
 
-        <h:form id="formAlta">
-            <p:messages id="messages" showDetail="true" closable="true" />
+        <h:form id="formAltaCombo">
+            <p:messages id="messagesCombo" showDetail="true" closable="true" />
 
             <div class="ui-fluid form-compacto dialog-form">
 
                 <div class="campo-formulario">
-                    <p:outputLabel for="nombre" value="Nombre: *" />
-                    <p:inputText id="nombre"
-                                 value="#{articuloUI.nuevoArticulo.nombre}"
-                                 required="true" />
-                </div>
-
-                <div class="campo-formulario">
-                    <p:outputLabel for="categoria" value="Categoría: *" />
-                    <p:selectOneMenu id="categoria"
-                                     value="#{articuloUI.nuevoArticulo.categoria}"
+                    <p:outputLabel for="mesa" value="Mesa: * *" />
+                    <p:selectOneMenu id="mesa"
+                                     value="#{combinacionMesaAdminUI.mesaId}"
                                      required="true">
-                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}" />
-                        <f:selectItem itemLabel="MESA" itemValue="MESA" />
-                        <f:selectItem itemLabel="TEXTIL" itemValue="TEXTIL" />
-                        <f:selectItem itemLabel="SILLA" itemValue="SILLA" />
-                        <f:selectItem itemLabel="CARPA" itemValue="CARPA" />
-                        <f:selectItem itemLabel="COOLER" itemValue="COOLER" />
-                        <f:selectItem itemLabel="CALENTON" itemValue="CALENTON" />
+                        <f:selectItem itemLabel="-- Seleccione mesa --" itemValue="#{null}" />
+                        <f:selectItems value="#{combinacionMesaAdminUI.mesasDisponibles}"
+                                       var="m"
+                                       itemValue="#{m.id}"
+                                       itemLabel="#{m.nombre}" />
+                        <p:ajax process="@this"
+                                listener="#{combinacionMesaAdminUI.onMesaChange}"
+                                update="mantel camino cubre messagesCombo" />
                     </p:selectOneMenu>
                 </div>
 
                 <div class="campo-formulario">
-                    <p:outputLabel for="precio" value="Precio: *" />
-                    <p:inputNumber id="precio"
-                                   value="#{articuloUI.nuevoPrecio}"
-                                   decimalPlaces="2"
-                                   required="true"
-                                   minValue="0" />
-                </div>
-
-                <div class="campo-formulario">
-                    <p:outputLabel for="unidades" value="Unidades: *" />
-                    <p:inputNumber id="unidades"
-                                   value="#{articuloUI.nuevoArticulo.unidades}"
-                                   decimalPlaces="0"
-                                   required="true"
-                                   minValue="0" />
-                </div>
-
-                <div class="campo-formulario">
-                    <p:outputLabel for="forma" value="Forma:" />
-                    <p:selectOneMenu id="forma"
-                                     value="#{articuloUI.nuevoArticulo.forma}">
-                        <f:selectItem itemLabel="N/A" itemValue="#{null}" />
-                        <f:selectItem itemLabel="REDONDA" itemValue="REDONDA" />
-                        <f:selectItem itemLabel="RECTANGULAR" itemValue="RECTANGULAR" />
-                        <f:selectItem itemLabel="UNIVERSAL" itemValue="UNIVERSAL" />
+                    <p:outputLabel for="mantel" value="Mantel: * *" />
+                    <p:selectOneMenu id="mantel"
+                                     value="#{combinacionMesaAdminUI.mantelId}"
+                                     required="true">
+                        <f:selectItem itemLabel="-- Seleccione mantel --" itemValue="#{null}" />
+                        <f:selectItems value="#{combinacionMesaAdminUI.mantelesDisponibles}"
+                                       var="mt"
+                                       itemValue="#{mt.id}"
+                                       itemLabel="#{mt.nombre}" />
+                        <p:ajax process="@this"
+                                listener="#{combinacionMesaAdminUI.onMantelChange}"
+                                update="camino cubre messagesCombo" />
                     </p:selectOneMenu>
                 </div>
 
                 <div class="campo-formulario">
-                    <p:outputLabel for="textilTipo" value="Tipo Textil:" />
-                    <p:selectOneMenu id="textilTipo"
-                                     value="#{articuloUI.nuevoArticulo.textilTipo}">
-                        <f:selectItem itemLabel="N/A" itemValue="#{null}" />
-                        <f:selectItem itemLabel="MANTEL" itemValue="MANTEL" />
-                        <f:selectItem itemLabel="CAMINO" itemValue="CAMINO" />
-                        <f:selectItem itemLabel="CUBRE" itemValue="CUBRE" />
+                    <p:outputLabel for="camino" value="Camino (opcional):" />
+                    <p:selectOneMenu id="camino"
+                                     value="#{combinacionMesaAdminUI.caminoId}"
+                                     disabled="#{combinacionMesaAdminUI.cubreId != null}">
+                        <f:selectItem itemLabel="-- Ninguno --" itemValue="#{null}" />
+                        <f:selectItems value="#{combinacionMesaAdminUI.caminosDisponibles}"
+                                       var="cm"
+                                       itemValue="#{cm.id}"
+                                       itemLabel="#{cm.nombre}" />
+                        <p:ajax process="@this"
+                                listener="#{combinacionMesaAdminUI.onCaminoChange}"
+                                update="camino cubre messagesCombo" />
+                    </p:selectOneMenu>
+                </div>
+
+                <div class="campo-formulario">
+                    <p:outputLabel for="cubre" value="Cubremantel (opcional):" />
+                    <p:selectOneMenu id="cubre"
+                                     value="#{combinacionMesaAdminUI.cubreId}"
+                                     disabled="#{combinacionMesaAdminUI.caminoId != null}">
+                        <f:selectItem itemLabel="-- Ninguno --" itemValue="#{null}" />
+                        <f:selectItems value="#{combinacionMesaAdminUI.cubresDisponibles}"
+                                       var="cb"
+                                       itemValue="#{cb.id}"
+                                       itemLabel="#{cb.nombre}" />
+                        <p:ajax process="@this"
+                                listener="#{combinacionMesaAdminUI.onCubreChange}"
+                                update="camino cubre messagesCombo" />
                     </p:selectOneMenu>
                 </div>
 
                 <div class="campo-formulario">
                     <p:outputLabel value="Imagen:" style="margin-bottom: 5px; display:block;" />
                     <h:panelGroup>
-                        <input type="file" id="imagenUpload"
+                        <input type="file" id="imagenComboUpload"
                                accept="image/jpeg,image/png" />
                         <script type="text/javascript">
                             //<![CDATA[
                             (function () {
-                                var el = document.getElementById('imagenUpload');
+                                var el = document.getElementById('imagenComboUpload');
                                 if (!el) {
                                     return;
                                 }
@@ -419,113 +478,66 @@
 
             </div> <div class="botones-dialogo">
             <p:commandButton value="Guardar"
-                             action="#{articuloUI.guardarNuevo}"
+                             styleClass="btn"
+                             action="#{combinacionMesaAdminUI.guardarCombinacion}"
                              process="@form"
-                             update=":articulosForm formAlta:messages"
+                             update=":combosForm formAltaCombo"
                              ajax="true"
-                             styleClass="btn"
-                             oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('dlgAlta').hide(); mostrarToastSimple('¡Artículo guardado exitosamente!'); }" />
-
-            <p:commandButton value="Limpiar"
-                             process="@this"
-                             update="formAlta"
-                             actionListener="#{articuloUI.cancelarAlta}"
-                             styleClass="btn"
-                             style="margin-left: 10px;" />
+                             oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('dlgAltaCombo').hide(); mostrarToastSimple('¡Combinación guardada!'); }" />
 
             <p:commandButton value="Cancelar"
-                             type="button"
                              styleClass="btn"
+                             process="@this"
+                             update="formAltaCombo"
+                             actionListener="#{combinacionMesaAdminUI.cancelarAlta}"
+                             ajax="true"
                              style="margin-left: 10px;"
-                             onclick="PF('dlgAlta').hide();" />
+                             oncomplete="PF('dlgAltaCombo').hide();" />
         </div>
         </h:form>
     </p:dialog>
 
-    <script type="text/javascript">
-        //<![CDATA[
-        document.addEventListener('DOMContentLoaded', function () {
-            try {
-                function updateDeleteBtn() {
-                    var del = document.querySelector('.button-bar > button.btn.eliminar');
-                    if (!del) {
-                        return;
-                    }
-                    var hasSel = document.querySelector('#articulosForm .ui-datatable .ui-state-highlight') !== null;
-                    del.disabled = !hasSel;
-                }
-
-                updateDeleteBtn();
-
-                document.addEventListener('click', function (e) {
-                    if (e.target && e.target.closest && e.target.closest('#articulosForm')) {
-                        setTimeout(updateDeleteBtn, 0);
-                    }
-                });
-
-                if (window.PrimeFaces && PrimeFaces.ajax && PrimeFaces.ajax.addOnEvent) {
-                    PrimeFaces.ajax.addOnEvent(function (e) {
-                        if (e && e.status === 'success') {
-                            updateDeleteBtn();
-                        }
-                    });
-                }
-
-                var btns = document.querySelectorAll('.btn.eliminar');
-                btns.forEach(function (b) {
-                    b.addEventListener('click', function () {
-                        if (b.disabled) {
-                            return;
-                        }
-                        if (typeof PF !== 'undefined' && PF('dlgEliminar')) {
-                            PF('dlgEliminar').show();
-                        }
-                    });
-                });
-            } catch (e) {
-            }
-        });
-        //]]>
-    </script>
-
-    <p:dialog header="Eliminar Artículo"
-              widgetVar="dlgEliminar"
+    <p:dialog header="Eliminar combinación"
+              widgetVar="dlgEliminarCombo"
               modal="true"
               width="500"
               closable="true"
               resizable="false">
-
-        <h:form id="formEliminar">
-            <p:messages id="messagesEliminar"
-                        showDetail="true"
-                        closable="true" />
+        <h:form id="formEliminarCombo">
+            <p:messages id="messagesEliminarCombo" showDetail="true" closable="true" />
 
             <div style="padding: 10px; font-family:'FreightText Pro', serif;">
                 <p style="margin:0 0 10px 0; color:#a94442;">
                     <strong>Advertencia:</strong>
-                    Eliminar un artículo puede afectar cotizaciones o rentas existentes.
+                    Eliminar una combinación puede afectar cotizaciones o rentas existentes.
                 </p>
                 <p style="margin:0;">
-                    ¿Desea eliminar el artículo
-                    <strong>#{articuloUI.seleccionada != null ? articuloUI.seleccionada.nombre : ''}</strong>
+                    ¿Desea eliminar la combinación
+                    <strong>
+                        #{combinacionMesaAdminUI.seleccionada != null ?
+                          combinacionMesaAdminUI.seleccionada.mesa.nombre : ''}
+                        -
+                        #{combinacionMesaAdminUI.seleccionada != null ?
+                          combinacionMesaAdminUI.seleccionada.mantel.nombre : ''}
+                    </strong>
                     de forma permanente?
                 </p>
             </div>
 
             <p:commandButton value="Eliminar"
-                             action="#{articuloUI.eliminarSeleccionada}"
+                             action="#{combinacionMesaAdminUI.eliminarSeleccionada}"
                              process="@form"
-                             update=":articulosForm formEliminar:messagesEliminar"
+                             update=":combosForm formEliminarCombo:messagesEliminarCombo"
                              ajax="true"
                              styleClass="btn"
                              style="margin-top: 20px;"
-                             oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('dlgEliminar').hide(); mostrarToastSimple('Artículo eliminado'); }" />
+                             oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('dlgEliminarCombo').hide(); mostrarToastSimple('Combinación eliminada'); }" />
 
             <p:commandButton value="Cancelar"
                              type="button"
                              styleClass="btn"
                              style="margin-top: 20px; margin-left: 10px;"
-                             onclick="PF('dlgEliminar').hide();" />
+                             onclick="PF('dlgEliminarCombo').hide();" />
         </h:form>
     </p:dialog>
 
