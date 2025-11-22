@@ -3,6 +3,7 @@ package mx.desarollo.integration;
 import mx.desarollo.facade.FacadeEmpleado;
 import mx.desarollo.facade.FacadeLogin;
 import mx.desarollo.facade.FacadeArticulo;
+import mx.desarollo.facade.FacadeCombinacionMesa;
 import mx.desarollo.facade.FacadeRenta;
 
 public class ServiceFacadeLocator {
@@ -10,6 +11,7 @@ public class ServiceFacadeLocator {
     private static FacadeArticulo facadeArticulo;
     private static FacadeRenta facadeRenta;
     private static FacadeEmpleado facadeEmpleado;
+    private static FacadeCombinacionMesa facadeCombinacionMesa;
 
     public static FacadeLogin getInstanceFacadeLogin() {
         if (facadeLogin == null) {
@@ -37,5 +39,12 @@ public class ServiceFacadeLocator {
             facadeEmpleado = new FacadeEmpleado();
         }
         return facadeEmpleado;
+    }
+
+    public static FacadeCombinacionMesa getInstanceFacadeCombinacionMesa() {
+        if (facadeCombinacionMesa == null) {
+            facadeCombinacionMesa = new FacadeCombinacionMesa();
+        }
+        return facadeCombinacionMesa;
     }
 }
