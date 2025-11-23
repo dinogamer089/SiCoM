@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xml:lang="es" lang="es">
+
+<h:head>
+    <title>Mis Tareas - Empleado</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style type="text/css">
+        @font-face { font-family: "Minerva Modern"; src: url("resources/MinervaModern Bold.ttf") format("truetype"); font-weight: bold; }
+        body, html { margin: 0; padding: 0; height: 100%; background: #E7D9CB; }
+        .topbar { background-color: #3D4435; color: #C2C8CC; display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; }
+        .topbar-center { text-align: center; flex-grow: 1; font-style: italic; font-size: 22px; }
+        .content { padding: 20px 60px; font-family: 'Minerva Modern', serif; }
+        .title { font-size: 26px; margin-bottom: 20px; color: #000000; }
+        .rentas-list { display: flex; gap: 20px; flex-wrap: wrap; }
+
+        .renta-card {
+            width: 280px; background-color: #3D4435; color: white; padding: 15px; display: flex; gap: 15px; align-items: center;
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3); cursor: pointer; transition: transform 0.2s;
+        }
+        .renta-card:hover { transform: translateY(-5px); }
+        .renta-info { display: flex; flex-direction: column; font-weight: bold; font-size: 14px; }
+        .renta-status { font-size: 14px; font-style: italic; margin-top: 5px; color: #C2C8CC; }
+        .renta-date { font-size: 12px; margin-top: 2px; color: white; }
+
+        .badge { padding: 2px 6px; border-radius: 3px; font-size: 10px; color: black; font-weight: bold; margin-bottom: 5px; display: inline-block; }
+        .badge-pool { background: orange; }
+        .badge-mine { background: #98FB98; }
+    </style>
+</h:head>
+
+<h:body>
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{empleadoRentaUI.cargarRentas}" />
+        <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
+    </f:metadata>
+
+    <div class="topbar">
+        <div class="topbar-left"><span style="font-size:14px;">Módulo Operativo</span></div>
+        <div class="topbar-center">MIS TAREAS PENDIENTES</div>
+        <div class="topbar-right"><span>Empleado</span><img src="resources/administrador.png" style="width:20px; margin-left:10px;" /></div>
+    </div>
+
+    <div class="content">
+        <h1 class="title">Bolsa de Trabajo y Mis Entregas</h1>
+
+        <h:form id="formEmpleados">
+            <p:growl id="msgs" showDetail="true" />
+
+            <div class="rentas-list">
+                <ui:repeat value="#{empleadoRentaUI.rentasPendientes}" var="rent">
+
+                    <h:commandLink action="#{empleadoRentaUI.irADetalle(rent)}" style="text-decoration: none; color: inherit;">
+                        <div class="renta-card" style="#{rent.idEmpleado == null ? 'border-left: 5px solid orange;' : 'border-left: 5px solid #98FB98;'}">
+
+                            <div>
+                                <h:graphicImage value="resources/cotizacion.png" width="30" height="35"/>
+                            </div>
+
+                            <div class="renta-info">
+                                <h:panelGroup rendered="#{rent.idEmpleado == null}">
+                                    <span class="badge badge-pool">DISPONIBLE</span>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{rent.idEmpleado != null}">
+                                    <span class="badge badge-mine">ASIGNADA A MÍ</span>
+                                </h:panelGroup>
+
+                                <h:outputText value="#{rent.idCliente.nombre}" style="font-size: 16px; margin-bottom: 3px;"/>
+                                <h:outputText value="#{rent.idCliente.direccion}" style="font-weight: normal; font-size: 12px;"/>
+
+                                <div class="renta-date">
+                                    📅 <h:outputText value="#{rent.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                                </h:outputText>
+
+                                    ⏰ <h:outputText value="#{rent.hora}">
+                                    <f:convertDateTime pattern="HH:mm" type="localTime"/>
+                                </h:outputText>
+                                </div>
+                                <h:outputText value="#{rent.estado.toUpperCase()}" styleClass="renta-status"/>
+                            </div>
+                        </div>
+                    </h:commandLink>
+                </ui:repeat>
+
+                <h:panelGroup rendered="#{empty empleadoRentaUI.rentasPendientes}">
+                    <div style="padding: 20px; font-size: 18px; color: #555;">
+                        No hay tareas disponibles ni asignadas en este momento.
+                    </div>
+                </h:panelGroup>
+            </div>
+        </h:form>
+    </div>
+</h:body>
+</html>
