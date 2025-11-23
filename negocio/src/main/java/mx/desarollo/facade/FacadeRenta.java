@@ -29,4 +29,15 @@ public class FacadeRenta {
     public void actualizarRenta(Renta renta){
         delegateRenta.actualizarRenta(renta);
     }
+
+    /**
+     * Metodo para obtener las rentas disponibles o asignadas a un empleado especifico.
+     * Llama al metodo del delegateRenta para procesar la solicitud.
+     * @Throws Si hay un error en la comunicacion con el delegate o en la recuperacion de datos.
+     * @Params Objeto de tipo Integer idEmpleado
+     * @return Una lista de objetos Renta disponibles o asignadas al empleado.
+     */
+    public java.util.List<Renta> obtenerRentasDisponiblesYAsignadas(Integer idEmpleado){
+        return delegateRenta.obtenerRentasDisponiblesYAsignadas(idEmpleado);
+    }
 }
