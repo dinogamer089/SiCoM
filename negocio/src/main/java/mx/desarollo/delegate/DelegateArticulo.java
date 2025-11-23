@@ -57,4 +57,8 @@ public class DelegateArticulo {
     public java.util.Optional<Articulo> findById(Integer id) {
         return ServiceLocator.getInstanceArticuloDAO().find(id);
     }
+
+    public void updateArticulo(Articulo articulo) {
+        ServiceLocator.getInstanceArticuloDAO().update(articulo);
+    }
 }
