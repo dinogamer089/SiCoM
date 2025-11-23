@@ -25,4 +25,15 @@ public class DelegateRenta {
     public void actualizarRenta(Renta renta){
         ServiceLocator.getInstanceRentaDAO().update(renta);
     }
+
+    /**
+     * Metodo para obtener las rentas disponibles o asignadas a un empleado especifico.
+     * Llama a la instancia de RentaDAO a traves del ServiceLocator para realizar la consulta.
+     * @Throws Si la base de datos rechaza la peticion de busqueda o hay un error en la capa DAO.
+     * @Params Objeto de tipo Integer idEmpleado
+     * @return Una lista con las rentas encontradas disponibles o asignadas al empleado.
+     */
+    public List<Renta> obtenerRentasDisponiblesYAsignadas(Integer idEmpleado){
+        return ServiceLocator.getInstanceRentaDAO().obtenerRentasDisponiblesYAsignadas(idEmpleado);
+    }
 }

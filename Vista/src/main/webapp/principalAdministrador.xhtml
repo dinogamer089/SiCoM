@@ -1,7 +1,15 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" lang="es">
-<head>
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xml:lang="es" lang="es">
+
+<f:metadata>
+    <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
+</f:metadata>
+
+<h:head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Eventos Campestre - Bienvenida</title>
@@ -146,73 +154,74 @@
             }
         }
     </style>
-</head>
-<body>
-<div class="topbar">
-    <div class="topbar-left">
-        <img src="#{request.contextPath}/resources/edicion.png" alt="Empleados" class="topbar-icon" />
-        <a href="#{request.contextPath}/AdminEmpleados.xhtml">Empleados</a>
+</h:head>
+<h:body>
+    <div class="topbar">
+        <div class="topbar-left">
+            <img src="#{request.contextPath}/resources/edicion.png" alt="Empleados" class="topbar-icon" />
+            <a href="#{request.contextPath}/AdminEmpleados.xhtml">Empleados</a>
 
-    </div>
-
-    <div class="topbar-center">
-        <a href="#"> EVENTOS CAMPESTRE</a><br />
-        <a href="Inventario.xhtml">Inventario</a>
-        <a href="Articulos.xhtml">Artículos</a>
-        <a href="Cotizaciones.xhtml">Cotizaciones</a>
-        <a href="Rentas.xhtml">Rentas</a>
-    </div>
-
-    <div class="topbar-right">
-        <span>Administrador</span>
-        <img src="#{request.contextPath}/resources/administrador.png" alt="admin" class="topbar-icon" />
-    </div>
-</div>
-
-<div class="container">
-    <div class="welcome-section">
-        <a>
-            <img src="#{request.contextPath}/resources/Elefante.png" alt="Logo" class="logo" />
-        </a>
-        <h1>¡Bienvenido!</h1>
-    </div>
-    <hr />
-
-    <div class="grid" >
-        <div class="card" >
-            <a href="alta.xhtml">
-                <img src="#{request.contextPath}/resources/listas-de-control.png" alt="Inventario" />
-                <h2>Inventario</h2>
-                <p>Aquí puedes ver el flujo de cambios en tu inventario</p>
-            </a>
         </div>
 
-        <div class="card">
-            <a href="Cotizaciones.xhtml">
-                <img src="#{request.contextPath}/resources/calendario.png" alt="Cotizaciones" />
-                <h2>Cotizaciones</h2>
-                <p>Aquí puedes administrar las cotizaciones solicitadas</p>
-            </a>
+        <div class="topbar-center">
+            <a href="#"> EVENTOS CAMPESTRE</a><br />
+            <a href="Inventario.xhtml">Inventario</a>
+            <a href="Articulos.xhtml">Artículos</a>
+            <a href="Cotizaciones.xhtml">Cotizaciones</a>
+            <a href="Rentas.xhtml">Rentas</a>
+            <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
         </div>
 
-
-        <div class="card">
-            <a href="#{request.contextPath}/articulos">
-                <img src="#{request.contextPath}/resources/inventario-disponible.png" alt="Artículos" />
-                <h2>Artículos</h2>
-                <p>Aquí administrar los artículos para su cotización</p>
-            </a>
-        </div>
-
-        <div class="card">
-            <a href="#{request.contextPath}/rentas">
-                <img src="#{request.contextPath}/resources/reloj.png" alt="Rentas" />
-                <h2>Rentas</h2>
-                <p>Aquí puedes administrar las rentas realizadas</p>
-            </a>
+        <div class="topbar-right">
+            <span>Administrador</span>
+            <img src="#{request.contextPath}/resources/administrador.png" alt="admin" class="topbar-icon" />
         </div>
     </div>
-</div>
 
-</body>
+    <div class="container">
+        <div class="welcome-section">
+            <a href="#">
+                <img src="#{request.contextPath}/resources/Elefante.png" alt="Logo" class="logo" />
+            </a>
+            <h1>¡Bienvenido!</h1>
+        </div>
+        <hr />
+
+        <div class="grid" >
+            <div class="card" >
+                <a href="#">
+                    <img src="#{request.contextPath}/resources/listas-de-control.png" alt="Inventario" />
+                    <h2>Inventario</h2>
+                    <p>Aquí puedes ver el flujo de cambios en tu inventario</p>
+                </a>
+            </div>
+
+            <div class="card">
+                <a href="Cotizaciones.xhtml">
+                    <img src="#{request.contextPath}/resources/calendario.png" alt="Cotizaciones" />
+                    <h2>Cotizaciones</h2>
+                    <p>Aquí puedes administrar las cotizaciones solicitadas</p>
+                </a>
+            </div>
+
+
+            <div class="card">
+                <a href="alta.xhtml">
+                    <img src="#{request.contextPath}/resources/inventario-disponible.png" alt="Artículos" />
+                    <h2>Artículos</h2>
+                    <p>Aquí administrar los artículos para su cotización</p>
+                </a>
+            </div>
+
+            <div class="card">
+                <a href="Rentas.xhtml">
+                    <img src="#{request.contextPath}/resources/reloj.png" alt="Rentas" />
+                    <h2>Rentas</h2>
+                    <p>Aquí puedes administrar las rentas realizadas</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+</h:body>
 </html>
