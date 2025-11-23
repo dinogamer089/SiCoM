@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8' ?>
+﻿<?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
@@ -256,22 +256,48 @@
             font-size: 1rem;
             font-weight: 600;
         }
+
+        /* --- SELECTOR DE CANTIDAD (recuadro gris) --- */
         .qty-selector {
             display: flex;
             align-items: center;
             justify-content: space-between;
             background-color: var(--lightGray-bg);
             border: 1px solid var(--black);
-            width: 95px;
-            padding: 3px 5px;
+            width: 130px;          /* ⬅️ MÁS ANCHO que antes (95px) */
+            padding: 3px 10px;     /* ⬅️ Un poco más de espacio interno */
             margin-right: 30px;
         }
-        .qty-btn {
-            background: transparent !important; border: none !important; box-shadow: none !important;
-            color: var(--black) !important; font-weight: 900 !important;
+
+        /* Botones +/- sin fondo ni bordes */
+        .qty-selector .ui-button.qty-btn,
+        .qty-selector .ui-button.qty-btn:hover,
+        .qty-selector .ui-button.qty-btn:focus,
+        .qty-selector .ui-button.qty-btn:active,
+        .qty-selector .ui-button.qty-btn.ui-state-hover,
+        .qty-selector .ui-button.qty-btn.ui-state-focus,
+        .qty-selector .ui-button.qty-btn.ui-state-active {
+            background: transparent !important;
+            background-color: transparent !important;
+            background-image: none !important;
+            box-shadow: none !important;
+            border: none !important;
+            color: var(--black) !important;
+            font-weight: 900 !important;
             width: 28px;
-            cursor: pointer;
+            outline: none !important;
         }
+
+        /* Quitar el recuadro blanco del InputNumber y centrar el número */
+        .qty-selector .ui-inputnumber,
+        .qty-selector .ui-inputnumber input {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            width: 45px !important;    /* ⬅️ ancho del área de número */
+            text-align: center;
+        }
+
         .qty-val {
             font-weight: 700;
             font-size: 1rem;
@@ -376,7 +402,7 @@
             color: var(--black);
         }
 
-        /* Estilos específicos del contenido del carrito modal */
+        /* Estilos especificos del contenido del carrito modal */
         .modal-cart-content {
             padding: 15px 20px;
         }
@@ -415,6 +441,14 @@
             border: 1px solid var(--black);
             padding: 2px 5px;
             gap: 8px;
+        }
+        .modal-qty-selector .ui-inputnumber,
+        .modal-qty-selector .ui-inputnumber input {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            width: 40px !important;
+            text-align: center;
         }
         .modal-qty-val {
             font-weight: 700;
@@ -530,7 +564,8 @@
                                       value="#{carritoBean.fechaCatalogoSeleccionada}"
                                       showIcon="true"
                                       appendTo="@(body)"
-                                      minDate="#{carritoBean.fechaActual}">
+                                      mindate="#{carritoBean.fechaActual}"
+                                      readonlyInput="true">
                             <p:ajax event="dateSelect"
                                     process="@this"
                                     listener="#{carritoBean.actualizarFechaDesdeCatalogo(carritoBean.fechaCatalogoSeleccionada)}"
@@ -548,7 +583,7 @@
             </div>
             <div class="tb-row2">
                 <a href="#">Acerca de</a>
-                <a href="#">Renta</a>
+                <a href="renta_cliente.xhtml">Renta</a>
                 <a href="#">Contacto</a>
             </div>
         </div>
@@ -610,11 +645,11 @@
                                                  actionListener="#{carritoBean.eliminarItem(item)}"
                                                  update=":formCarrito:stockAlerts :formCarrito:mainCartGrid :formCarrito:tb-count-group :formCarrito:modalCarritoContent"/>
 
-                                <h:panelGroup rendered="#{empty item.articulo.imagen}">
+                                <h:panelGroup rendered="#{empty item.articulo}">
                                     <div class="item-img-placeholder"></div>
                                 </h:panelGroup>
-                                <h:graphicImage rendered="#{not empty item.articulo.imagen}"
-                                                value="#{articuloUI.getImagenBase64(item.articulo.imagen)}"
+                                <h:graphicImage rendered="#{not empty item.articulo}"
+                                                value="#{articuloUI.getImagenBase64(item.articulo)}"
                                                 styleClass="item-img-placeholder" style="object-fit: cover"/>
 
                                 <h:outputText value="#{item.articulo.nombre}" styleClass="item-name"/>
@@ -624,7 +659,17 @@
                                                      actionListener="#{carritoBean.decrementarCantidad(item)}"
                                                      update=":formCarrito:stockAlerts :formCarrito:mainCartGrid :formCarrito:tb-count-group :formCarrito:modalCarritoContent"
                                                      disabled="#{item.cantidad le 1}"/>
-                                    <h:outputText value="#{item.cantidad}" styleClass="qty-val"/>
+                                    <p:inputNumber id="qtyInput"
+                                                   value="#{item.cantidad}"
+                                                   decimalPlaces="0"
+                                                   minValue="1"
+                                                   maxValue="#{carritoBean.maxCantidadItem(item)}"
+                                                   style="width: 60px; text-align:center;">
+                                        <p:ajax event="blur"
+                                                process="@this"
+                                                listener="#{carritoBean.aplicarCantidad(item)}"
+                                                update=":formCarrito:stockAlerts :formCarrito:mainCartGrid :formCarrito:tb-count-group :formCarrito:modalCarritoContent"/>
+                                    </p:inputNumber>
                                     <p:commandButton icon="pi pi-plus" styleClass="qty-btn"
                                                      actionListener="#{carritoBean.incrementarCantidad(item)}"
                                                      update=":formCarrito:stockAlerts :formCarrito:mainCartGrid :formCarrito:tb-count-group :formCarrito:modalCarritoContent"/>
@@ -705,9 +750,9 @@
                             <i class="pi pi-minus-circle"/>
                         </p:commandLink>
 
-                        <h:panelGroup rendered="#{empty item.articulo.imagen}" styleClass="modal-item-img placeholder"/>
-                        <h:graphicImage rendered="#{not empty item.articulo.imagen}"
-                                        value="#{articuloUI.getImagenBase64(item.articulo.imagen)}"
+                        <h:panelGroup rendered="#{empty item.articulo}" styleClass="modal-item-img placeholder"/>
+                        <h:graphicImage rendered="#{not empty item.articulo}"
+                                        value="#{articuloUI.getImagenBase64(item.articulo)}"
                                         styleClass="modal-item-img"/>
 
                         <h:outputText value="#{item.articulo.nombre}" styleClass="modal-item-name"/>
@@ -718,7 +763,17 @@
                                            disabled="#{item.cantidad le 1}">
                                 <i class="pi pi-minus" style="font-size: 0.7rem;"/>
                             </p:commandLink>
-                            <span class="modal-qty-val">#{item.cantidad}</span>
+                            <p:inputNumber id="modalQtyInput"
+                                           value="#{item.cantidad}"
+                                           decimalPlaces="0"
+                                           minValue="1"
+                                           maxValue="#{carritoBean.maxCantidadItem(item)}"
+                                           style="width: 50px; text-align:center;">
+                                <p:ajax event="blur"
+                                        process="@this"
+                                        listener="#{carritoBean.aplicarCantidad(item)}"
+                                        update=":formCarrito:modalCarritoContent :formCarrito:tb-count-group :formCarrito:mainCartGrid"/>
+                            </p:inputNumber>
                             <p:commandLink actionListener="#{carritoBean.incrementarCantidad(item)}"
                                            update=":formCarrito:modalCarritoContent :formCarrito:tb-count-group :formCarrito:mainCartGrid">
                                 <i class="pi pi-plus" style="font-size: 0.7rem;"/>

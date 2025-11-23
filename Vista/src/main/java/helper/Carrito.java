@@ -50,8 +50,8 @@ public class Carrito implements Serializable {
         // Busca si el artículo ya está en la lista
         Optional<CarritoItem> existente = items.stream()
                 .filter(i -> i.getArticulo() != null
-                        && i.getArticulo().getIdarticulo() != null
-                        && i.getArticulo().getIdarticulo().equals(articulo.getIdarticulo()))
+                        && i.getArticulo().getId() != null
+                        && i.getArticulo().getId().equals(articulo.getId()))
                 .findFirst();
 
         if (existente.isPresent()) {
@@ -109,6 +109,34 @@ public class Carrito implements Serializable {
         }
     }
 
+    // Cambia la cantidad manualmente respetando disponibilidad
+    public void cambiarCantidad(CarritoItem item, int nuevaCantidad) {
+        if (item == null) return;
+        for (CarritoItem i : new ArrayList<>(items)) {
+            if (!i.equals(item)) continue;
+            if (nuevaCantidad <= 0) {
+                items.remove(i);
+                break;
+            }
+            // validar contra stock por fecha
+            if (facadeCarrito.verificarStock(i.getArticulo(), nuevaCantidad, fechaSeleccionada)) {
+                i.setCantidad(nuevaCantidad);
+                i.setAjustadoPorStock(false);
+                i.setAvisoAjuste(null);
+            } else {
+                int disponible = checkStock(i.getArticulo(), fechaSeleccionada);
+                if (disponible <= 0) {
+                    items.remove(i);
+                } else {
+                    i.setCantidad(disponible);
+                    i.setAjustadoPorStock(true);
+                    i.setAvisoAjuste("La cantidad de '" + safeNombre(i.getArticulo()) + "' se ajustó a " + disponible + " por disponibilidad.");
+                }
+            }
+            break;
+        }
+    }
+
     // Limpia todo el carrito
     public void vaciar() { items.clear(); }
 
@@ -144,7 +172,7 @@ public class Carrito implements Serializable {
         List<CarritoItem> snapshot = new ArrayList<>(items);
         for (CarritoItem it : snapshot) {
             Articulo art = it.getArticulo();
-            if (art == null || art.getIdarticulo() == null) continue;
+            if (art == null || art.getId() == null) continue;
 
             // Consultamos disponibilidad en la NUEVA fecha
             int disponible = checkStock(art, nuevaFecha);

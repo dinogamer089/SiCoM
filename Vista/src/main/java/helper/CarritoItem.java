@@ -77,12 +77,12 @@ public class CarritoItem implements Serializable {
         CarritoItem that = (CarritoItem) o;
 
         if (this.articulo == null || that.articulo == null) return false;
-        return Objects.equals(this.articulo.getIdarticulo(), that.articulo.getIdarticulo());
+        return Objects.equals(this.articulo.getId(), that.articulo.getId());
     }
 
     @Override
     public int hashCode() {
-        return articulo != null && articulo.getIdarticulo() != null ?
-                articulo.getIdarticulo().hashCode() : 0;
+        return articulo != null && articulo.getId() != null ?
+                articulo.getId().hashCode() : 0;
     }
 }

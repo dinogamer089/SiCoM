@@ -21,7 +21,7 @@ public class DelegateCarrito {
         if (fecha == null) return stock >= cantidadSolicitada;
 
         int reservado = ServiceLocator.getInstanceStockReservadoDAO()
-                .obtenerReservado(articulo.getIdarticulo(), fecha);
+                .obtenerReservado(articulo.getId(), fecha);
         int disponible = Math.max(stock - reservado, 0);
         return cantidadSolicitada <= disponible;
     }
@@ -32,7 +32,7 @@ public class DelegateCarrito {
         if (stock == null) return 0;
         if (fecha == null) return stock;
         int reservado = ServiceLocator.getInstanceStockReservadoDAO()
-                .obtenerReservado(articulo.getIdarticulo(), fecha);
+                .obtenerReservado(articulo.getId(), fecha);
         return Math.max(stock - reservado, 0);
     }
 }

@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.text.Normalizer;
 
 import mx.desarollo.entity.Categoria;
 import mx.desarollo.entity.Forma;
@@ -48,7 +49,7 @@ public class ArticuloCatalogoBeanUI implements Serializable {
     private LocalDate fechaSeleccionada;
 
     @Inject
-    private CarritoBeanUI carritoBeanUI;
+    private CarritoBean carritoBeanUI;
 
     /**
      * Metodo de inicializacion del bean de catalogo.
@@ -135,12 +136,155 @@ public class ArticuloCatalogoBeanUI implements Serializable {
     public void agregarSeleccion() {
         if (seleccionado != null && seleccionado.isDisponible()) {
             int n = Math.min(Math.max(1, cantidad), getMaxCantidad());
+
+            // Siempre agregar la mesa seleccionada
             for (int i = 0; i < n; i++) {
-                carritoBeanUI.agregar(seleccionado);
+                carritoBeanUI.agregarArticulo(seleccionado);
             }
+
+            // Agregar textiles asociados (mantel obligatorio si fue seleccionado; camino o cubre opcional)
+            try {
+                FacesContext ctx = FacesContext.getCurrentInstance();
+                CombinacionMesaClienteBeanUI comb = (CombinacionMesaClienteBeanUI)
+                        ctx.getApplication().evaluateExpressionGet(ctx, "#{combinacionMesaClienteUI}", CombinacionMesaClienteBeanUI.class);
+                if (comb != null) {
+                    // Mantel
+                    if (comb.getMantelId() != null) {
+                        ArticuloCardDTO dtoMantel = buscarPorId(comb.getMantelId());
+                        if (dtoMantel != null && dtoMantel.isDisponible()) {
+                            for (int i = 0; i < n; i++) {
+                                carritoBeanUI.agregarArticulo(dtoMantel);
+                            }
+                        }
+                    }
+                    // Camino o Cubre (el bean garantiza que solo hay uno activo a la vez)
+                    if (comb.getCaminoId() != null) {
+                        ArticuloCardDTO dtoCamino = buscarPorId(comb.getCaminoId());
+                        if (dtoCamino != null && dtoCamino.isDisponible()) {
+                            for (int i = 0; i < n; i++) {
+                                carritoBeanUI.agregarArticulo(dtoCamino);
+                            }
+                        }
+                    } else if (comb.getCubreId() != null) {
+                        ArticuloCardDTO dtoCubre = buscarPorId(comb.getCubreId());
+                        if (dtoCubre != null && dtoCubre.isDisponible()) {
+                            for (int i = 0; i < n; i++) {
+                                carritoBeanUI.agregarArticulo(dtoCubre);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception ignored) { }
+
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Agregado", n + " articulos al carrito."));
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Agregado",
+                            n + " artículos de cada selección al carrito."));
         }
+    }
+
+    // ============ Paquetes predefinidos ============
+
+    private void addN(ArticuloCardDTO dto, int n) {
+        if (dto == null || !dto.isDisponible()) return;
+        for (int i = 0; i < n; i++) {
+            carritoBeanUI.agregarArticulo(dto);
+        }
+    }
+
+    public void agregarPaqueteRedondaGarden() {
+        if (articulos == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Paquete", "Catálogo no disponible."));
+            return;
+        }
+        ArticuloCardDTO mesa = buscarPorNombreContieneCI("mesa redonda");
+        ArticuloCardDTO silla = buscarPorNombreContieneCI("garden");
+        if (mesa == null || silla == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Paquete", "No hay existencias para armar el paquete."));
+            return;
+        }
+        addN(mesa, 1);
+        addN(silla, 10);
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "Paquete agregado", "1 mesa redonda + 10 sillas garden"));
+    }
+
+    public void agregarPaqueteRectGarden() {
+        if (articulos == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Paquete", "Catálogo no disponible."));
+            return;
+        }
+        ArticuloCardDTO mesa = buscarPorNombreContieneCI("mesa rectangular");
+        ArticuloCardDTO silla = buscarPorNombreContieneCI("garden");
+        if (mesa == null || silla == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Paquete", "No hay existencias para armar el paquete."));
+            return;
+        }
+        addN(mesa, 1);
+        addN(silla, 8);
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "Paquete agregado", "1 mesa rectangular + 8 sillas garden"));
+    }
+
+    public void agregarPaqueteRectLifetime() {
+        if (articulos == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Paquete", "Catálogo no disponible."));
+            return;
+        }
+        ArticuloCardDTO mesa = buscarPorNombreContieneCI("mesa rectangular");
+        ArticuloCardDTO silla = buscarPorNombreContieneCI("lifetime");
+        if (mesa == null || silla == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Paquete", "No hay existencias para armar el paquete."));
+            return;
+        }
+        addN(mesa, 1);
+        addN(silla, 8);
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "Paquete agregado", "1 mesa rectangular + 8 sillas lifetime"));
+    }
+
+    public void agregarPaqueteRedondaLifetime() {
+        if (articulos == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Paquete", "Catálogo no disponible."));
+            return;
+        }
+        ArticuloCardDTO mesa = buscarPorNombreContieneCI("mesa redonda");
+        ArticuloCardDTO silla = buscarPorNombreContieneCI("lifetime");
+        if (mesa == null || silla == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Paquete", "No hay existencias para armar el paquete."));
+            return;
+        }
+        addN(mesa, 1);
+        addN(silla, 10);
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "Paquete agregado", "1 mesa redonda + 10 sillas lifetime"));
+    }
+
+    // Búsqueda por nombre, ignorando mayúsculas/minúsculas y acentos
+    private String norm(String s) {
+        if (s == null) return "";
+        String n = Normalizer.normalize(s, Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        return n.toLowerCase(Locale.ROOT).trim();
+    }
+
+    private ArticuloCardDTO buscarPorNombreContieneCI(String token) {
+        if (token == null || articulos == null) return null;
+        String q = norm(token);
+        for (ArticuloCardDTO a : articulos) {
+            if (a == null || a.getNombre() == null) continue;
+            if (norm(a.getNombre()).contains(q)) {
+                return a;
+            }
+        }
+        return null;
     }
 
     /**
