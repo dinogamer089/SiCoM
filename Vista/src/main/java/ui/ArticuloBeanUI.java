@@ -281,28 +281,47 @@ public class ArticuloBeanUI implements Serializable {
         try {
             if (seleccionada == null) return;
 
+            if (imagenBytes == null || imagenBytes.length == 0) {
+                var map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+                byte[] content = (byte[]) map.get("uploadBytes");
+                String ct = (String) map.get("uploadMime");
+
+                if (content != null && content.length > 0) {
+                    this.imagenBytes = content;
+                    if (ct != null && !ct.isBlank()) {
+                        this.imagenMime = ct.toLowerCase();
+                    } else {
+                        boolean looksJpeg = content.length >= 2 && (content[0] & 0xFF) == 0xFF && (content[1] & 0xFF) == 0xD8;
+                        this.imagenMime = looksJpeg ? "image/jpeg" : "image/png";
+                    }
+                }
+            }
+
             if (imagenBytes != null && imagenBytes.length > 0) {
                 Imagen nuevaImg = new Imagen();
                 nuevaImg.setDatos(imagenBytes);
                 nuevaImg.setMime(imagenMime != null ? imagenMime : "image/jpeg");
+
                 seleccionada.setImagen(nuevaImg);
             }
 
             articuloHelper.actualizar(seleccionada);
-
             articulos = articuloHelper.obtenerTodas();
 
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Artículo modificado correctamente"));
 
+            this.imagenBytes = null;
+            this.imagenMime = null;
+            var map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+            map.remove("uploadBytes");
+            map.remove("uploadMime");
+
         } catch (Exception e) {
             e.printStackTrace();
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo modificar el artículo"));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo modificar el artículo: " + e.getMessage()));
             FacesContext.getCurrentInstance().validationFailed();
         }
     }
-
-    public Articulo getArticuloEditar() { return articuloEditar; }
-    public void setArticuloEditar(Articulo articuloEditar) { this.articuloEditar = articuloEditar; }
 }

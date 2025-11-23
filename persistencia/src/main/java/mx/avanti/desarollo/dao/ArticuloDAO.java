@@ -99,4 +99,18 @@ public class ArticuloDAO extends AbstractDAO<Articulo> {
             return null;
         });
     }
+
+    public void updateWithImage(Articulo articulo) {
+        execute(e -> {
+            Imagen img = articulo.getImagen();
+
+            if (img != null && img.getId() == null) {
+                e.persist(img);
+                e.flush();
+            }
+
+            e.merge(articulo);
+            return null;
+        });
+    }
 }

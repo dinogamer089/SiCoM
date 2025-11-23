@@ -59,6 +59,6 @@ public class DelegateArticulo {
     }
 
     public void updateArticulo(Articulo articulo) {
-        ServiceLocator.getInstanceArticuloDAO().update(articulo);
+        ServiceLocator.getInstanceArticuloDAO().updateWithImage(articulo);
     }
 }
