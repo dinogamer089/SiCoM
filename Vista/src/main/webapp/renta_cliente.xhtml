@@ -13,7 +13,7 @@
 
     <style type="text/css">
         /*<![CDATA[*/
-        :root{ --olive:#3f4737; --paper:#ffffff; --ink:#1d1d1b; --muted:#c5c8c0; }
+        :root{ --olive:#3f4737; --paper:#ffffff; --ink:#1d1d1b; --muted:#c5c8c0; --beige:#e8dfd3; }
         *{ box-sizing:border-box; }
         html, body{ height:100%; }
         body{ margin:0; font-family:"Minerva Modern", serif; color:var(--ink); background:var(--paper); }
@@ -64,50 +64,20 @@
         /* Catálogo 3 columnas */
         .grid-3{ display:grid; grid-template-columns: 250px 1fr 260px; gap:22px; }
 
-        /* === NUEVO: sidebar de catálogo en forma de cuadricula === */
-        .catalog-left{
-            max-height:72vh;
-            overflow-y:auto;
-            padding-right:4px;
-        }
+        /* === Sidebar catálogo === */
+        .catalog-left{ max-height:72vh; overflow-y:auto; padding-right:4px; }
         .catalog-left::-webkit-scrollbar{ width:6px; }
         .catalog-left::-webkit-scrollbar-thumb{ background:rgba(0,0,0,.25); border-radius:4px; }
 
         .catalog-section{ margin-bottom:18px; }
-        .catalog-section .thumb-title{
-            font-weight:600;
-            margin-bottom:8px;
-        }
+        .catalog-section .thumb-title{ font-weight:600; margin-bottom:8px; }
 
-        /* cuadricula interna: mínimo 110px, se rellena sola */
-        .catalog-grid{
-            display:grid;
-            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-            gap:10px;
-        }
+        .catalog-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap:10px; }
 
-        .catalog-item{
-            border:1px solid #e3e3e3;
-            border-radius:8px;
-            background:#fff;
-            overflow:hidden;
-            text-align:center;
-            transition:box-shadow .15s ease;
-        }
-        .catalog-item:hover{
-            box-shadow:0 2px 8px rgba(0,0,0,.12);
-        }
-        .catalog-item img{
-            width:100%;
-            height:90px;
-            object-fit:cover;
-            display:block;
-        }
-        .catalog-item .thumb-caption{
-            font-size:.7rem;
-            padding:6px 4px 8px;
-            line-height:1.2;
-        }
+        .catalog-item{ border:1px solid #e3e3e3; border-radius:8px; background:#fff; overflow:hidden; text-align:center; transition:box-shadow .15s ease; }
+        .catalog-item:hover{ box-shadow:0 2px 8px rgba(0,0,0,.12); }
+        .catalog-item img{ width:100%; height:90px; object-fit:cover; display:block; }
+        .catalog-item .thumb-caption{ font-size:.7rem; padding:6px 4px 8px; line-height:1.2; }
 
         .panel-shadow{ box-shadow:0 2px 8px rgba(0,0,0,.08); border-radius:8px; }
 
@@ -126,6 +96,43 @@
             .footer__right{ text-align:center; }
             .catalog-left{ max-height:none; overflow:visible; }
         }
+
+        #formRenta .ui-selectonemenu,
+        #formRenta .ui-selectonemenu .ui-selectonemenu-trigger,
+        #formRenta .ui-selectonemenu .ui-selectonemenu-label{ background-color:#ffffff !important; border:1px solid #ccc !important; }
+        #formRenta .ui-selectonemenu-panel, #formRenta .ui-selectonemenu-panel .ui-selectonemenu-items{ background-color:#ffffff !important; }
+        #formRenta .ui-selectonemenu-panel .ui-selectonemenu-item{ background-color:#ffffff !important; color:#000000 !important; }
+        #formRenta .ui-selectonemenu-panel .ui-selectonemenu-item:hover{ background-color:#f0f0f0 !important; }
+        #formRenta .ui-selectonemenu{ width:100%; }
+
+        /* Estilo para el aviso de fecha */
+        .date-info-bar { background-color: #fdfcdc; border-bottom: 1px solid #e0dca0; color: #4f4f4f; padding: 10px; text-align: center; margin-bottom: 15px; border-radius: 4px; }
+
+        /* === ESTILOS PERSONALIZADOS PARA EL DIALOGO DE FECHA === */
+        .custom-dialog .ui-dialog-titlebar { background-color: var(--olive) !important; color: #ffffff !important; border: none !important; padding: 15px 20px !important; border-top-left-radius: 8px !important; border-top-right-radius: 8px !important; }
+        .custom-dialog .ui-dialog-title { font-weight: 600 !important; font-size: 1.2rem !important; }
+        .custom-dialog .ui-dialog-titlebar-close { display: none !important; /* Ocultar botón cerrar para obligar selección */ }
+        .custom-dialog .ui-dialog-content { background-color: var(--beige) !important; /* Color beige del cuerpo */ color: var(--ink) !important; border: none !important; padding: 25px 20px !important; border-bottom-left-radius: 8px !important; border-bottom-right-radius: 8px !important; }
+
+        /* Centrar el DatePicker */
+        .center-calendar .ui-calendar { width: 100% !important; display: flex !important; justify-content: center !important; }
+        .center-calendar .ui-calendar input { width: 200px !important; /* Ancho fijo para input */ text-align: center !important; }
+
+        /* Botón del diálogo */
+        .dialog-btn { background: #000 !important; border: 1px solid #000 !important; color: #fff !important; padding: 10px 20px !important; font-weight: 600 !important; width: auto !important; margin-top: 10px !important; }
+        .dialog-btn:hover { background: #222 !important; border-color: #222 !important; }
+
+        /* === ESTILOS NUEVOS PARA PREVIEW APILADO === */
+        .preview-stack { display: flex; flex-direction: column; width: 100%; padding: 10px 10px 0; font-size: 1rem; }
+        .preview-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px dashed #eee; }
+        .preview-row:last-child { border-bottom: none; margin-bottom: 0; }
+        .preview-row.main-item { font-weight: 700; color: #1d1d1b; }
+        .preview-row.sub-item { color: #555; font-size: 0.9em; padding-left: 10px; }
+
+        .p-name { display:flex; align-items:center; gap:6px; }
+        .p-info { display: flex; align-items: center; gap: 10px; }
+        .p-stock { font-size: 0.8em; color: #777; background: #f0f0f0; padding: 2px 6px; border-radius: 4px; }
+        .p-price { font-weight: 600; }
         /*]]>*/
     </style>
 </h:head>
@@ -135,7 +142,6 @@
 
         <div class="layout">
 
-            <!-- TOPBAR -->
             <header class="topbar">
                 <div class="tb-row1">
                     <div class="tb-left">
@@ -224,247 +230,374 @@
 
                     <p:messages id="msgs" showDetail="true" closable="true" />
 
-                    <div class="grid-3" style="margin-top:18px;">
-
-                        <!-- IZQUIERDA: Mobiliario en cuadricula -->
-                        <div class="catalog-left">
-                            <h3 style="margin:0 0 10px;">Mobiliario</h3>
-
-                            <!-- Mesas redondas -->
-                            <div class="catalog-section">
-                                <div class="thumb-title">Mesas redondas</div>
-                                <div class="catalog-grid">
-                                    <ui:repeat value="#{articuloCatalogoUI.mesasRedondas}" var="mR">
-                                        <p:commandLink process="@this"
-                                                       update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
-                                                       actionListener="#{articuloCatalogoUI.ver(mR)}"
-                                                       styleClass="catalog-item">
-                                            <h:panelGroup rendered="#{not empty mR.imagenDataUrl}">
-                                                <h:graphicImage value="#{mR.imagenDataUrl}" alt="#{mR.nombre}"/>
-                                            </h:panelGroup>
-                                            <h:panelGroup rendered="#{empty mR.imagenDataUrl}">
-                                                <div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div>
-                                            </h:panelGroup>
-                                            <div class="thumb-caption">#{mR.nombre}</div>
-                                        </p:commandLink>
-                                    </ui:repeat>
-                                </div>
-                            </div>
-
-                            <!-- Mesas rectangulares -->
-                            <div class="catalog-section">
-                                <div class="thumb-title">Mesas rectangulares</div>
-                                <div class="catalog-grid">
-                                    <ui:repeat value="#{articuloCatalogoUI.mesasRectangulares}" var="mRec">
-                                        <p:commandLink process="@this"
-                                                       update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
-                                                       actionListener="#{articuloCatalogoUI.ver(mRec)}"
-                                                       styleClass="catalog-item">
-                                            <h:panelGroup rendered="#{not empty mRec.imagenDataUrl}">
-                                                <h:graphicImage value="#{mRec.imagenDataUrl}" alt="#{mRec.nombre}"/>
-                                            </h:panelGroup>
-                                            <h:panelGroup rendered="#{empty mRec.imagenDataUrl}">
-                                                <div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div>
-                                            </h:panelGroup>
-                                            <div class="thumb-caption">#{mRec.nombre}</div>
-                                        </p:commandLink>
-                                    </ui:repeat>
-                                </div>
-                            </div>
-
-                            <!-- Sillas Garden -->
-                            <div class="catalog-section">
-                                <div class="thumb-title">Sillas Garden</div>
-                                <div class="catalog-grid">
-                                    <ui:repeat value="#{articuloCatalogoUI.sillasGarden}" var="sG">
-                                        <p:commandLink process="@this"
-                                                       update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
-                                                       actionListener="#{articuloCatalogoUI.ver(sG)}"
-                                                       styleClass="catalog-item">
-                                            <h:panelGroup rendered="#{not empty sG.imagenDataUrl}">
-                                                <h:graphicImage value="#{sG.imagenDataUrl}" alt="#{sG.nombre}"/>
-                                            </h:panelGroup>
-                                            <h:panelGroup rendered="#{empty sG.imagenDataUrl}">
-                                                <div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div>
-                                            </h:panelGroup>
-                                            <div class="thumb-caption">#{sG.nombre}</div>
-                                        </p:commandLink>
-                                    </ui:repeat>
-                                </div>
-                            </div>
-
-                            <!-- Sillas Lifetime -->
-                            <div class="catalog-section">
-                                <div class="thumb-title">Sillas Lifetime</div>
-                                <div class="catalog-grid">
-                                    <ui:repeat value="#{articuloCatalogoUI.sillasLifetime}" var="sL">
-                                        <p:commandLink process="@this"
-                                                       update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
-                                                       actionListener="#{articuloCatalogoUI.ver(sL)}"
-                                                       styleClass="catalog-item">
-                                            <h:panelGroup rendered="#{not empty sL.imagenDataUrl}">
-                                                <h:graphicImage value="#{sL.imagenDataUrl}" alt="#{sL.nombre}"/>
-                                            </h:panelGroup>
-                                            <h:panelGroup rendered="#{empty sL.imagenDataUrl}">
-                                                <div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div>
-                                            </h:panelGroup>
-                                            <div class="thumb-caption">#{sL.nombre}</div>
-                                        </p:commandLink>
-                                    </ui:repeat>
-                                </div>
-                            </div>
-
-                            <!-- Carpas chicas -->
-                            <div class="catalog-section">
-                                <div class="thumb-title">Carpas (chicas)</div>
-                                <div class="catalog-grid">
-                                    <ui:repeat value="#{articuloCatalogoUI.carpasChicas}" var="cCh">
-                                        <p:commandLink process="@this"
-                                                       update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
-                                                       actionListener="#{articuloCatalogoUI.ver(cCh)}"
-                                                       styleClass="catalog-item">
-                                            <h:panelGroup rendered="#{not empty cCh.imagenDataUrl}">
-                                                <h:graphicImage value="#{cCh.imagenDataUrl}" alt="#{cCh.nombre}"/>
-                                            </h:panelGroup>
-                                            <h:panelGroup rendered="#{empty cCh.imagenDataUrl}">
-                                                <div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div>
-                                            </h:panelGroup>
-                                            <div class="thumb-caption">#{cCh.nombre}</div>
-                                        </p:commandLink>
-                                    </ui:repeat>
-                                </div>
-                            </div>
-
-                            <!-- Carpas grandes -->
-                            <div class="catalog-section">
-                                <div class="thumb-title">Carpas (grandes)</div>
-                                <div class="catalog-grid">
-                                    <ui:repeat value="#{articuloCatalogoUI.carpasGrandes}" var="cGr">
-                                        <p:commandLink process="@this"
-                                                       update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
-                                                       actionListener="#{articuloCatalogoUI.ver(cGr)}"
-                                                       styleClass="catalog-item">
-                                            <h:panelGroup rendered="#{not empty cGr.imagenDataUrl}">
-                                                <h:graphicImage value="#{cGr.imagenDataUrl}" alt="#{cGr.nombre}"/>
-                                            </h:panelGroup>
-                                            <h:panelGroup rendered="#{empty cGr.imagenDataUrl}">
-                                                <div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div>
-                                            </h:panelGroup>
-                                            <div class="thumb-caption">#{cGr.nombre}</div>
-                                        </p:commandLink>
-                                    </ui:repeat>
-                                </div>
-                            </div>
-
-                            <!-- Coolers -->
-                            <div class="catalog-section">
-                                <div class="thumb-title">Coolers</div>
-                                <div class="catalog-grid">
-                                    <ui:repeat value="#{articuloCatalogoUI.coolers}" var="cool">
-                                        <p:commandLink process="@this"
-                                                       update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
-                                                       actionListener="#{articuloCatalogoUI.ver(cool)}"
-                                                       styleClass="catalog-item">
-                                            <h:panelGroup rendered="#{not empty cool.imagenDataUrl}">
-                                                <h:graphicImage value="#{cool.imagenDataUrl}" alt="#{cool.nombre}"/>
-                                            </h:panelGroup>
-                                            <h:panelGroup rendered="#{empty cool.imagenDataUrl}">
-                                                <div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div>
-                                            </h:panelGroup>
-                                            <div class="thumb-caption">#{cool.nombre}</div>
-                                        </p:commandLink>
-                                    </ui:repeat>
-                                </div>
-                            </div>
-
-                            <!-- Calentones -->
-                            <div class="catalog-section" style="margin-bottom:4px;">
-                                <div class="thumb-title">Calentones</div>
-                                <div class="catalog-grid">
-                                    <ui:repeat value="#{articuloCatalogoUI.calentones}" var="cal">
-                                        <p:commandLink process="@this"
-                                                       update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
-                                                       actionListener="#{articuloCatalogoUI.ver(cal)}"
-                                                       styleClass="catalog-item">
-                                            <h:panelGroup rendered="#{not empty cal.imagenDataUrl}">
-                                                <h:graphicImage value="#{cal.imagenDataUrl}" alt="#{cal.nombre}"/>
-                                            </h:panelGroup>
-                                            <h:panelGroup rendered="#{empty cal.imagenDataUrl}">
-                                                <div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div>
-                                            </h:panelGroup>
-                                            <div class="thumb-caption">#{cal.nombre}</div>
-                                        </p:commandLink>
-                                    </ui:repeat>
-                                </div>
-                            </div>
+                    <h:panelGroup id="barraFecha" rendered="#{not empty articuloCatalogoUI.fechaSeleccionada}">
+                        <div class="date-info-bar">
+                            <i class="pi pi-calendar" style="margin-right:6px;"></i>
+                            Reservando para el: <strong><h:outputText value="#{articuloCatalogoUI.fechaSeleccionada}"><f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/></h:outputText></strong>
                         </div>
+                    </h:panelGroup>
 
-                        <!-- CENTRO -->
-                        <div>
-                            <p:panel header="Vista previa" styleClass="panel-shadow">
-                                <h:panelGroup id="preview">
-                                    <h:panelGroup rendered="#{not empty articuloCatalogoUI.seleccionado and not empty articuloCatalogoUI.seleccionado.imagenDataUrl}">
-                                        <h:graphicImage value="#{articuloCatalogoUI.seleccionado.imagenDataUrl}"
-                                                        style="width:100%;min-height:430px;background:#e5e5e5;border-radius:6px;object-fit:contain;display:block"/>
-                                    </h:panelGroup>
-                                    <h:panelGroup rendered="#{empty articuloCatalogoUI.seleccionado or empty articuloCatalogoUI.seleccionado.imagenDataUrl}">
-                                        <div style="width:100%;min-height:430px;background:#e5e5e5;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#666;">
-                                            Selecciona un artículo para previsualizarlo
-                                        </div>
-                                    </h:panelGroup>
+                    <p:remoteCommand name="rcMesaCombinacion"
+                                     actionListener="#{combinacionMesaClienteUI.onMesaSeleccion}"
+                                     process="@this"
+                                     update=":formRenta:panelDerecha :formRenta:preview" />
 
-                                    <h:panelGroup rendered="#{not empty articuloCatalogoUI.seleccionado}">
-                                        <div class="preview-meta">
-                                            <div class="preview-name">#{articuloCatalogoUI.seleccionado.nombre}</div>
-                                            <div class="preview-price">
-                                                <h:outputText value="#{articuloCatalogoUI.seleccionado.precio}">
-                                                    <f:convertNumber type="currency" currencySymbol="$" locale="es_MX"/>
-                                                </h:outputText>
-                                            </div>
-                                        </div>
-                                    </h:panelGroup>
-                                </h:panelGroup>
-                            </p:panel>
+                    <h:panelGroup id="catalogoPrincipal" layout="block">
 
-                            <p:outputPanel id="barraAgregar" style="margin-top:10px;text-align:center;">
-                                <h:panelGroup rendered="#{not empty articuloCatalogoUI.seleccionado}">
-                                    <div class="add-bar">
-                                        <div>
-                                            <p:inputNumber id="qty"
-                                                           value="#{articuloCatalogoUI.cantidad}"
-                                                           decimalPlaces="0"
-                                                           minValue="1"
-                                                           maxValue="#{articuloCatalogoUI.maxCantidad}"
-                                                           disabled="#{articuloCatalogoUI.agregarDeshabilitado}"
-                                                           style="width:120px"/>
-                                            <span class="stock-note">Disponibles: #{articuloCatalogoUI.maxCantidad}</span>
-                                        </div>
+                        <h:panelGroup rendered="#{empty articuloCatalogoUI.fechaSeleccionada}" style="text-align:center; display:block; padding:40px; background:#f9f9f9; border-radius:8px;">
+                            <i class="pi pi-calendar-times" style="font-size: 3rem; color: var(--muted); margin-bottom: 15px;"></i>
+                            <h3 style="color: #555;">Por favor, selecciona una fecha para ver la disponibilidad.</h3>
+                            <p:commandButton value="Seleccionar Fecha" onclick="PF('dlgFecha').show()" type="button" icon="pi pi-calendar" styleClass="cta-btn"/>
+                        </h:panelGroup>
 
-                                        <p:commandButton value="Agregar"
-                                                         styleClass="p-button-lg cta-btn"
-                                                         process="@this"
-                                                         actionListener="#{articuloCatalogoUI.agregarSeleccion}"
-                                                         disabled="#{articuloCatalogoUI.agregarDeshabilitado}"
-                                                         update=":formRenta:msgs"/>
+                        <h:panelGroup rendered="#{not empty articuloCatalogoUI.fechaSeleccionada}" styleClass="grid-3" style="margin-top:18px;">
+
+                            <div class="catalog-left">
+                                <h3 style="margin:0 0 10px;">Mobiliario</h3>
+
+                                <h:panelGroup layout="block" styleClass="catalog-section" rendered="#{not empty articuloCatalogoUI.mesasRedondas}">
+                                    <div class="thumb-title">Mesas redondas</div>
+                                    <div class="catalog-grid">
+                                        <ui:repeat value="#{articuloCatalogoUI.mesasRedondas}" var="mR">
+                                            <p:commandLink process="@this"
+                                                           update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
+                                                           actionListener="#{articuloCatalogoUI.ver(mR)}"
+                                                           oncomplete="rcMesaCombinacion([{name:'mesaId', value:'#{mR.id}'}]);"
+                                                           styleClass="catalog-item">
+                                                <h:panelGroup rendered="#{not empty mR.imagenDataUrl}">
+                                                    <h:graphicImage value="#{mR.imagenDataUrl}" alt="#{mR.nombre}"/>
+                                                </h:panelGroup>
+                                                <h:panelGroup rendered="#{empty mR.imagenDataUrl}">
+                                                    <div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div>
+                                                </h:panelGroup>
+                                                <div class="thumb-caption">#{mR.nombre}</div>
+                                            </p:commandLink>
+                                        </ui:repeat>
                                     </div>
                                 </h:panelGroup>
-                            </p:outputPanel>
-                        </div>
 
-                        <!-- DERECHA -->
+                                <h:panelGroup layout="block" styleClass="catalog-section" rendered="#{not empty articuloCatalogoUI.mesasRectangulares}">
+                                    <div class="thumb-title">Mesas rectangulares</div>
+                                    <div class="catalog-grid">
+                                        <ui:repeat value="#{articuloCatalogoUI.mesasRectangulares}" var="mRec">
+                                            <p:commandLink process="@this"
+                                                           update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
+                                                           actionListener="#{articuloCatalogoUI.ver(mRec)}"
+                                                           oncomplete="rcMesaCombinacion([{name:'mesaId', value:'#{mRec.id}'}]);"
+                                                           styleClass="catalog-item">
+                                                <h:panelGroup rendered="#{not empty mRec.imagenDataUrl}">
+                                                    <h:graphicImage value="#{mRec.imagenDataUrl}" alt="#{mRec.nombre}"/>
+                                                </h:panelGroup>
+                                                <h:panelGroup rendered="#{empty mRec.imagenDataUrl}">
+                                                    <div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div>
+                                                </h:panelGroup>
+                                                <div class="thumb-caption">#{mRec.nombre}</div>
+                                            </p:commandLink>
+                                        </ui:repeat>
+                                    </div>
+                                </h:panelGroup>
+
+                                <h:panelGroup layout="block" styleClass="catalog-section" rendered="#{not empty articuloCatalogoUI.sillasGarden}">
+                                    <div class="thumb-title">Sillas Garden</div>
+                                    <div class="catalog-grid">
+                                        <ui:repeat value="#{articuloCatalogoUI.sillasGarden}" var="sG">
+                                            <p:commandLink process="@this" update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
+                                                           actionListener="#{articuloCatalogoUI.ver(sG)}" styleClass="catalog-item">
+                                                <h:panelGroup rendered="#{not empty sG.imagenDataUrl}"><h:graphicImage value="#{sG.imagenDataUrl}" alt="#{sG.nombre}"/></h:panelGroup>
+                                                <h:panelGroup rendered="#{empty sG.imagenDataUrl}"><div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div></h:panelGroup>
+                                                <div class="thumb-caption">#{sG.nombre}</div>
+                                            </p:commandLink>
+                                        </ui:repeat>
+                                    </div>
+                                </h:panelGroup>
+
+                                <h:panelGroup layout="block" styleClass="catalog-section" rendered="#{not empty articuloCatalogoUI.sillasLifetime}">
+                                    <div class="thumb-title">Sillas Lifetime</div>
+                                    <div class="catalog-grid">
+                                        <ui:repeat value="#{articuloCatalogoUI.sillasLifetime}" var="sL">
+                                            <p:commandLink process="@this" update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
+                                                           actionListener="#{articuloCatalogoUI.ver(sL)}" styleClass="catalog-item">
+                                                <h:panelGroup rendered="#{not empty sL.imagenDataUrl}"><h:graphicImage value="#{sL.imagenDataUrl}" alt="#{sL.nombre}"/></h:panelGroup>
+                                                <h:panelGroup rendered="#{empty sL.imagenDataUrl}"><div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div></h:panelGroup>
+                                                <div class="thumb-caption">#{sL.nombre}</div>
+                                            </p:commandLink>
+                                        </ui:repeat>
+                                    </div>
+                                </h:panelGroup>
+
+                                <h:panelGroup layout="block" styleClass="catalog-section" rendered="#{not empty articuloCatalogoUI.carpasChicas}">
+                                    <div class="thumb-title">Carpas (chicas)</div>
+                                    <div class="catalog-grid">
+                                        <ui:repeat value="#{articuloCatalogoUI.carpasChicas}" var="cCh">
+                                            <p:commandLink process="@this" update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
+                                                           actionListener="#{articuloCatalogoUI.ver(cCh)}" styleClass="catalog-item">
+                                                <h:panelGroup rendered="#{not empty cCh.imagenDataUrl}"><h:graphicImage value="#{cCh.imagenDataUrl}" alt="#{cCh.nombre}"/></h:panelGroup>
+                                                <h:panelGroup rendered="#{empty cCh.imagenDataUrl}"><div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div></h:panelGroup>
+                                                <div class="thumb-caption">#{cCh.nombre}</div>
+                                            </p:commandLink>
+                                        </ui:repeat>
+                                    </div>
+                                </h:panelGroup>
+
+                                <h:panelGroup layout="block" styleClass="catalog-section" rendered="#{not empty articuloCatalogoUI.carpasGrandes}">
+                                    <div class="thumb-title">Carpas (grandes)</div>
+                                    <div class="catalog-grid">
+                                        <ui:repeat value="#{articuloCatalogoUI.carpasGrandes}" var="cGr">
+                                            <p:commandLink process="@this" update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
+                                                           actionListener="#{articuloCatalogoUI.ver(cGr)}" styleClass="catalog-item">
+                                                <h:panelGroup rendered="#{not empty cGr.imagenDataUrl}"><h:graphicImage value="#{cGr.imagenDataUrl}" alt="#{cGr.nombre}"/></h:panelGroup>
+                                                <h:panelGroup rendered="#{empty cGr.imagenDataUrl}"><div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div></h:panelGroup>
+                                                <div class="thumb-caption">#{cGr.nombre}</div>
+                                            </p:commandLink>
+                                        </ui:repeat>
+                                    </div>
+                                </h:panelGroup>
+
+                                <h:panelGroup layout="block" styleClass="catalog-section" rendered="#{not empty articuloCatalogoUI.coolers}">
+                                    <div class="thumb-title">Coolers</div>
+                                    <div class="catalog-grid">
+                                        <ui:repeat value="#{articuloCatalogoUI.coolers}" var="cool">
+                                            <p:commandLink process="@this" update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
+                                                           actionListener="#{articuloCatalogoUI.ver(cool)}" styleClass="catalog-item">
+                                                <h:panelGroup rendered="#{not empty cool.imagenDataUrl}"><h:graphicImage value="#{cool.imagenDataUrl}" alt="#{cool.nombre}"/></h:panelGroup>
+                                                <h:panelGroup rendered="#{empty cool.imagenDataUrl}"><div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div></h:panelGroup>
+                                                <div class="thumb-caption">#{cool.nombre}</div>
+                                            </p:commandLink>
+                                        </ui:repeat>
+                                    </div>
+                                </h:panelGroup>
+
+                                <h:panelGroup layout="block" styleClass="catalog-section" rendered="#{not empty articuloCatalogoUI.calentones}">
+                                    <div class="thumb-title">Calentones</div>
+                                    <div class="catalog-grid">
+                                        <ui:repeat value="#{articuloCatalogoUI.calentones}" var="cal">
+                                            <p:commandLink process="@this" update=":formRenta:preview :formRenta:barraAgregar :formRenta:msgs"
+                                                           actionListener="#{articuloCatalogoUI.ver(cal)}" styleClass="catalog-item">
+                                                <h:panelGroup rendered="#{not empty cal.imagenDataUrl}"><h:graphicImage value="#{cal.imagenDataUrl}" alt="#{cal.nombre}"/></h:panelGroup>
+                                                <h:panelGroup rendered="#{empty cal.imagenDataUrl}"><div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;color:#777;">Sin imagen</div></h:panelGroup>
+                                                <div class="thumb-caption">#{cal.nombre}</div>
+                                            </p:commandLink>
+                                        </ui:repeat>
+                                    </div>
+                                </h:panelGroup>
+                            </div>
+
+                            <div>
+                                <p:panel styleClass="panel-shadow">
+                                    <f:facet name="header">
+                                        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                                            <span>Vista previa</span>
+                                            <p:commandLink onclick="PF('dlgFecha').show()" process="@this" title="Cambiar fecha del evento" style="text-decoration:none;">
+                                                <i class="pi pi-calendar" style="font-size: 1.2rem; color: var(--olive); cursor: pointer;" onmouseover="this.style.color='#1d1d1b'" onmouseout="this.style.color='var(--olive)'"></i>
+                                            </p:commandLink>
+                                        </div>
+                                    </f:facet>
+
+                                    <h:panelGroup id="preview">
+
+                                        <h:panelGroup rendered="#{not empty combinacionMesaClienteUI.imagenPreview}">
+                                            <h:graphicImage value="#{combinacionMesaClienteUI.imagenPreview}"
+                                                            style="width:100%;min-height:430px;background:#e5e5e5;border-radius:6px;object-fit:contain;display:block"/>
+                                        </h:panelGroup>
+
+                                        <h:panelGroup rendered="#{empty combinacionMesaClienteUI.imagenPreview}">
+                                            <h:panelGroup rendered="#{not empty articuloCatalogoUI.seleccionado and not empty articuloCatalogoUI.seleccionado.imagenDataUrl}">
+                                                <h:graphicImage value="#{articuloCatalogoUI.seleccionado.imagenDataUrl}"
+                                                                style="width:100%;min-height:430px;background:#e5e5e5;border-radius:6px;object-fit:contain;display:block"/>
+                                            </h:panelGroup>
+                                            <h:panelGroup rendered="#{empty articuloCatalogoUI.seleccionado or empty articuloCatalogoUI.seleccionado.imagenDataUrl}">
+                                                <div style="width:100%;min-height:430px;background:#e5e5e5;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#666;">
+                                                    Selecciona un artículo para previsualizarlo
+                                                </div>
+                                            </h:panelGroup>
+                                        </h:panelGroup>
+
+                                        <h:panelGroup rendered="#{not empty articuloCatalogoUI.seleccionado}">
+                                            <div class="preview-stack">
+
+                                                <div class="preview-row main-item">
+                                                    <div class="p-name">#{articuloCatalogoUI.seleccionado.nombre}</div>
+                                                    <div class="p-info">
+                                                        <span class="p-stock">Disp: #{articuloCatalogoUI.seleccionado.unidades}</span>
+                                                        <span class="p-price">
+                                                            <h:outputText value="#{articuloCatalogoUI.seleccionado.precio}">
+                                                                <f:convertNumber type="currency" currencySymbol="$" locale="es_MX"/>
+                                                            </h:outputText>
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <h:panelGroup rendered="#{not empty combinacionMesaClienteUI.mantelId}">
+                                                    <ui:param name="dtoMantel" value="#{articuloCatalogoUI.buscarPorId(combinacionMesaClienteUI.mantelId)}" />
+                                                    <h:panelGroup rendered="#{not empty dtoMantel}">
+                                                        <div class="preview-row sub-item">
+                                                            <div class="p-name"><i class="pi pi-angle-right"></i> #{dtoMantel.nombre}</div>
+                                                            <div class="p-info">
+                                                                <span class="p-stock">Disp: #{dtoMantel.unidades}</span>
+                                                                <span class="p-price">
+                                                                    <h:outputText value="#{dtoMantel.precio}">
+                                                                        <f:convertNumber type="currency" currencySymbol="$" locale="es_MX"/>
+                                                                    </h:outputText>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </h:panelGroup>
+                                                </h:panelGroup>
+
+                                                <h:panelGroup rendered="#{not empty combinacionMesaClienteUI.caminoId}">
+                                                    <ui:param name="dtoCamino" value="#{articuloCatalogoUI.buscarPorId(combinacionMesaClienteUI.caminoId)}" />
+                                                    <h:panelGroup rendered="#{not empty dtoCamino}">
+                                                        <div class="preview-row sub-item">
+                                                            <div class="p-name"><i class="pi pi-angle-right"></i> #{dtoCamino.nombre}</div>
+                                                            <div class="p-info">
+                                                                <span class="p-stock">Disp: #{dtoCamino.unidades}</span>
+                                                                <span class="p-price">
+                                                                    <h:outputText value="#{dtoCamino.precio}">
+                                                                        <f:convertNumber type="currency" currencySymbol="$" locale="es_MX"/>
+                                                                    </h:outputText>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </h:panelGroup>
+                                                </h:panelGroup>
+
+                                                <h:panelGroup rendered="#{not empty combinacionMesaClienteUI.cubreId}">
+                                                    <ui:param name="dtoCubre" value="#{articuloCatalogoUI.buscarPorId(combinacionMesaClienteUI.cubreId)}" />
+                                                    <h:panelGroup rendered="#{not empty dtoCubre}">
+                                                        <div class="preview-row sub-item">
+                                                            <div class="p-name"><i class="pi pi-angle-right"></i> #{dtoCubre.nombre}</div>
+                                                            <div class="p-info">
+                                                                <span class="p-stock">Disp: #{dtoCubre.unidades}</span>
+                                                                <span class="p-price">
+                                                                    <h:outputText value="#{dtoCubre.precio}">
+                                                                        <f:convertNumber type="currency" currencySymbol="$" locale="es_MX"/>
+                                                                    </h:outputText>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </h:panelGroup>
+                                                </h:panelGroup>
+
+                                            </div>
+                                        </h:panelGroup>
+
+                                    </h:panelGroup>
+                                </p:panel>
+
+                                <p:outputPanel id="barraAgregar" style="margin-top:10px;text-align:center;">
+                                    <h:panelGroup rendered="#{not empty articuloCatalogoUI.seleccionado}">
+                                        <div class="add-bar">
+                                            <div>
+                                                <p:inputNumber id="qty"
+                                                               value="#{articuloCatalogoUI.cantidad}"
+                                                               decimalPlaces="0"
+                                                               minValue="1"
+                                                               maxValue="#{articuloCatalogoUI.maxCantidad}"
+                                                               disabled="#{articuloCatalogoUI.agregarDeshabilitado}"
+                                                               style="width:120px"/>
+                                                <span class="stock-note">Disponibles (mesa): #{articuloCatalogoUI.maxCantidad}</span>
+                                            </div>
+
+                                            <p:commandButton value="#{articuloCatalogoUI.maxCantidad eq 0 ? 'Agotado' : 'Agregar'}"
+                                                             styleClass="p-button-lg cta-btn"
+                                                             process="@this"
+                                                             actionListener="#{articuloCatalogoUI.agregarSeleccion}"
+                                                             disabled="#{articuloCatalogoUI.agregarDeshabilitado}"
+                                                             update=":formRenta:msgs"/>
+                                        </div>
+                                    </h:panelGroup>
+                                </p:outputPanel>
+                            </div>
+
+                        <!-- DERECHA: Textiles + combinación -->
                         <p:outputPanel id="panelDerecha">
                             <p:panel header="Textiles" styleClass="panel-shadow">
-                                <div style="font-size:.9rem;color:#666;">
-                                    Esta sección se habilitará en la siguiente US para combinar textiles con mesas.
-                                </div>
-                            </p:panel>
-                        </p:outputPanel>
 
-                    </div>
-                </div>
+                                    <h:panelGroup rendered="#{empty combinacionMesaClienteUI.mesaId}">
+                                        <div style="font-size:.9rem;color:#666;">
+                                            Selecciona una <strong>mesa</strong> del catálogo (izquierda) para ver
+                                            los manteles y extras disponibles.
+                                        </div>
+                                    </h:panelGroup>
+
+                                    <h:panelGroup rendered="#{not empty combinacionMesaClienteUI.mesaId}">
+
+                                        <h:panelGroup layout="block" style="margin-bottom:10px;">
+                                            <p:outputLabel for="mantelSel" value="Mantel:" style="display:block;margin-bottom:4px;" />
+                                            <p:selectOneMenu id="mantelSel" value="#{combinacionMesaClienteUI.mantelId}">
+                                                <f:selectItem itemLabel="-- Seleccione mantel --" itemValue="#{null}" />
+                                                <f:selectItems value="#{combinacionMesaClienteUI.mantelesDisponibles}" var="mt" itemLabel="#{mt.nombre}" itemValue="#{mt.id}" />
+                                                <p:ajax process="@this" listener="#{combinacionMesaClienteUI.onMantelChange}" update=":formRenta:panelDerecha :formRenta:preview" />
+                                            </p:selectOneMenu>
+                                        </h:panelGroup>
+
+                                        <h:panelGroup layout="block" style="margin-bottom:10px;">
+                                            <p:outputLabel for="caminoSel" value="Camino (opcional):" style="display:block;margin-bottom:4px;" />
+                                            <p:selectOneMenu id="caminoSel" value="#{combinacionMesaClienteUI.caminoId}" disabled="#{empty combinacionMesaClienteUI.mantelId or not empty combinacionMesaClienteUI.cubreId}">
+                                                <f:selectItem itemLabel="-- Ninguno --" itemValue="#{null}" />
+                                                <f:selectItems value="#{combinacionMesaClienteUI.caminosDisponibles}" var="cm" itemLabel="#{cm.nombre}" itemValue="#{cm.id}" />
+                                                <p:ajax process="@this" listener="#{combinacionMesaClienteUI.onCaminoChange}" update=":formRenta:panelDerecha :formRenta:preview" />
+                                            </p:selectOneMenu>
+                                        </h:panelGroup>
+
+                                        <h:panelGroup layout="block">
+                                            <p:outputLabel for="cubreSel" value="Cubremantel (opcional):" style="display:block;margin-bottom:4px;" />
+                                            <p:selectOneMenu id="cubreSel" value="#{combinacionMesaClienteUI.cubreId}" disabled="#{empty combinacionMesaClienteUI.mantelId or not empty combinacionMesaClienteUI.caminoId}">
+                                                <f:selectItem itemLabel="-- Ninguno --" itemValue="#{null}" />
+                                                <f:selectItems value="#{combinacionMesaClienteUI.cubresDisponibles}" var="cb" itemLabel="#{cb.nombre}" itemValue="#{cb.id}" />
+                                                <p:ajax process="@this" listener="#{combinacionMesaClienteUI.onCubreChange}" update=":formRenta:panelDerecha :formRenta:preview" />
+                                            </p:selectOneMenu>
+                                        </h:panelGroup>
+
+                                        <h:panelGroup rendered="#{empty combinacionMesaClienteUI.combinacionSeleccionada}">
+                                            <div style="font-size:.8rem;color:#999;margin-top:8px;">
+                                                Elige un mantel y opcionalmente <strong>un solo extra</strong>
+                                                (camino o cubremantel) para ver si existe una combinación registrada.
+                                            </div>
+                                        </h:panelGroup>
+
+                                        <h:panelGroup rendered="#{not empty combinacionMesaClienteUI.combinacionSeleccionada}">
+                                            <div style="font-size:.8rem;color:#333;margin-top:8px;">
+                                                Mostrando la <strong>combinación registrada</strong> para la mesa seleccionada.
+                                            </div>
+                                        </h:panelGroup>
+                                    </h:panelGroup>
+
+                                </p:panel>
+                            </p:outputPanel>
+
+                        </h:panelGroup> </h:panelGroup> </div>
             </section>
 
-            <!-- FOOTER -->
+            <p:dialog header="Fecha del Evento" widgetVar="dlgFecha"
+                      modal="true" closable="false" resizable="false" draggable="false"
+                      visible="#{empty articuloCatalogoUI.fechaSeleccionada}"
+                      showEffect="fade" hideEffect="fade" responsive="true" width="400"
+                      styleClass="custom-dialog">
+
+                <div style="display:flex; flex-direction:column; gap:20px; align-items:center; text-align:center;">
+                    <i class="pi pi-calendar" style="font-size: 3rem; color: var(--olive);"></i>
+                    <div>
+                        <h3 style="margin:0; color: var(--olive);">¡Hola!</h3>
+                        <p style="margin-top:10px; color:#666; font-size:0.95rem; line-height:1.4;">
+                            Para mostrarte la disponibilidad exacta de nuestros artículos, necesitamos saber la fecha de tu evento.
+                        </p>
+                    </div>
+
+                    <div class="center-calendar">
+                        <p:datePicker id="fechaInput" value="#{articuloCatalogoUI.fechaSeleccionada}"
+                                      pattern="dd/MM/yyyy" showIcon="true" locale="es"
+                                      mindate="#{articuloCatalogoUI.now}" readonlyInput="true" placeholder="Selecciona una fecha"/>
+                    </div>
+
+                    <p:commandButton value="Confirmar Fecha"
+                                     actionListener="#{articuloCatalogoUI.onFechaCambio}"
+                                     update=":formRenta:catalogoPrincipal :formRenta:barraFecha :formRenta:msgs"
+                                     oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlgFecha').hide()"
+                                     styleClass="dialog-btn" icon="pi pi-check"/>
+                </div>
+            </p:dialog>
+
             <footer class="footer">
                 <div>
                     <div style="font-weight:700;"><i class="pi pi-briefcase"></i> EVENTOS CAMPESTRE</div>
@@ -481,17 +614,6 @@
             </footer>
 
         </div>
-
-        <!-- JS carrusel -->
-        <h:outputScript target="body">
-            //<![CDATA[
-            (function(){
-                var root = document.getElementById('workCarousel');
-                if(!root) return;
-            })();
-            //]]>
-        </h:outputScript>
-
     </h:form>
 </h:body>
 </html>
