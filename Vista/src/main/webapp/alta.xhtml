@@ -7,6 +7,10 @@
        xmlns:p="http://primefaces.org/ui"
        xml:lang="es" lang="es">
 
+<f:metadata>
+    <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
+</f:metadata>
+
 <h:head>
     <title>Gestión de Artículos</title>
     <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
@@ -228,9 +232,6 @@
 </h:head>
 
 <h:body>
-    <f:metadata>
-        <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
-    </f:metadata>
     <div class="topbar">
         <div class="topbar-left">
             <img src="resources/edicion.png" alt="Empleados" class="topbar-icon" />
