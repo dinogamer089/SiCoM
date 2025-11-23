@@ -77,6 +77,36 @@ public class RentaDAO extends AbstractDAO<Renta> {
         return entityManager;
     }
 
+    /**
+     * Metodo para obtener las rentas disponibles (sin asignar) y las asignadas al empleado logueado.
+     * Utiliza LEFT JOIN FETCH para cargar cliente, empleado y detalles en una sola consulta.
+     * Filtra por estados: 'Pendiente' para rentas libres y 'En proceso' para las propias.
+     * @Throws Si la base de datos rechaza la consulta.
+     * @Params Objeto de tipo Integer idEmpleadoLogueado
+     * @return Una lista de objetos Renta ordenados por fecha y hora, o null si no se encuentran resultados.
+     */
+    public List<Renta> obtenerRentasDisponiblesYAsignadas(Integer idEmpleadoLogueado) {
+        try {
+            return entityManager.createQuery("SELECT r FROM Renta r " +
+                            "LEFT JOIN FETCH r.detallesRenta dr " +
+                            "LEFT JOIN FETCH dr.idarticulo " +
+                            "LEFT JOIN FETCH r.idCliente " +
+                            "LEFT JOIN FETCH r.idEmpleado " +
+                            "WHERE " +
+                            // CASO A: Rentas en el "Pool" (Sin empleado asignado) listas para tomar
+                            "(r.idEmpleado IS NULL AND r.estado IN ('Pendiente a reparto', 'Pendiente a recoleccion')) " +
+                            "OR " +
+                            // CASO B: Rentas que YA tomé yo (y están en proceso)
+                            "(r.idEmpleado.id = :empId AND r.estado IN ('En reparto', 'En recoleccion')) " +
+                            "ORDER BY r.fecha ASC, r.hora ASC", Renta.class)
+                    .setParameter("empId", idEmpleadoLogueado)
+                    .getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+}
+
     // Registro de renta/cotización con detalles y cliente asociado
     public void registrarRenta(Cliente cliente,
                                List<Detallerenta> detalles,

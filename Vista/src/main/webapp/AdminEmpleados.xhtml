@@ -532,6 +532,9 @@
     </style>
 </h:head>
 <h:body>
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
+    </f:metadata>
     <div class="topbar">
         <div class="topbar-left">
             <h:graphicImage name="edicion.png" alt="Empleados" styleClass="topbar-icon"/>
@@ -540,10 +543,12 @@
         <div class="topbar-center">
             <div><h:outputLink value="#"> EVENTOS CAMPESTRE </h:outputLink></div>
             <div>
-                <a href="Inventario.xhtml">Inventario</a>
-                <a href="Articulos.xhtml">Artículos</a>
+                <a href="principalAdministrador.xhtml">EVENTOS CAMPESTRE</a><br />
+                <a href="#">Inventario</a>
+                <a href="alta.xhtml">Artículos</a>
                 <a href="Cotizaciones.xhtml">Cotizaciones</a>
                 <a href="Rentas.xhtml">Rentas</a>
+                <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
             </div>
         </div>
         <div class="topbar-right">

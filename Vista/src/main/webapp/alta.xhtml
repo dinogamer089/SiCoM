@@ -228,17 +228,21 @@
 </h:head>
 
 <h:body>
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
+    </f:metadata>
     <div class="topbar">
         <div class="topbar-left">
             <img src="resources/edicion.png" alt="Empleados" class="topbar-icon" />
             <a href="AdminEmpleados.xhtml">Empleados</a>
         </div>
         <div class="topbar-center">
-            <a href="#"> EVENTOS CAMPESTRE</a><br />
-            <a href="alta.xhtml">Inventario</a>
-            <a href="Articulos.xhtml">Artículos</a>
+            <a href="principalAdministrador.xhtml">EVENTOS CAMPESTRE</a><br />
+            <a href="#">Inventario</a>
+            <a href="alta.xhtml">Artículos</a>
             <a href="Cotizaciones.xhtml">Cotizaciones</a>
             <a href="Rentas.xhtml">Rentas</a>
+            <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
         </div>
         <div class="topbar-right">
             <span>Administrador</span>

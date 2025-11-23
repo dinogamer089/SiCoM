@@ -85,4 +85,42 @@ public class RentaHelper {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Metodo para obtener las rentas disponibles y asignadas validando el empleado.
+     * Gestiona errores internamente devolviendo una lista vacia en caso de fallo.
+     * @Throws Si ocurre una excepcion durante la llamada al facade, se captura y retorna lista vacia.
+     * @Params Objeto de tipo Integer idEmpleado
+     * @return Una lista de objetos Renta, nunca retorna nulo.
+     */
+    public List<Renta> obtenerRentasDisponiblesYAsignadas(Integer idEmpleado) {
+        if (idEmpleado == null) return new ArrayList<>();
+        try {
+            List<Renta> lista = ServiceFacadeLocator.getInstanceFacadeRenta().obtenerRentasDisponiblesYAsignadas(idEmpleado);
+            return (lista != null) ? lista : new ArrayList<>();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Metodo que implementa la maquina de estados para calcular el siguiente estatus de una renta.
+     * Define la transicion logica del ciclo de vida de la renta segun su estado actual.
+     * @Throws No lanza excepciones, retorna nulo si el estado no tiene transicion definida.
+     * @Params Objeto de tipo String estadoActual
+     * @return Un String con el nombre del siguiente estado o nulo si no aplica.
+     */
+    public String calcularSiguienteEstado(String estadoActual) {
+        if (estadoActual == null) return null;
+        switch (estadoActual) {
+            case "Confirmado":              return "Pendiente a reparto";
+            case "Pendiente a reparto":     return "En reparto";      // Aquí el empleado se la asigna
+            case "En reparto":              return "Entregado";       // Aquí llega al cliente
+            case "Entregado":               return "Pendiente a recoleccion";
+            case "Pendiente a recoleccion": return "En recoleccion";  // Aquí el empleado se la asigna (retorno)
+            case "En recoleccion":          return "Finalizada";      // Fin del ciclo
+            default:                        return null;
+        }
+    }
 }
