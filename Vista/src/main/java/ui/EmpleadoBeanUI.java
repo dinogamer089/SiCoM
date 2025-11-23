@@ -8,7 +8,6 @@ import jakarta.inject.Named;
 import mx.desarollo.entity.Empleado;
 import mx.desarollo.facade.FacadeEmpleado;
 import mx.desarollo.integration.ServiceFacadeLocator;
-import org.mindrot.jbcrypt.BCrypt;
 import org.primefaces.PrimeFaces;
 
 import java.io.Serializable;
@@ -85,9 +84,7 @@ public class EmpleadoBeanUI implements Serializable
                 return;
             }
 
-            // Hash de contraseña
-            String hashGenerado = BCrypt.hashpw(nuevoEmpleado.getContrasena(), BCrypt.gensalt());
-            nuevoEmpleado.setContrasena(hashGenerado);
+            // --- EDICION: SE QUITÓ BCRYPT AQUÍ PARA EVITAR DOBLE ENCRIPTACIÓN ---
 
             facadeEmpleado.saveEmpleado(nuevoEmpleado);
             cargarEmpleados();
@@ -145,8 +142,8 @@ public class EmpleadoBeanUI implements Serializable
         }
 
         try {
-            String hashGenerado = BCrypt.hashpw(nuevaContrasena, BCrypt.gensalt());
-            empleadoSeleccionado.setContrasena(hashGenerado);
+            // --- EDICIÓN: SE QUITÓ BCRYPT AQUÍ ---
+            empleadoSeleccionado.setContrasena(nuevaContrasena);
 
             facadeEmpleado.updateEmpleado(empleadoSeleccionado);
 
