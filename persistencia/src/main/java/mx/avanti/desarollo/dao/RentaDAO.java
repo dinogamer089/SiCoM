@@ -105,7 +105,6 @@ public class RentaDAO extends AbstractDAO<Renta> {
             return null;
         }
     }
-}
 
     // Registro de renta/cotización con detalles y cliente asociado
     public void registrarRenta(Cliente cliente,
