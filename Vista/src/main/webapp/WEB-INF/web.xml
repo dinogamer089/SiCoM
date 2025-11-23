@@ -33,7 +33,7 @@
     <!-- PrimeFaces -->
     <context-param>
         <param-name>primefaces.THEME</param-name>
-        <param-value>none</param-value>
+        <param-value>saga</param-value>
     </context-param>
 
     <context-param>
@@ -53,7 +53,7 @@
     </context-param>
 
     <welcome-file-list>
-        <welcome-file>AutenticacionUsuario.xhtml</welcome-file>
+        <welcome-file>Rentas.xhtml</welcome-file>
     </welcome-file-list>
 
     <listener>

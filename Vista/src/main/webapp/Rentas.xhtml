@@ -1,0 +1,202 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xml:lang="es" lang="es">
+
+<h:head>
+    <title>Gestion de Rentas</title>
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{rentaUI.obtenerTodasLasRentas}" />
+    </f:metadata>
+
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style type="text/css">
+        @font-face {
+            font-family: "Minerva Modern";
+            src: url("resources/MinervaModern Bold.ttf") format("truetype");
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: #E7D9CB;
+        }
+
+        .topbar {
+            background-color: #3D4435;
+            color: #C2C8CC;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+        .topbar-left, .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .topbar-center {
+            text-align: center;
+            flex-grow: 1;
+            font-style: italic;
+            font-size: 22px;
+        }
+        .topbar a {
+            text-decoration: none;
+            color: #C2C8CC;
+            font-size: 16px;
+            margin: 0 5px;
+            font-style: italic;
+        }
+        .topbar a:hover {
+            text-decoration: underline;
+        }
+        .topbar img {
+            width: 20px;
+            height: 20px;
+        }
+        .content {
+            padding: 20px 60px;
+            font-family: 'Minerva Modern', serif;
+        }
+
+        .title {
+            font-size: 26px;
+            margin-bottom: 20px;
+            color: #000000;
+        }
+
+        .rentas-list {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .renta-card {
+            width: 250px;
+            height: 120px;
+            background-color: black;
+            color: white;
+            padding: 15px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .renta-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .renta-icon {
+            font-size: 40px;
+        }
+
+        .renta-details {
+            display: flex;
+            align-items: center;
+        }
+
+        .renta-details img{
+            width: 25px;
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        .renta-info {
+            display: flex;
+            flex-direction: column;
+            font-weight: bold;
+            font-size: 14px;
+            font-family: "FreightTextCmp Pro Semibold";
+        }
+
+        .renta-status {
+            font-size: 14px;
+            font-style: italic;
+            margin-top: 5px;
+            color: lightblue;
+        }
+
+        .icon-bill {
+            font-size: 40px;
+            margin-right: 15px;
+        }
+
+    </style>
+</h:head>
+<h:body>
+    <div class="topbar">
+        <div class="topbar-left">
+            <img src="resources/edicion.png" alt="Empleados" class="topbar-icon" />
+            <a href="AdminEmpleados.xhtml">Empleados</a>
+        </div>
+        <div class="topbar-center">
+            <a href="#"> EVENTOS CAMPESTRE</a><br />
+            <a href="Inventario.xhtml">Inventario</a>
+            <a href="Articulos.xhtml">Artículos</a>
+            <a href="Cotizaciones.xhtml">Cotizaciones</a>
+            <a href="Rentas.xhtml">Rentas</a>
+        </div>
+        <div class="topbar-right">
+            <span>Administrador</span>
+            <img src="resources/administrador.png" alt="admin" class="topbar-icon" />
+        </div>
+    </div>
+
+    <div class="content">
+        <h1 class="title">Rentas</h1>
+
+        <h:form id="rentasForm">
+            <p:growl id="messages" showDetail="true" life="3000"/>
+
+            <div class="rentas-list">
+
+                <h:panelGroup rendered="#{not empty rentaUI.rentas}">
+                    <ui:repeat value="#{rentaUI.rentas}" var="rent">
+
+                        <h:commandLink action="#{rentaUI.seleccionarRenta(rent)}" style="text-decoration: none; color: inherit;">
+                            <div class="renta-card">
+                                <div class="renta-details">
+                                    <img src="resources/cotizacion.png" alt="Renta" />
+
+                                    <div class="renta-info">
+                                        <h:outputText value="#{rent.idCliente.nombre}" style="font-size: 16px;"/>
+                                        <h:outputText value="#{rent.idCliente.telefono}" style="font-size: 14px;"/>
+
+                                        <h:outputText value="#{rent.estado}"
+                                                      styleClass="renta-status"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:commandLink>
+                    </ui:repeat>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{empty rentaUI.rentas}">
+                    <div class="rent-card" style="background-color: #000000; cursor: default; justify-content: center; width: 300px;">
+                        <div class="rent-info" style="text-align: center; color: white">
+                            <h:outputText value="No existen rentas por el momento." />
+                        </div>
+                    </div>
+                </h:panelGroup>
+
+            </div>
+
+        </h:form>
+    </div>
+</h:body>
+</html>

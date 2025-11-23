@@ -33,10 +33,19 @@ public class ArticuloBeanUI implements Serializable {
     private String imagenMime;
     // buffer manejado por servlet de subida
 
+    /**
+     * Constructor por defecto del bean de articulo en la capa UI.
+     * Inicializa el helper que se comunicara con la capa de negocio.
+     */
     public ArticuloBeanUI() {
         articuloHelper = new ArticuloHelper();
     }
 
+    /**
+     * Metodo de inicializacion que se ejecuta despues de construir el bean.
+     * Prepara la lista de articulos y el objeto para alta.
+     * @Throws Si ocurre un error al obtener los articulos desde el helper.
+     */
     @PostConstruct
     public void init() {
         articulo = new Articulo();
@@ -47,16 +56,40 @@ public class ArticuloBeanUI implements Serializable {
         imagenMime = null;
     }
 
+    /**
+     * Metodo para obtener la lista de articulos mostrados en la tabla de administracion.
+     * @return Una lista de objetos Articulo.
+     */
     public List<Articulo> getArticulos() { return articulos; }
 
+    /**
+     * Metodo para seleccionar un articulo desde la tabla de la vista.
+     * Guarda la referencia para operaciones posteriores como eliminacion.
+     * @Params Objeto de tipo Articulo art
+     */
     public void seleccionar(Articulo art) {
         this.seleccionada = art;
         System.out.println("Seleccionada: " + art.getNombre());
     }
 
+    /**
+     * Metodo getter para obtener el articulo actualmente seleccionado.
+     * @return El objeto Articulo seleccionado o null si no hay seleccion.
+     */
     public Articulo getSeleccionada() { return seleccionada; }
+
+    /**
+     * Metodo setter para establecer el articulo seleccionado desde la vista.
+     * @Params Objeto de tipo Articulo art
+     */
     public void setSeleccionada(Articulo art) { this.seleccionada = art; }
 
+    /**
+     * Metodo para obtener la imagen de un articulo en formato base64 lista para usarse en un tag img.
+     * @Throws Si ocurre un error al codificar la imagen en base64.
+     * @Params Objeto de tipo Articulo art
+     * @return Una cadena con la Data URL de la imagen o una cadena vacia si no hay imagen.
+     */
     public String getImagenBase64(Articulo art) {
         if (art == null || art.getImagen() == null || art.getImagen().getDatos() == null) {
             return "";
@@ -67,15 +100,36 @@ public class ArticuloBeanUI implements Serializable {
         return "data:" + mime + ";base64," + base64;
     }
 
+    /**
+     * Metodo getter para el objeto nuevoArticulo usado en el formulario de alta.
+     * @return El objeto Articulo que se esta creando.
+     */
     public Articulo getNuevoArticulo() { return nuevoArticulo; }
+
+    /**
+     * Metodo setter para asignar un nuevoArticulo desde la vista.
+     * @Params Objeto de tipo Articulo nuevoArticulo
+     */
     public void setNuevoArticulo(Articulo nuevoArticulo) { this.nuevoArticulo = nuevoArticulo; }
 
+    /**
+     * Metodo getter para obtener el precio del nuevo articulo.
+     * @return El precio capturado para el nuevo articulo.
+     */
     public BigDecimal getNuevoPrecio() { return nuevoPrecio; }
+
+    /**
+     * Metodo setter para asignar el precio del nuevo articulo.
+     * @Params Objeto de tipo BigDecimal nuevoPrecio
+     */
     public void setNuevoPrecio(BigDecimal nuevoPrecio) { this.nuevoPrecio = nuevoPrecio; }
 
-    // La imagen se obtiene de sesión cargada por UploadImageServlet
-
-    // === Manejo de upload (PrimeFaces advanced) ===
+    /**
+     * Metodo manejador del evento de subida de archivos (PrimeFaces).
+     * Valida el tipo y extension del archivo y guarda los bytes de la imagen en memoria.
+     * @Throws Si el archivo es invalido o ocurre un error durante el procesamiento.
+     * @Params Objeto de tipo FileUploadEvent event
+     */
     public void onUpload(FileUploadEvent event) {
         try {
             var file = event.getFile();
@@ -117,6 +171,11 @@ public class ArticuloBeanUI implements Serializable {
         }
     }
 
+    /**
+     * Metodo para guardar un nuevo articulo usando los datos capturados en el formulario.
+     * Valida precio, imagen y luego persiste articulo e imagen en una sola transaccion.
+     * @Throws Si faltan datos requeridos, la imagen no se cargo o la base de datos rechaza la operacion.
+     */
     public void guardarNuevo() {
         try {
             if (nuevoPrecio == null) {
@@ -173,6 +232,10 @@ public class ArticuloBeanUI implements Serializable {
         }
     }
 
+    /**
+     * Metodo para limpiar el formulario de alta de articulos.
+     * Reinicia el articulo nuevo, el precio y los buffers de imagen.
+     */
     public void cancelarAlta() {
         this.nuevoArticulo = new Articulo();
         this.nuevoArticulo.setActivo(true);
@@ -181,7 +244,12 @@ public class ArticuloBeanUI implements Serializable {
         this.imagenMime = null;
     }
 
-    // === Eliminación ===
+    /**
+     * Metodo para eliminar el articulo actualmente seleccionado.
+     * Valida que haya una seleccion, elimina por ID y refresca la lista.
+     * @Throws Si no hay articulo seleccionado, la base de datos rechaza la eliminacion
+     *         o el articulo esta siendo referenciado por rentas/cotizaciones.
+     */
     public void eliminarSeleccionada() {
         FacesContext context = FacesContext.getCurrentInstance();
         try {

@@ -1,6 +1,7 @@
 package helper;
 
 import mx.desarollo.entity.Empleado;
+import mx.desarollo.entity.Renta;
 import mx.desarollo.integration.ServiceFacadeLocator;
 
 import java.io.Serializable;
@@ -34,5 +35,20 @@ public class EmpleadoHelper implements Serializable {
      */
     public void deleteEmpleado(Empleado empleado) {
         ServiceFacadeLocator.getInstanceFacadeEmpleado().deleteEmpleado(empleado);
+    }
+
+    public Empleado findById(int empleadoId) {
+        try {
+            Empleado empleado = ServiceFacadeLocator.getInstanceFacadeEmpleado().findById(empleadoId);
+
+            return empleado;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<Empleado> getAllEmpleadosDisponibles() {
+        return ServiceFacadeLocator.getInstanceFacadeEmpleado().getAllEmpleadosDisponibles();
     }
 }
