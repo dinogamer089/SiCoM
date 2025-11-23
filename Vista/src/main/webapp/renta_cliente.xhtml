@@ -138,6 +138,9 @@
 </h:head>
 
 <h:body>
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
+    </f:metadata>
     <h:form id="formRenta">
 
         <div class="layout">
