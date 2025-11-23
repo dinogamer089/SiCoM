@@ -53,7 +53,7 @@
     </context-param>
 
     <welcome-file-list>
-        <welcome-file>Rentas.xhtml</welcome-file>
+        <welcome-file>alta.xhtml</welcome-file>
     </welcome-file-list>
 
     <listener>

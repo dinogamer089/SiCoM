@@ -32,6 +32,8 @@ public class ArticuloBeanUI implements Serializable {
     private String imagenMime;
     // buffer manejado por servlet de subida
 
+    private Articulo articuloEditar;
+
     /**
      * Constructor por defecto del bean de articulo en la capa UI.
      * Inicializa el helper que se comunicara con la capa de negocio.
@@ -274,4 +276,40 @@ public class ArticuloBeanUI implements Serializable {
             context.validationFailed();
         }
     }
+
+    public void guardarModificacion() {
+        try {
+            if (seleccionada == null) return;
+
+            if (imagenBytes != null && imagenBytes.length > 0) {
+                Imagen nuevaImg = new Imagen();
+                nuevaImg.setDatos(imagenBytes);
+                nuevaImg.setMime(imagenMime != null ? imagenMime : "image/jpeg");
+                seleccionada.setImagen(nuevaImg);
+            }
+
+            articuloHelper.actualizar(seleccionada);
+
+            articulos = articuloHelper.obtenerTodas();
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Artículo modificado correctamente"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo modificar el artículo"));
+            FacesContext.getCurrentInstance().validationFailed();
+        }
+    }
+
+    public void cancelarModificacion() {
+        this.imagenBytes = null;
+        this.imagenMime = null;
+
+        articulos = articuloHelper.obtenerTodas();
+    }
+
+    public Articulo getArticuloEditar() { return articuloEditar; }
+    public void setArticuloEditar(Articulo articuloEditar) { this.articuloEditar = articuloEditar; }
 }

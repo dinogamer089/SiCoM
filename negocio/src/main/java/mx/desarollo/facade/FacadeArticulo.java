@@ -64,4 +64,8 @@ public class FacadeArticulo {
     public java.util.Optional<Articulo> obtenerArticuloPorId(Integer id) {
         return delegateArticulo.findById(id);
     }
+
+    public void actualizarArticulo(Articulo articulo) {
+        delegateArticulo.updateArticulo(articulo);
+    }
 }
