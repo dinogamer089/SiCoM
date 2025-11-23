@@ -1,0 +1,888 @@
+﻿<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+    <title>EVENTOS CAMPESTRE — Mi carrito</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/primeicons@6.0.1/primeicons.css"/>
+
+    <style type="text/css">
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&amp;family=Lato:ital,wght@0,400;0,700;1,400&amp;display=swap');
+
+        :root {
+            --olive: #3f4737;
+            --beige: #e9dfd3;
+            --black: #0d0d0d;
+            --white: #ffffff;
+            --gray-qty: #a8afaf;
+            --brown-lines: #9c8e80;
+            --lightGray-bg: #c5c7c8;
+        }
+
+        body {
+            background-color: var(--beige);
+            font-family: "Minerva Modern", "Times New Roman", serif;
+            color: var(--black);
+            margin: 0;
+            padding-bottom: 50px;
+        }
+
+        /* --- TOPBAR --- */
+        .topbar {
+            background-color: var(--olive);
+            color: var(--white);
+            padding: 15px 40px 10px 40px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1000;
+        }
+
+        .tb-row1 {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+        }
+
+        .tb-left {
+            display: flex;
+            gap: 15px;
+        }
+
+        .tb-left i {
+            font-size: 1.2rem;
+            color: var(--white);
+            opacity: 0.9;
+            cursor: pointer;
+        }
+
+        .tb-brand {
+            text-align: center;
+            font-style: italic;
+            font-weight: 400;
+            font-size: 2rem;
+            letter-spacing: 0.05em;
+            font-family: "Cinzel", serif;
+        }
+
+        .tb-right {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tb-count {
+            font-size: 1.15rem;
+            font-style: italic;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .tb-row2 {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-top: 15px;
+            font-style: italic;
+            font-size: 1.1rem;
+        }
+        .tb-row2 a {
+            color: var(--white);
+            text-decoration: none;
+            opacity: 0.9;
+        }
+
+        /* --- LAYOUT PRINCIPAL --- */
+        .main-layout {
+            max-width: 1400px;
+            margin: 60px auto 0;
+            padding: 0 40px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .carrito-title {
+            font-size: 1.7rem;
+            font-weight: 600;
+            margin-bottom: 40px;
+            padding-left: 0px;
+            font-family: "Minerva Modern", "Times New Roman", serif;
+        }
+
+        .carrito-grid {
+            display: flex;
+            align-items: flex-start;
+            gap: 40px;
+            width: 100%;
+            min-height: 400px;
+        }
+
+        /* --- COLUMNA IZQUIERDA --- */
+        .left-panel {
+            flex: 0 0 160px;
+            display: flex;
+            flex-direction: column;
+        }
+        .articulos-box {
+            background-color: var(--white);
+            padding: 30px 15px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .art-title {
+            font-family: "Minerva Modern", "Times New Roman", serif;
+            font-size: 1.8rem;
+            font-weight: 400;
+            margin-bottom: 15px;
+            color: var(--black);
+        }
+        .art-icon-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 25px;
+            color: var(--black);
+        }
+        .art-icon-row i {
+            font-size: 1.5rem;
+        }
+        .art-count-big {
+            font-family: "Minerva Modern", "Times New Roman", serif;
+            font-size: 3rem;
+            font-weight: 400;
+            line-height: 1;
+        }
+        .btn-black {
+            background-color: var(--black) !important;
+            color: var(--white) !important;
+            border: none !important;
+            border-radius: 0 !important;
+            font-weight: 700 !important;
+            width: 100%;
+            padding: 12px 0 !important;
+            font-family: "Minerva Modern", "Times New Roman", serif;
+            font-size: 1rem !important;
+            cursor: pointer;
+            text-align: center !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+        .btn-vaciar-fuera {
+            margin-top: 20px !important;
+        }
+
+        /* --- COLUMNA CENTRAL --- */
+        .center-list {
+            flex: 1;
+        }
+        .ui-datalist-empty-message {
+            font-family: "Minerva Modern", "Times New Roman", serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--black);
+            text-align: center;
+            background-color: var(--beige);
+            border-top: 1px solid var(--brown-lines);
+            border-bottom: 1px solid var(--brown-lines);
+            padding: 18px 0;
+            margin-top: 10px;
+            letter-spacing: 0.02em;
+        }
+        .ui-datalist-content { background: transparent !important; border: none !important; }
+        .ui-datalist-data { background: transparent !important; }
+
+        .empty-cart-btn {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 25px;
+            background-color: var(--black);
+            color: var(--white);
+            text-decoration: none;
+            font-family: "Minerva Modern", "Times New Roman", serif;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .empty-cart-btn:hover {
+            background-color: var(--olive);
+        }
+
+        /* --- Estilos de la Fila del Item (Principal) --- */
+        .item-row {
+            display: flex;
+            flex-direction: column;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--brown-lines);
+            font-family: 'Lato', serif;
+            width: 100%;
+        }
+        .item-row:first-child { border-top: 1px solid var(--brown-lines); }
+
+        .item-row-top {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .btn-remove {
+            background: transparent !important; border: none !important; box-shadow: none !important;
+            color: var(--black) !important;
+            cursor: pointer;
+        }
+        .btn-remove .pi { font-size: 1.3rem; font-weight: lighter; }
+
+        .item-img-placeholder {
+            width: 60px; height: 60px;
+            background-color: var(--white);
+            margin: 0 15px;
+            border: 1px solid #ddd;
+        }
+        .item-name {
+            flex: 1;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        /* --- SELECTOR DE CANTIDAD (recuadro gris) --- */
+        .qty-selector {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--lightGray-bg);
+            border: 1px solid var(--black);
+            width: 130px;          /* ⬅️ MÁS ANCHO que antes (95px) */
+            padding: 3px 10px;     /* ⬅️ Un poco más de espacio interno */
+            margin-right: 30px;
+        }
+
+        /* Botones +/- sin fondo ni bordes */
+        .qty-selector .ui-button.qty-btn,
+        .qty-selector .ui-button.qty-btn:hover,
+        .qty-selector .ui-button.qty-btn:focus,
+        .qty-selector .ui-button.qty-btn:active,
+        .qty-selector .ui-button.qty-btn.ui-state-hover,
+        .qty-selector .ui-button.qty-btn.ui-state-focus,
+        .qty-selector .ui-button.qty-btn.ui-state-active {
+            background: transparent !important;
+            background-color: transparent !important;
+            background-image: none !important;
+            box-shadow: none !important;
+            border: none !important;
+            color: var(--black) !important;
+            font-weight: 900 !important;
+            width: 28px;
+            outline: none !important;
+        }
+
+        /* Quitar el recuadro blanco del InputNumber y centrar el número */
+        .qty-selector .ui-inputnumber,
+        .qty-selector .ui-inputnumber input {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            width: 45px !important;    /* ⬅️ ancho del área de número */
+            text-align: center;
+        }
+
+        .qty-val {
+            font-weight: 700;
+            font-size: 1rem;
+            min-width: 20px;
+            text-align: center;
+        }
+        .item-price {
+            font-size: 1.1rem; font-weight: 600;
+            min-width: 70px; text-align: right;
+        }
+
+        /* --- COLUMNA DERECHA --- */
+        .right-panel {
+            flex: 0 0 220px;
+            padding-top: 10px;
+            font-family: 'Lato', serif;
+            font-size: 0.9rem;
+            color: var(--black);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .resumen-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-bottom: 1px solid var(--black);
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+            width: 100%;
+            font-family: 'Cinzel', serif;
+        }
+        .res-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-weight: 600;
+            width: 100%;
+            border-bottom: none;
+        }
+        .res-row.subtotal {
+            border-bottom: 1px solid var(--black);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        #btnCotizar {
+            background-color: var(--black) !important;
+            color: var(--white) !important;
+            padding: 10px 18px !important;
+            border: none !important;
+            text-transform: none !important;
+            font-weight: 600 !important;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem !important;
+            margin-top: 10px !important;
+            font-family: 'Lato', sans-serif;
+        }
+        #btnCotizar[disabled] { opacity: 0.5; cursor: not-allowed; }
+        .disclaimer {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+            font-size: 0.8rem;
+            line-height: 1.3;
+            color: #444;
+            align-items: flex-start;
+            max-width: 220px;
+        }
+        .disclaimer .ui-chkbox { margin-top: -2px; }
+
+        /* --- ESTILOS MODAL FLOTANTE CARRITO --- */
+        .custom-cart-modal.ui-dialog {
+            position: fixed !important;
+            top: 75px !important;
+            right: 40px !important;
+            left: auto !important;
+            transform: none !important;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.15) !important;
+            z-index: 1001 !important;
+        }
+        /* Estilos Generales para TODOS los modales */
+        .ui-dialog {
+            border: none !important;
+            border-radius: 0 !important;
+        }
+        .ui-dialog .ui-dialog-titlebar {
+            background-color: var(--olive) !important;
+            color: var(--white) !important;
+            font-family: "Cinzel", serif;
+            border: none !important;
+            border-radius: 0 !important;
+            padding: 10px 15px !important;
+        }
+        .ui-dialog .ui-dialog-titlebar-icon {
+            color: var(--white) !important;
+        }
+        .ui-dialog .ui-dialog-content {
+            background-color: var(--beige) !important;
+            padding: 0 !important;
+            font-family: 'Lato', serif;
+            color: var(--black);
+        }
+
+        /* Estilos especificos del contenido del carrito modal */
+        .modal-cart-content {
+            padding: 15px 20px;
+        }
+        .modal-item-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--brown-lines);
+            gap: 10px;
+        }
+        .modal-btn-remove {
+            color: var(--black);
+            opacity: 0.6;
+            transition: opacity 0.3s;
+            text-decoration: none;
+        }
+        .modal-btn-remove:hover { opacity: 1; }
+        .modal-item-img {
+            width: 40px; height: 40px;
+            object-fit: cover;
+            border: 1px solid #ccc;
+        }
+        .modal-item-img.placeholder { background-color: var(--white); }
+        .modal-item-name {
+            flex: 1;
+            font-weight: 600;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .modal-qty-selector {
+            display: flex;
+            align-items: center;
+            background-color: var(--lightGray-bg);
+            border: 1px solid var(--black);
+            padding: 2px 5px;
+            gap: 8px;
+        }
+        .modal-qty-selector .ui-inputnumber,
+        .modal-qty-selector .ui-inputnumber input {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            width: 40px !important;
+            text-align: center;
+        }
+        .modal-qty-val {
+            font-weight: 700;
+            min-width: 15px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        .modal-qty-selector a {
+            color: var(--black);
+            text-decoration: none;
+            display: flex;
+        }
+        .modal-item-price {
+            font-weight: 600;
+            min-width: 60px;
+            text-align: right;
+            font-size: 0.95rem;
+        }
+
+        /* Estilo para la alerta general DENTRO del modal */
+        .modal-general-alert {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+            border: 1px solid #ffeeba;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Lato', sans-serif;
+        }
+
+        /* Estilos para el Formulario de Cotización */
+        .cotizar-form-content {
+            padding: 25px;
+        }
+        .form-field {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        .form-field label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+        }
+        .ui-inputfield, .ui-inputtextarea {
+            background-color: var(--white) !important;
+            border: 1px solid var(--brown-lines) !important;
+            border-radius: 0 !important;
+            padding: 8px !important;
+            font-family: 'Lato', serif !important;
+        }
+        .ui-datepicker-trigger {
+            background-color: var(--black) !important;
+            color: var(--white) !important;
+            border: none !important;
+            border-radius: 0 !important;
+            z-index: 9999 !important;
+        }
+
+        .ui-datepicker,
+        .ui-datepicker-calendar,
+        .ui-datepicker-container {
+            z-index: 999999 !important;
+        }
+
+        /* --- STOCK ALERT BANNER (Pantalla Principal) --- */
+        .stock-alert {
+            position: fixed;
+            top: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1100;
+            background: rgba(13, 13, 13, 0.96);
+            border: 1px solid var(--brown-lines);
+            color: #f9f9f9;
+            padding: 10px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+            border-radius: 4px;
+            max-width: 900px;
+            width: calc(100% - 80px);
+            opacity: 1;
+            transition: opacity .4s ease, transform .4s ease;
+        }
+        .stock-alert i { margin-top: 2px; font-size: 1.2rem; color: #f6e2b8; }
+        .stock-alert .sa-content { flex: 1; }
+        .stock-alert .sa-actions { margin-left: 8px; }
+        .stock-alert ul { margin: 6px 0 0 18px; padding: 0; }
+    </style>
+</h:head>
+
+<h:body>
+    <h:form id="formCarrito">
+
+        <div class="topbar">
+            <div class="tb-row1">
+                <div class="tb-left">
+                    <i class="pi pi-facebook"/>
+                    <i class="pi pi-whatsapp"/>
+                    <i class="pi pi-home"/>
+                </div>
+                <div class="tb-brand">EVENTOS CAMPESTRE</div>
+                <div class="tb-right">
+                    <h:panelGroup layout="block" style="display:flex; align-items:center; gap:8px; margin-right:10px;">
+                        <h:outputText value="Fecha de evento:"/>
+                        <p:datePicker id="fechaCatalogo"
+                                      value="#{carritoBean.fechaCatalogoSeleccionada}"
+                                      showIcon="true"
+                                      appendTo="@(body)"
+                                      mindate="#{carritoBean.fechaActual}"
+                                      readonlyInput="true">
+                            <p:ajax event="dateSelect"
+                                    process="@this"
+                                    listener="#{carritoBean.actualizarFechaDesdeCatalogo(carritoBean.fechaCatalogoSeleccionada)}"
+                                    update=":formCarrito:stockAlerts :formCarrito:mainCartGrid :formCarrito:tb-count-group :formCarrito:modalCarritoContent"/>
+                        </p:datePicker>
+                    </h:panelGroup>
+                    <p:commandLink onclick="PF('carritoModal').show(); return false;"
+                                   style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                        <i class="pi pi-shopping-cart" style="font-size: 1.4rem;"/>
+                        <h:panelGroup id="tb-count-group">
+                            <span class="tb-count">#{carritoBean.carrito.conteoTotalItems}</span>
+                        </h:panelGroup>
+                    </p:commandLink>
+                </div>
+            </div>
+            <div class="tb-row2">
+                <a href="#">Acerca de</a>
+                <a href="renta_cliente.xhtml">Renta</a>
+                <a href="#">Contacto</a>
+            </div>
+        </div>
+
+        <div class="main-layout">
+            <div class="carrito-title">Mi carrito</div>
+
+            <h:panelGroup id="stockAlerts" rendered="#{carritoBean.huboAjustesStock}" layout="block" styleClass="stock-alert">
+                <i class="pi pi-exclamation-triangle"></i>
+                <div class="sa-content">
+                    <div style="font-weight:600;">Disponibilidad actualizada para la fecha seleccionada</div>
+                    <ul>
+                        <ui:repeat value="#{carritoBean.notificacionesStock}" var="msg">
+                            <li><h:outputText value="#{msg}"/></li>
+                        </ui:repeat>
+                    </ul>
+                </div>
+                <div class="sa-actions">
+                    <p:commandLink title="Ocultar"
+                                   actionListener="#{carritoBean.limpiarNotificacionesStock}"
+                                   process="@this"
+                                   update=":formCarrito:stockAlerts :formCarrito:mainCartGrid :formCarrito:modalCarritoContent :formCarrito:tb-count-group">
+                        <i class="pi pi-times" style="color:#856404;"></i>
+                    </p:commandLink>
+                </div>
+            </h:panelGroup>
+
+            <h:panelGroup id="mainCartGrid" layout="block" styleClass="carrito-grid">
+
+                <div class="left-panel">
+                    <div class="articulos-box">
+                        <div class="art-title">Articulos</div>
+                        <div class="art-icon-row">
+                            <i class="pi pi-shopping-bag" />
+                            <h:panelGroup id="lp-count-group">
+                                <span class="art-count-big">#{carritoBean.carrito.conteoTotalItems}</span>
+                            </h:panelGroup>
+                        </div>
+                    </div>
+                    <p:commandButton value="Vaciar" styleClass="btn-black btn-vaciar-fuera"
+                                     rendered="#{not carritoBean.carrito.vacio}"
+                                     process="@this"
+                                     actionListener="#{carritoBean.vaciarCarrito}"
+                                     update="mainCartGrid :formCarrito:tb-count-group :formCarrito:modalCarritoContent"/>
+                </div>
+
+                <h:panelGroup layout="block" styleClass="center-list">
+                    <p:dataList value="#{carritoBean.carrito.items}" var="item" type="none" styleClass="dl-reset"
+                                emptyMessage="Actualmente no hay nada en su carrito">
+                        <p:button value="Ir al catálogo"
+                                  outcome="#"
+                                  styleClass="empty-cart-btn"
+                                  rendered="#{carritoBean.carrito.vacio}"
+                                  style="margin-top: 15px; display:inline-block;"/>
+
+                        <div class="item-row">
+                            <div class="item-row-top">
+                                <p:commandButton icon="pi pi-minus-circle" styleClass="btn-remove ui-button-flat"
+                                                 actionListener="#{carritoBean.eliminarItem(item)}"
+                                                 update=":formCarrito:stockAlerts :formCarrito:mainCartGrid :formCarrito:tb-count-group :formCarrito:modalCarritoContent"/>
+
+                                <h:panelGroup rendered="#{empty item.articulo}">
+                                    <div class="item-img-placeholder"></div>
+                                </h:panelGroup>
+                                <h:graphicImage rendered="#{not empty item.articulo}"
+                                                value="#{articuloUI.getImagenBase64(item.articulo)}"
+                                                styleClass="item-img-placeholder" style="object-fit: cover"/>
+
+                                <h:outputText value="#{item.articulo.nombre}" styleClass="item-name"/>
+
+                                <div class="qty-selector">
+                                    <p:commandButton icon="pi pi-minus" styleClass="qty-btn"
+                                                     actionListener="#{carritoBean.decrementarCantidad(item)}"
+                                                     update=":formCarrito:stockAlerts :formCarrito:mainCartGrid :formCarrito:tb-count-group :formCarrito:modalCarritoContent"
+                                                     disabled="#{item.cantidad le 1}"/>
+                                    <p:inputNumber id="qtyInput"
+                                                   value="#{item.cantidad}"
+                                                   decimalPlaces="0"
+                                                   minValue="1"
+                                                   maxValue="#{carritoBean.maxCantidadItem(item)}"
+                                                   style="width: 60px; text-align:center;">
+                                        <p:ajax event="blur"
+                                                process="@this"
+                                                listener="#{carritoBean.aplicarCantidad(item)}"
+                                                update=":formCarrito:stockAlerts :formCarrito:mainCartGrid :formCarrito:tb-count-group :formCarrito:modalCarritoContent"/>
+                                    </p:inputNumber>
+                                    <p:commandButton icon="pi pi-plus" styleClass="qty-btn"
+                                                     actionListener="#{carritoBean.incrementarCantidad(item)}"
+                                                     update=":formCarrito:stockAlerts :formCarrito:mainCartGrid :formCarrito:tb-count-group :formCarrito:modalCarritoContent"/>
+                                </div>
+
+                                <h:outputText value="#{item.precioTotal}" styleClass="item-price">
+                                    <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="0"/>
+                                </h:outputText>
+                            </div>
+
+                            <h:panelGroup rendered="#{item.ajustadoPorStock}" layout="block"
+                                          style="width: 100%; text-align: right; color:#a94442; font-size:0.85rem; margin-top:8px; font-style: italic;">
+                                <i class="pi pi-exclamation-triangle" style="margin-right:6px;"/>
+                                <h:outputText value="#{item.avisoAjuste}"/>
+                            </h:panelGroup>
+                        </div>
+                    </p:dataList>
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" styleClass="right-panel">
+                    <div class="resumen-title">Resumen del presupuesto</div>
+
+                    <div class="res-row subtotal">
+                        <span>Subtotal</span>
+                        <h:outputText value="#{carritoBean.carrito.subtotal}">
+                            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="0"/>
+                        </h:outputText>
+                    </div>
+
+                    <div class="res-row">
+                        <span>Total</span>
+                        <h:outputText value="#{carritoBean.carrito.total}">
+                            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="0"/>
+                        </h:outputText>
+                    </div>
+
+                    <p:commandButton id="btnCotizar" value="Cotizar" styleClass="btn-black"
+                                     disabled="#{not carritoBean.aceptaTerminos or carritoBean.carrito.vacio}"
+                                     onclick="PF('cotizarDialog').show(); return false;" />
+
+                    <div class="disclaimer">
+                        <p:selectBooleanCheckbox id="chkTerminos" value="#{carritoBean.aceptaTerminos}">
+                            <p:ajax update="btnCotizar" />
+                        </p:selectBooleanCheckbox>
+                        <span>Estoy enterado y de acuerdo en que este documento es una solicitud de cotización y no representa un compromiso de precio o servicio.</span>
+                    </div>
+                </h:panelGroup>
+
+            </h:panelGroup> </div>
+
+        <p:dialog header="Mi carrito" widgetVar="carritoModal"
+                  draggable="false" resizable="false"
+                  showEffect="fade" hideEffect="fade"
+                  styleClass="custom-cart-modal"
+                  closeOnEscape="true"
+                  responsive="true" width="350">
+
+            <p:ajax event="close" update=":formCarrito:mainCartGrid :formCarrito:tb-count-group" />
+
+            <h:panelGroup id="modalCarritoContent" layout="block" styleClass="modal-cart-content">
+
+                <h:panelGroup rendered="#{carritoBean.huboAjustesStock}" layout="block" styleClass="modal-general-alert">
+                    <i class="pi pi-exclamation-triangle"/>
+                    <span>Algunas cantidades fueron ajustadas por stock.</span>
+                </h:panelGroup>
+
+                <p:outputPanel rendered="#{carritoBean.carrito.vacio}"
+                               style="display:block; text-align:center; padding: 20px 0; font-style: italic; font-family: 'Lato', serif;">
+                    Tu carrito esta vacio.
+                </p:outputPanel>
+
+                <p:dataList value="#{carritoBean.carrito.items}" var="item" type="none" styleClass="dl-reset"
+                            rendered="#{not carritoBean.carrito.vacio}">
+                    <div class="modal-item-row">
+                        <p:commandLink actionListener="#{carritoBean.eliminarItem(item)}"
+                                       update=":formCarrito:modalCarritoContent :formCarrito:tb-count-group :formCarrito:mainCartGrid"
+                                       styleClass="modal-btn-remove">
+                            <i class="pi pi-minus-circle"/>
+                        </p:commandLink>
+
+                        <h:panelGroup rendered="#{empty item.articulo}" styleClass="modal-item-img placeholder"/>
+                        <h:graphicImage rendered="#{not empty item.articulo}"
+                                        value="#{articuloUI.getImagenBase64(item.articulo)}"
+                                        styleClass="modal-item-img"/>
+
+                        <h:outputText value="#{item.articulo.nombre}" styleClass="modal-item-name"/>
+
+                        <div class="modal-qty-selector">
+                            <p:commandLink actionListener="#{carritoBean.decrementarCantidad(item)}"
+                                           update=":formCarrito:modalCarritoContent :formCarrito:tb-count-group :formCarrito:mainCartGrid"
+                                           disabled="#{item.cantidad le 1}">
+                                <i class="pi pi-minus" style="font-size: 0.7rem;"/>
+                            </p:commandLink>
+                            <p:inputNumber id="modalQtyInput"
+                                           value="#{item.cantidad}"
+                                           decimalPlaces="0"
+                                           minValue="1"
+                                           maxValue="#{carritoBean.maxCantidadItem(item)}"
+                                           style="width: 50px; text-align:center;">
+                                <p:ajax event="blur"
+                                        process="@this"
+                                        listener="#{carritoBean.aplicarCantidad(item)}"
+                                        update=":formCarrito:modalCarritoContent :formCarrito:tb-count-group :formCarrito:mainCartGrid"/>
+                            </p:inputNumber>
+                            <p:commandLink actionListener="#{carritoBean.incrementarCantidad(item)}"
+                                           update=":formCarrito:modalCarritoContent :formCarrito:tb-count-group :formCarrito:mainCartGrid">
+                                <i class="pi pi-plus" style="font-size: 0.7rem;"/>
+                            </p:commandLink>
+                        </div>
+
+                        <h:outputText value="#{item.precioTotal}" styleClass="modal-item-price">
+                            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="0"/>
+                        </h:outputText>
+
+                    </div>
+                </p:dataList>
+
+                <h:panelGroup layout="block" style="margin-top: 15px; border-top: 2px solid var(--olive); padding-top: 15px;" rendered="#{not carritoBean.carrito.vacio}">
+                    <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; margin-bottom: 15px; font-family: 'Lato', serif;">
+                        <span>Total:</span>
+                        <h:outputText value="#{carritoBean.carrito.total}">
+                            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="0"/>
+                        </h:outputText>
+                    </div>
+                    <p:button value="Ver Carrito Completo" outcome="/Carrito.xhtml" styleClass="btn-black" style="width: 100%;"/>
+                </h:panelGroup>
+
+            </h:panelGroup>
+        </p:dialog>
+    </h:form>
+
+    <p:dialog header="Solicitar Cotización" widgetVar="cotizarDialog"
+              modal="true" draggable="false" resizable="false"
+              showEffect="fade" hideEffect="fade" responsive="true" width="500">
+
+        <h:form id="frmCotizacion">
+            <div class="cotizar-form-content">
+                <div class="form-field">
+                    <p:outputLabel for="nombre" value="Nombre Completo"/>
+                    <p:inputText id="nombre"
+                                 value="#{carritoBean.nombreCliente}"
+                                 required="true"
+                                 requiredMessage="El nombre es obligatorio"
+                                 validatorMessage="El nombre debe tener al menos 3 caracteres"
+                                 style="width: 100%">
+                        <f:validateLength minimum="3"/>
+                    </p:inputText>
+                    <p:message for="nombre" style="font-size: 0.8rem; margin-top: 3px;"/>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-field">
+                        <p:outputLabel for="tel1" value="Numero de Telefono 1"/>
+                        <p:inputText id="tel1"
+                                     value="#{carritoBean.telefono1}"
+                                     required="true"
+                                     requiredMessage="Telefono es obligatorio"
+                                     validatorMessage="Debe tener 10 digitos numericos"
+                                     maxlength="10"
+                                     placeholder="10 digitos"
+                                     style="width: 100%">
+                            <p:keyFilter mask="num"/>
+                            <f:validateRegex pattern="^\d{10}$"/>
+                        </p:inputText>
+                        <p:message for="tel1" style="font-size: 0.8rem; margin-top: 3px;"/>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <p:outputLabel for="direccion" value="Direccion de Entrega"/>
+                    <p:inputTextarea id="direccion"
+                                     value="#{carritoBean.direccionEntrega}"
+                                     rows="3" required="true"
+                                     requiredMessage="La direccion es obligatoria"
+                                     validatorMessage="La direccion es muy corta"
+                                     style="width: 100%; resize: none;">
+                        <f:validateLength minimum="10"/>
+                    </p:inputTextarea>
+                    <p:message for="direccion" style="font-size: 0.8rem; margin-top: 3px;"/>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; margin-top: 20px; gap: 10px;">
+                    <p:commandButton value="Cancelar" type="button"
+                                     onclick="PF('cotizarDialog').hide()"
+                                     styleClass="ui-button-flat"
+                                     style="color: var(--black) !important;"/>
+
+                    <p:commandButton value="Enviar Solicitud"
+                                     styleClass="btn-black"
+                                     style="width: auto !important; padding: 10px 25px !important;"
+                                     process="@form"
+                                     update="frmCotizacion"
+                                     actionListener="#{carritoBean.confirmarCotizacion}"
+                                     oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('cotizarDialog').hide(); PF('successDialog').show(); }"/>
+                </div>
+            </div>
+        </h:form>
+    </p:dialog>
+
+    <p:dialog widgetVar="successDialog" modal="true" showEffect="fade" hideEffect="fade"
+              draggable="false" resizable="false" closable="false" responsive="true" width="400"
+              header="¡Cotización Enviada!">
+        <div style="text-align: center; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+            <i class="pi pi-check-circle" style="font-size: 4rem; color: var(--olive);"></i>
+            <h:outputText value="COTIZACION EXITOSA"
+                          style="font-family: 'Cinzel', serif; font-weight: 600; font-size: 1.4rem; color: var(--black);"/>
+            <h:outputText value="NOS PONDREMOS EN CONTACTO PRONTO"
+                          style="font-family: 'Lato', serif; font-size: 1.1rem; color: #555;"/>
+
+            <p:commandButton value="Aceptar" type="button" onclick="PF('successDialog').hide()"
+                             styleClass="btn-black" style="margin-top: 15px; width: 150px !important;"/>
+        </div>
+    </p:dialog>
+
+</h:body>
+</html>

@@ -8,6 +8,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -47,6 +48,10 @@ public class Renta {
     @Size(max = 45)
     @Column(name = "Recogido", length = 45)
     private String recogido;
+
+    // Total de la renta/cotización (requerido por el esquema)
+    @Column(name = "total", nullable = false, precision = 10, scale = 2)
+    private BigDecimal total;
 
     @OneToMany(mappedBy = "idrenta")
     @OrderBy("id ASC")
@@ -116,6 +121,9 @@ public class Renta {
     public void setRecogido(String recogido) {
         this.recogido = recogido;
     }
+
+    public BigDecimal getTotal() { return total; }
+    public void setTotal(BigDecimal total) { this.total = total; }
 
     public List<Detallerenta> getDetallesRenta() {
         return detallesRenta;
