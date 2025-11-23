@@ -1,0 +1,336 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xml:lang="es" lang="es">
+<f:metadata>
+    <f:viewParam name="idRenta" value="#{empleadoRentaUI.idRentaSeleccionada}" />
+    <f:viewAction action="#{empleadoRentaUI.cargarRentaSeleccionada}" />
+    <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
+</f:metadata>
+<h:head>
+    <title>Detalle Tarea</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style type="text/css">
+        @font-face {
+            font-family: "Minerva Modern";
+            src: url("resources/MinervaModern Bold.ttf") format("truetype");
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: #E7D9CB;
+        }
+
+        .topbar {
+            background-color: #3D4435;
+            color: #C2C8CC;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+        .topbar-left, .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .topbar-center {
+            text-align: center;
+            flex-grow: 1;
+            font-style: italic;
+            font-size: 22px;
+        }
+        .topbar a {
+            text-decoration: none;
+            color: #C2C8CC;
+            font-size: 16px;
+            margin: 0 5px;
+            font-style: italic;
+        }
+        .topbar a:hover {
+            text-decoration: underline;
+        }
+        .topbar img {
+            width: 20px;
+            height: 20px;
+        }
+        .content {
+            padding: 20px 60px;
+            font-family: 'Minerva Modern', serif;
+        }
+
+        .detalle-container {
+            display: flex;
+            gap: 40px;
+            padding-top: 20px;
+        }
+
+        .cliente-info-box {
+            flex: 0 0 350px;
+            font-size: 18px;
+        }
+
+        .cliente-info {
+            background-color: #3D4435;
+            padding: 15px;
+            color: white;
+        }
+
+        .cliente-row {
+            display: flex;
+            margin-bottom: 15px;
+            font-family: 'Minerva Modern', serif;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .cliente-label {
+            font-weight: bold;
+            flex: 0 0 100px;
+            color: white;
+        }
+
+        .cliente-value {
+            font-weight: normal;
+        }
+
+        .articulos-section {
+            flex-grow: 1;
+        }
+
+        .articulos-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #000000;
+            font-family: 'Minerva Modern', serif;
+        }
+
+        .custom-datatable table {
+            background: #E7D9CB;
+        }
+
+        .articulos-card{
+            background-color: #3D4435;
+            padding: 15px;
+        }
+
+        .ui-datatable thead th,
+        .custom-datatable thead th {
+            background-color: #3D4435 !important;
+            color: white !important;
+            text-align: center !important;
+            font-weight: bold !important;
+            font-family: "FreightTextCmp Pro Semibold" !important;
+        }
+
+        .custom-datatable .ui-datatable-data tr,
+        .custom-datatable .ui-datatable-data td {
+            border-color: #000000 !important;
+            color: #000000 !important;
+            font-family: "FreightTextCmp Pro Semibold" !important;
+            text-align: center !important;
+        }
+
+        .custom-datatable .ui-datatable-data tr {
+            background: white !important;
+        }
+
+        .custom-datatable .ui-datatable-data tr:nth-child(even) {
+            background: white !important;
+        }
+
+        .custom-datatable .ui-datatable-data td {
+            border: none !important;
+            padding: 8px 10px;
+        }
+
+        .custom-datatable .ui-widget-content {
+            border: none !important;
+        }
+
+        .boton-centrado {
+            display: flex;
+            justify-content: center;
+            padding-top: 20px;
+            width: 100%;
+        }
+
+        .ui-button.btn {
+            background-color: black !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 0 !important;
+            padding: 10px 20px !important;
+            font-family: 'Minerva Modern', serif;
+        }
+
+        /* Estilos del Dialogo de Confirmación */
+        .ui-confirm-dialog.ui-widget-content,
+        .ui-confirm-dialog .ui-dialog-titlebar {
+            background-color: #3D4435 !important;
+            border-color: #3D4435 !important;
+        }
+
+        .ui-confirm-dialog .ui-dialog-content,
+        .ui-confirm-dialog .ui-dialog-buttonpane {
+            background-color: #3D4435 !important;
+        }
+
+        .ui-confirm-dialog .ui-dialog-title,
+        .ui-confirm-dialog .ui-confirm-dialog-message,
+        .ui-confirm-dialog .ui-icon {
+            color: white !important;
+        }
+
+        .ui-confirm-dialog .ui-confirmdialog-yes,
+        .ui-confirm-dialog .ui-confirmdialog-no.ui-button-flat {
+            background-color: black !important;
+            color: white !important;
+        }
+
+        .ui-confirm-dialog .ui-dialog-titlebar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px !important;
+        }
+    </style>
+</h:head>
+<h:body>
+    <div class="topbar">
+        <div class="topbar-left">
+            <span style="font-size:14px;">Módulo Operativo</span>
+        </div>
+        <div class="topbar-center">
+            DETALLE DE TAREA
+        </div>
+        <div class="topbar-right">
+            <span>Empleado</span>
+            <img src="resources/administrador.png" alt="user" style="width:20px; height:20px; margin-left:10px;" />
+        </div>
+    </div>
+
+    <div class="content">
+        <h:form id="formDetalle">
+            <p:growl id="growl" showDetail="true" life="5000" />
+            <div class="detalle-container">
+                <div class="cliente-info-box">
+                    <div class="cliente-row">
+                        <div style="margin-bottom: 20px;">
+                            <h:commandLink action="RentasEmpleado.xhtml?faces-redirect=true" title="Regresar">
+                                <h:graphicImage value="resources/retornar.png"
+                                                alt="Regresar"
+                                                width="40"
+                                                height="40"
+                                                style="cursor: pointer;" />
+                            </h:commandLink>
+                        </div>
+                    </div>
+
+                    <div class="cliente-info">
+                        <div class="cliente-row">
+                            <span class="cliente-label">Nombre:</span>
+                            <span class="cliente-value">#{empleadoRentaUI.rentaSeleccionada.idCliente.nombre}</span>
+                        </div>
+
+                        <div class="cliente-row">
+                            <span class="cliente-label">Dirección:</span>
+                            <span class="cliente-value">#{empleadoRentaUI.rentaSeleccionada.idCliente.direccion}</span>
+                        </div>
+
+                        <div class="cliente-row">
+                            <span class="cliente-label">Teléfono:</span>
+                            <span class="cliente-value">#{empleadoRentaUI.rentaSeleccionada.idCliente.telefono}</span>
+                        </div>
+
+                        <div class="cliente-row">
+                            <span class="cliente-label">Estado:</span>
+                            <span class="cliente-value">#{empleadoRentaUI.rentaSeleccionada.estado}</span>
+                        </div>
+
+                        <div class="cliente-row">
+                            <span class="cliente-label">Fecha:</span>
+                            <span class="cliente-value">
+                                <h:outputText value="#{empleadoRentaUI.rentaSeleccionada.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" type="localDate" />
+                                </h:outputText>
+                            </span>
+                        </div>
+
+                        <div class="cliente-row">
+                            <span class="cliente-label">Hora:</span>
+                            <span class="cliente-value">
+                                <h:outputText value="#{empleadoRentaUI.rentaSeleccionada.hora}">
+                                    <f:convertDateTime pattern="HH:mm" type="localTime" />
+                                </h:outputText>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="boton-centrado">
+                        <h:panelGroup rendered="#{not empty empleadoRentaUI.siguienteEstado}">
+
+                            <p:commandButton value="Avanzar a: #{empleadoRentaUI.siguienteEstado}"
+                                             action="#{empleadoRentaUI.avanzarEstado}"
+                                             update="@form :growl"
+                                             styleClass="btn"
+                                             style="width: 100%;">
+                                <p:confirm header="Confirmar Acción"
+                                           message="¿Confirmas cambiar el estado a '#{empleadoRentaUI.siguienteEstado}'? #{empleadoRentaUI.rentaSeleccionada.idEmpleado == null ? '(Se te asignará esta tarea)' : ''}"
+                                           icon="pi pi-exclamation-triangle" />
+                            </p:commandButton>
+
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{empty empleadoRentaUI.siguienteEstado}">
+                            <div style="text-align: center; color: #555; font-style: italic;">
+                                Tarea Finalizada o en espera.
+                            </div>
+                        </h:panelGroup>
+                    </div>
+                </div>
+
+                <div class="articulos-section">
+                    <div class="articulos-title">Artículos Asignados</div>
+
+                    <div class="articulos-card">
+                        <p:dataTable var="detalle"
+                                     value="#{empleadoRentaUI.rentaSeleccionada.detallesRenta}"
+                                     styleClass="custom-datatable"
+                                     emptyMessage="No hay artículos en esta renta."
+                                     style="border-spacing: 0 10px; border-collapse: separate;">
+
+                            <p:column headerText="Nombre">
+                                <h:outputText value="#{detalle.idarticulo.nombre}" />
+                            </p:column>
+
+                            <p:column headerText="Categoría">
+                                <h:outputText value="#{detalle.idarticulo.categoria}" />
+                            </p:column>
+
+                            <p:column headerText="Cantidad">
+                                <h:outputText value="#{detalle.cantidad}" />
+                            </p:column>
+
+                        </p:dataTable>
+                    </div>
+                </div>
+            </div>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+                <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" />
+            </p:confirmDialog>
+        </h:form>
+    </div>
+</h:body>
+</html>
