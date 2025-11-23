@@ -302,7 +302,4 @@ public class ArticuloBeanUI implements Serializable {
             FacesContext.getCurrentInstance().validationFailed();
         }
     }
-
-    public Articulo getArticuloEditar() { return articuloEditar; }
-    public void setArticuloEditar(Articulo articuloEditar) { this.articuloEditar = articuloEditar; }
 }
