@@ -97,4 +97,8 @@ public class ArticuloHelper {
     public void eliminarPorId(Integer id) {
         ServiceFacadeLocator.getInstanceFacadeArticulo().eliminarArticuloPorId(id);
     }
+
+    public void actualizar(Articulo articulo) {
+        ServiceFacadeLocator.getInstanceFacadeArticulo().actualizarArticulo(articulo);
+    }
 }
