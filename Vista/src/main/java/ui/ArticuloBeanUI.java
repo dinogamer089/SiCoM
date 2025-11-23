@@ -303,13 +303,6 @@ public class ArticuloBeanUI implements Serializable {
         }
     }
 
-    public void cancelarModificacion() {
-        this.imagenBytes = null;
-        this.imagenMime = null;
-
-        articulos = articuloHelper.obtenerTodas();
-    }
-
     public Articulo getArticuloEditar() { return articuloEditar; }
     public void setArticuloEditar(Articulo articuloEditar) { this.articuloEditar = articuloEditar; }
 }

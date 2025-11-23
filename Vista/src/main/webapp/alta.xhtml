@@ -234,11 +234,11 @@
             <a href="AdminEmpleados.xhtml">Empleados</a>
         </div>
         <div class="topbar-center">
-            <a href="#">EVENTOS CAMPESTRE</a><br />
-            <a href="#">Inventario</a>
-            <a href="#">Artículos</a>
-            <a href="#">Cotizaciones</a>
-            <a href="#">Rentas</a>
+            <a href="#"> EVENTOS CAMPESTRE</a><br />
+            <a href="alta.xhtml">Inventario</a>
+            <a href="Articulos.xhtml">Artículos</a>
+            <a href="Cotizaciones.xhtml">Cotizaciones</a>
+            <a href="Rentas.xhtml">Rentas</a>
         </div>
         <div class="topbar-right">
             <span>Administrador</span>
@@ -611,7 +611,6 @@
                                      oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('dlgModificar').hide(); mostrarToastSimple('Artículo actualizado'); }"
                                      styleClass="btn" />
                     <p:commandButton value="Cancelar"
-                                     actionListener="#{articuloUI.cancelarModificacion}"
                                      update=":articulosForm"
                                      oncomplete="PF('dlgModificar').hide();"
                                      process="@this"
