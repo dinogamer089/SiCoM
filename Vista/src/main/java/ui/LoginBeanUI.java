@@ -40,7 +40,7 @@ public class LoginBeanUI implements Serializable {
             context.getExternalContext().redirect(context.getExternalContext().getRequestContextPath() + "/principalAdministrador.xhtml");
         } else if (result instanceof mx.desarollo.entity.Empleado) {
             usuario = result;
-            context.getExternalContext().redirect(context.getExternalContext().getRequestContextPath() + "/login.xhtml");
+            context.getExternalContext().redirect(context.getExternalContext().getRequestContextPath() + "/RentasEmpleado.xhtml");
         } else {
             context.addMessage(null, new FacesMessage(
                     FacesMessage.SEVERITY_WARN, "Usuario o contraseña incorrecta", "Intente de nuevo"));
