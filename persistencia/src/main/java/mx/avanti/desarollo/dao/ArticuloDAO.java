@@ -70,6 +70,22 @@ public class ArticuloDAO extends AbstractDAO<Articulo> {
     }
 
     /**
+     * Obtiene un artículo por id con su imagen precargada (JOIN FETCH) para evitar LazyInitialization en la vista.
+     * @param id identificador del artículo
+     * @return Optional con el artículo o vacío si no existe
+     */
+    public java.util.Optional<Articulo> findWithImage(Integer id) {
+        final String jpql = "SELECT a FROM Articulo a LEFT JOIN FETCH a.imagen WHERE a.id = :id";
+        return java.util.Optional.ofNullable(
+                execute(em -> em.createQuery(jpql, Articulo.class)
+                        .setParameter("id", id)
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null))
+        );
+    }
+
+    /**
      * Metodo para guardar un articulo junto con su imagen en una sola transaccion.
      * Primero persiste la imagen, luego enlaza la imagen al articulo y persiste el articulo.
      * @Throws Si la base de datos rechaza la operacion de guardado o hay un error de persistencia.

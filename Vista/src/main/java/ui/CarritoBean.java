@@ -2,6 +2,7 @@ package ui;
 
 import helper.Carrito;
 import helper.CarritoItem;
+import helper.dto.ArticuloCardDTO;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
@@ -55,64 +56,14 @@ public class CarritoBean implements Serializable {
         carrito = new Carrito();
         aceptaTerminos = false;
         notificacionesStock = new ArrayList<>();
-        inicializarCatalogoSimulado();
-        precargarArticulosDeEjemplo();
 
         facadeRenta = ServiceFacadeLocator.getInstanceFacadeRenta();
-    }
 
-    /**
-     * Carga el catálogo "simulado"
-     * Solo se agregan los artículos con id 2, 4 y 3.
-     */
-    private void inicializarCatalogoSimulado() {
-        catalogoSimulado = new ArrayList<>();
-
-        try {
-            java.util.List<Articulo> todos =
-                    ServiceFacadeLocator.getInstanceFacadeArticulo().obtenerArticulos();
-
-            if (todos == null || todos.isEmpty()) {
-                System.out.println("No se encontraron artículos en la BD para el catálogo simulado.");
-                return;
-            }
-
-            int[] idsDeseados = {2, 4, 3};
-
-            for (int idBuscado : idsDeseados) {
-                Integer idObj = idBuscado;
-                for (Articulo art : todos) {
-                    if (art != null
-                            && art.getIdarticulo() != null
-                            && idObj.equals(art.getIdarticulo())) {
-
-
-                        catalogoSimulado.add(art);
-                        System.out.println("Artículo agregado al catálogo simulado desde BD: "
-                                + art.getIdarticulo() + " - " + art.getNombre()
-                                + " (stock=" + art.getUnidades() + ")");
-                        break;
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            System.err.println("Error al inicializar catálogo simulado desde BD:");
-            e.printStackTrace();
-        }
+        // Sincroniza la fecha del carrito con la seleccionada en el catálogo si existe
+        sincronizarFechaConCatalogo();
     }
 
 
-    private void precargarArticulosDeEjemplo() {
-        if (catalogoSimulado == null || catalogoSimulado.isEmpty()) {
-            System.out.println("Catálogo simulado vacío, no se precargan artículos en el carrito.");
-            return;
-        }
-
-        agregarArticuloPorId(2);
-        agregarArticuloPorId(4);
-        agregarArticuloPorId(3);
-    }
 
     private void agregarArticuloPorId(int idArticulo) {
         if (catalogoSimulado == null) return;
@@ -120,8 +71,8 @@ public class CarritoBean implements Serializable {
         Integer idObj = idArticulo;
         for (Articulo art : catalogoSimulado) {
             if (art != null
-                    && art.getIdarticulo() != null
-                    && idObj.equals(art.getIdarticulo())) {
+                    && art.getId() != null
+                    && idObj.equals(art.getId())) {
 
                 boolean added = carrito.agregarArticulo(art);
                 if (added) {
@@ -137,9 +88,30 @@ public class CarritoBean implements Serializable {
     }
 
 
-    public void agregarArticulo(Articulo articulo) {
+    public void agregarArticulo(ArticuloCardDTO articulo) {
+        // Asegura que el carrito esté usando la fecha seleccionada en el catálogo
+        sincronizarFechaConCatalogo();
         if (articulo == null) return;
-        boolean added = carrito.agregarArticulo(articulo);
+        // Adaptar DTO -> Entidad para respetar la lógica de stock
+        mx.desarollo.entity.Articulo entidad = null;
+        try {
+            var opt = mx.desarollo.integration.ServiceFacadeLocator
+                    .getInstanceFacadeArticulo()
+                    .obtenerArticuloConImagenPorId(articulo.getId());
+            if (opt != null && opt.isPresent()) {
+                entidad = opt.get();
+            }
+        } catch (Exception ignored) {}
+        if (entidad == null) {
+            // Fallback mínimo si no se encuentra: no agregar para evitar inconsistencias de stock
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_WARN,
+                    "Artículo no disponible",
+                    "No fue posible obtener el artículo seleccionado."
+            ));
+            return;
+        }
+        boolean added = carrito.agregarArticulo(entidad);
         if (!added) {
             System.out.println("No se pudo agregar el articulo (posible falta de stock): " + articulo.getNombre());
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
@@ -155,16 +127,38 @@ public class CarritoBean implements Serializable {
     }
 
     public void incrementarCantidad(CarritoItem item) {
+        sincronizarFechaConCatalogo();
         carrito.incrementarCantidad(item);
     }
 
     public void decrementarCantidad(CarritoItem item) {
+        sincronizarFechaConCatalogo();
         carrito.decrementarCantidad(item);
     }
 
     public void vaciarCarrito() {
         carrito.vaciar();
     }
+
+    // Aplica una cantidad ingresada manualmente respetando el stock disponible
+    public void aplicarCantidad(CarritoItem item) {
+        if (item == null) return;
+        sincronizarFechaConCatalogo();
+        int n = Math.max(0, item.getCantidad());
+        carrito.cambiarCantidad(item, n);
+    }
+
+    // Máximo permitido para el ítem (stock disponible en la fecha)
+    public int maxCantidadItem(CarritoItem item) {
+        try {
+            if (item == null || item.getArticulo() == null) return 0;
+            return carrito.checkStock(item.getArticulo(), carrito.getFechaSeleccionada());
+        } catch (Exception e) {
+            return item != null ? item.getCantidad() : 0;
+        }
+    }
+
+    // (Revertido) Edición manual deshabilitada; mantener solo botones +/-
 
 
     public void confirmarCotizacion() {
@@ -258,7 +252,6 @@ public class CarritoBean implements Serializable {
     }
 
 
-
     private String buildWhatsappMessage(Cliente cliente, LocalDate fecha, BigDecimal total) {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String fechaStr = fecha != null ? fecha.format(fmt) : "";
@@ -300,6 +293,24 @@ public class CarritoBean implements Serializable {
 
     public Date getFechaActual() { return new Date(); }
 
+    // Intenta leer la fecha seleccionada en el catálogo y aplicarla al carrito
+    private void sincronizarFechaConCatalogo() {
+        try {
+            FacesContext ctx = FacesContext.getCurrentInstance();
+            if (ctx == null) return;
+            ArticuloCatalogoBeanUI cat = (ArticuloCatalogoBeanUI)
+                    ctx.getApplication().evaluateExpressionGet(ctx, "#{articuloCatalogoUI}", ArticuloCatalogoBeanUI.class);
+            if (cat != null && cat.getFechaSeleccionada() != null) {
+                LocalDate f = cat.getFechaSeleccionada();
+                if (carrito.getFechaSeleccionada() == null || !carrito.getFechaSeleccionada().equals(f)) {
+                    this.fechaCatalogoSeleccionada = Date.from(f.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                    carrito.actualizarFechaSeleccionada(f);
+                }
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
     // Setter para que el catálogo actualice la fecha seleccionada
     public void actualizarFechaDesdeCatalogo(Date nuevaFecha) {
         this.fechaCatalogoSeleccionada = nuevaFecha;
@@ -310,8 +321,8 @@ public class CarritoBean implements Serializable {
         // Snapshot de cantidades previas por ID de artículo
         java.util.Map<Integer, Integer> prevCantidades = new java.util.HashMap<>();
         for (CarritoItem it : carrito.getItems()) {
-            if (it.getArticulo() != null && it.getArticulo().getIdarticulo() != null) {
-                prevCantidades.put(it.getArticulo().getIdarticulo(), it.getCantidad());
+            if (it.getArticulo() != null && it.getArticulo().getId() != null) {
+                prevCantidades.put(it.getArticulo().getId(), it.getCantidad());
             }
         }
 
@@ -321,8 +332,8 @@ public class CarritoBean implements Serializable {
 
         // Marca flags en ítems cuyo stock fue ajustado hacia abajo
         for (CarritoItem it : carrito.getItems()) {
-            if (it.getArticulo() == null || it.getArticulo().getIdarticulo() == null) continue;
-            Integer id = it.getArticulo().getIdarticulo();
+            if (it.getArticulo() == null || it.getArticulo().getId() == null) continue;
+            Integer id = it.getArticulo().getId();
             Integer prev = prevCantidades.get(id);
             if (prev != null && it.getCantidad() < prev) {
                 it.setAjustadoPorStock(true);
@@ -343,7 +354,12 @@ public class CarritoBean implements Serializable {
     public String getDireccionEntrega() { return direccionEntrega; }
     public void setDireccionEntrega(String direccionEntrega) { this.direccionEntrega = direccionEntrega; }
 
-    public Date getFechaCatalogoSeleccionada() { return fechaCatalogoSeleccionada; }
+    public Date getFechaCatalogoSeleccionada() {
+        if (this.fechaCatalogoSeleccionada == null) {
+            sincronizarFechaConCatalogo();
+        }
+        return fechaCatalogoSeleccionada;
+    }
     public void setFechaCatalogoSeleccionada(Date fechaCatalogoSeleccionada) { actualizarFechaDesdeCatalogo(fechaCatalogoSeleccionada); }
 
     public List<String> getNotificacionesStock() { return notificacionesStock; }
