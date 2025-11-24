@@ -5,6 +5,7 @@ import mx.desarollo.facade.FacadeLogin;
 import mx.desarollo.facade.FacadeArticulo;
 import mx.desarollo.facade.FacadeCombinacionMesa;
 import mx.desarollo.facade.FacadeRenta;
+import mx.desarollo.facade.FacadeTarjetaAlmacen;
 
 public class ServiceFacadeLocator {
     private static FacadeLogin facadeLogin;
@@ -12,6 +13,7 @@ public class ServiceFacadeLocator {
     private static FacadeRenta facadeRenta;
     private static FacadeEmpleado facadeEmpleado;
     private static FacadeCombinacionMesa facadeCombinacionMesa;
+    private static FacadeTarjetaAlmacen facadeTarjetaAlmacen;
 
     public static FacadeLogin getInstanceFacadeLogin() {
         if (facadeLogin == null) {
@@ -46,5 +48,12 @@ public class ServiceFacadeLocator {
             facadeCombinacionMesa = new FacadeCombinacionMesa();
         }
         return facadeCombinacionMesa;
+    }
+
+    public static FacadeTarjetaAlmacen getInstanceFacadeTarjetaAlmacen() {
+        if (facadeTarjetaAlmacen == null) {
+            facadeTarjetaAlmacen = new FacadeTarjetaAlmacen();
+        }
+        return facadeTarjetaAlmacen;
     }
 }
