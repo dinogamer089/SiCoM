@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+    <title>Dashboard Rentas - Eventos Campestre</title>
+    <style>
+        /* --- VARIABLES DE COLOR --- */
+        :root {
+            --bg-olive: #3e4637;
+            --bg-body: #eaddcf;
+            --bg-filter: #efe6db;
+            --text-dark: #1a1a1a;
+            --green-pct: #8cc66f;
+            --red-pct: #ff7676;
+            --font-serif: 'Georgia', 'Times New Roman', serif;
+            --font-sans: 'Segoe UI', sans-serif;
+        }
+
+        /* --- ESTILOS GENERALES --- */
+        body {
+            background-color: #E7D9CB;
+            font-family: "FreightText Pro", var(--font-serif);
+            margin: 0;
+            padding: 0;
+            color: #1a1a1a;
+        }
+
+        /* --- TOPBAR --- */
+        .topbar {
+            background-color: #3D4435; /* Olive oscuro */
+            color: #C2C8CC;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        .topbar-left, .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topbar-center {
+            text-align: center;
+            flex-grow: 1;
+            font-style: italic;
+            font-size: 22px;
+            font-family: var(--font-serif);
+            letter-spacing: 1px;
+        }
+
+        .topbar a {
+            text-decoration: none;
+            color: #C2C8CC;
+            font-size: 14px;
+            margin: 0 5px;
+        }
+        .topbar a:hover { text-decoration: underline; }
+        .topbar-icon { width: 24px; height: 24px; filter: brightness(0.9); }
+
+        /* --- NAV STRIP --- */
+        .nav-strip {
+            background-color: #ffffff;
+            width: 85%;
+            max-width: 1200px;
+            margin: 25px auto;
+            padding: 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 60px;
+        }
+
+        .nav-item {
+            font-family: var(--font-serif);
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            font-size: 16px;
+            position: relative;
+            padding-bottom: 2px;
+        }
+
+        .nav-item.active { border-bottom: 2px solid #333; }
+
+        /* --- FILTROS CENTRADOS --- */
+        .filter-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        .filter-container {
+            background-color: var(--bg-filter);
+            border: 1px solid #d4cbbd;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 4px;
+        }
+
+        /* Ajustes para los inputs de Primefaces dentro del filtro */
+        .filter-container .ui-outputlabel {
+            font-family: var(--font-serif);
+            font-weight: bold;
+            color: #3D4435;
+        }
+
+        /* Hacemos que los inputs se vean más limpios */
+        .filter-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        .filter-container {
+            background-color: var(--bg-filter);
+            border: 1px solid #d4cbbd;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 4px;
+        }
+
+        .filter-container .ui-outputlabel {
+            font-family: var(--font-serif);
+            font-weight: bold;
+            color: #3D4435;
+        }
+
+        /* --- KPI CARDS PERSONALIZADAS --- */
+        .kpi-grid {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto 40px auto;
+            padding: 0 20px;
+        }
+
+        .custom-card {
+            background-color: #ffffff;
+            padding: 25px 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 130px; /* Cartas más altas */
+        }
+
+        .card-title {
+            font-family: var(--font-serif);
+            font-size: 16px;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .card-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .kpi-number {
+            font-size: 34px;
+            font-family: var(--font-serif);
+            color: #000;
+            line-height: 1;
+        }
+
+        .kpi-badge { text-align: right; }
+
+        /* --- HEATMAP y CHART SECTION --- */
+        .content-section {
+            max-width: 1200px;
+            margin: 0 auto 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        /* Estilos tabla Heatmap */
+        .custom-panel-header {
+            font-family: var(--font-serif);
+            font-size: 20px;
+            color: #3D4435;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #3D4435;
+            padding-bottom: 5px;
+        }
+
+        .heatmap {
+            border-collapse: collapse;
+            width: 100%;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .heatmap th {
+            padding: 10px;
+            text-align: center;
+            background-color: var(--bg-olive);
+            color: #fff;
+            font-family: var(--font-sans);
+            font-weight: normal;
+        }
+
+        .heatmap td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #eee;
+            font-family: var(--font-sans);
+        }
+
+        .heatmap .week-col {
+            font-weight: bold;
+            background: #f9f9f9;
+            font-family: var(--font-serif);
+            color: #3D4435;
+        }
+
+        .heatmap .cell {
+            color: #1b1b1b;
+            font-weight: 600;
+            font-size: 0.9em;
+            border-radius: 4px; /* Celdas redondeadas visualmente */
+        }
+
+        /* Contenedor blanco para gráficas */
+        .chart-box {
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-radius: 4px;
+        }
+
+        /* Reset de Primefaces Panels para que no choquen con el diseño */
+        .ui-panel, .ui-panel-content {
+            background: transparent !important;
+            border: none !important;
+            padding: 0 !important;
+        }
+        .ui-panel-titlebar {
+            background: transparent !important;
+            border: none !important;
+            padding: 0 0 10px 0 !important;
+            border-bottom: 2px solid #3D4435 !important;
+            border-radius: 0 !important;
+            font-family: var(--font-serif) !important;
+            font-size: 1.2em !important;
+            color: #3D4435 !important;
+        }
+
+    </style>
+</h:head>
+<h:body>
+
+    <div class="topbar">
+        <div class="topbar-left">
+            <h:graphicImage name="edicion.png" alt="Empleados" styleClass="topbar-icon"/>
+            <h:outputLink value="AdminEmpleados.xhtml"> Empleados </h:outputLink>
+        </div>
+        <div class="topbar-center">
+            <div>
+                <a href="principalAdministrador.xhtml">EVENTOS CAMPESTRE</a><br />
+                <a href="#">Inventario</a>
+                <a href="Articulos.xhtml">Artículos</a>
+                <a href="Cotizaciones.xhtml">Cotizaciones</a>
+                <a href="Rentas.xhtml">Rentas</a>
+                <a href="Dashboard.xhtml">Informes</a>
+                <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <span>Administrador</span>
+            <h:graphicImage name="administrador.png" alt="admin" styleClass="topbar-icon"/>
+        </div>
+    </div>
+
+    <div class="nav-strip">
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="Dashboard.xhtml" style="color: inherit; text-decoration: none;">Vista General</a></li>
+            <li class="nav-item active"><a href="DashboardRentas.xhtml" style="color: inherit; text-decoration: none;">Rentas</a></li>
+            <li class="nav-item"><a href="DashboardCotizaciones.xhtml" style="color: inherit; text-decoration: none;">Cotizaciones</a></li>
+            <li class="nav-item"><a href="DashboardClientes.xhtml" style="color: inherit; text-decoration: none;">Clientes</a></li>
+        </ul>
+    </div>
+
+    <h:form id="formDashboardRentas">
+
+        <div class="filter-wrapper">
+            <div class="filter-container">
+                <h:panelGroup styleClass="filter-item">
+                    <p:outputLabel for="inicio" value="Desde:" />
+                    <p:datePicker id="inicio" value="#{dashboardRentasBean.fechaInicio}" pattern="yyyy-MM-dd" showIcon="true"/>
+                </h:panelGroup>
+
+                <h:panelGroup styleClass="filter-item">
+                    <p:outputLabel for="fin" value="Hasta:" />
+                    <p:datePicker id="fin" value="#{dashboardRentasBean.fechaFin}" pattern="yyyy-MM-dd" showIcon="true"/>
+                </h:panelGroup>
+
+                <p:commandButton value="Actualizar Dashboard"
+                                 actionListener="#{dashboardRentasBean.recargar}"
+                                 form=":formDashboardRentas"
+                                 update=":formDashboardRentas"
+                                 process=":formDashboardRentas"
+                                 style="background-color: #3D4435; border:none; font-family: var(--font-serif);" />
+            </div>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="custom-card">
+                <div class="card-title">Tasa de Cancelación</div>
+                <div class="card-body">
+                    <span class="kpi-number">#{dashboardRentasBean.tasaCancelacionStr}</span>
+                </div>
+            </div>
+
+            <div class="custom-card" style="border-left-color: var(--red-pct);">
+                <div class="card-title">Total Canceladas</div>
+                <div class="card-body">
+                    <span class="kpi-number">#{dashboardRentasBean.totalCanceladas}</span>
+                </div>
+            </div>
+
+            <div class="custom-card" style="border-left-color: var(--green-pct);">
+                <div class="card-title">Rentas Completadas</div>
+                <div class="card-body">
+                    <span class="kpi-number">#{dashboardRentasBean.totalCompletadas}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+
+            <p:panel header="Calendario de Ocupación (Mapa de Calor)">
+                <table class="heatmap">
+                    <thead>
+                    <tr>
+                        <th>Semana</th>
+                        <th>Lun</th>
+                        <th>Mar</th>
+                        <th>Mié</th>
+                        <th>Jue</th>
+                        <th>Vie</th>
+                        <th>Sáb</th>
+                        <th>Dom</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <ui:repeat value="#{dashboardRentasBean.heatmap}" var="week">
+                        <tr>
+                            <td class="week-col">#{week.label}</td>
+                            <ui:repeat value="#{week.cells}" var="cell">
+                                <td class="cell" style="background: #{cell.color}">
+                                    <div style="font-size:12px; color:#555;">#{cell.diaLabel}</div>
+                                    <div style="font-size:16px;">#{cell.count}</div>
+                                </td>
+                            </ui:repeat>
+                        </tr>
+                    </ui:repeat>
+                    </tbody>
+                </table>
+            </p:panel>
+
+            <div class="chart-box">
+                <p:panel header="Análisis: Rentas vs Cancelaciones">
+                    <p:barChart model="#{dashboardRentasBean.stackedBarModel}"
+                                style="width:100%; height:400px;"/>
+                </p:panel>
+            </div>
+
+        </div>
+
+    </h:form>
+</h:body>
+</html>
