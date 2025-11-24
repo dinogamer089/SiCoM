@@ -79,6 +79,7 @@ public class RentaHelper {
         System.out.println("=== RentaHelper.actualizarRenta() ===");
         try {
             ServiceFacadeLocator.getInstanceFacadeRenta().actualizarRenta(renta);
+
             System.out.println("✓ Renta actualizada correctamente.");
         } catch (Exception e) {
             System.err.println("✗ ERROR al actualizar renta en RentaHelper:");
