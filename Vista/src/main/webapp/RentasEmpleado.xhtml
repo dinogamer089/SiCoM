@@ -7,6 +7,11 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xml:lang="es" lang="es">
 
+<f:metadata>
+    <f:event type="preRenderView" listener="#{empleadoRentaUI.cargarRentas}" />
+    <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
+</f:metadata>
+
 <h:head>
     <title>Mis Tareas - Empleado</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -35,10 +40,6 @@
 </h:head>
 
 <h:body>
-    <f:metadata>
-        <f:event type="preRenderView" listener="#{empleadoRentaUI.cargarRentas}" />
-        <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
-    </f:metadata>
 
     <div class="topbar">
         <div class="topbar-left"><span style="font-size:14px;">Módulo Operativo</span></div>
