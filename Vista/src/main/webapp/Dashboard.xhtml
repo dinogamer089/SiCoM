@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Eventos Campestre Dashboard</title>
+    <meta charset="UTF-8" />
+    <style>
+        /* VARIABLES DE COLOR */
+        :root {
+            --bg-olive: #3e4637;
+            --bg-body: #eaddcf;
+            --bg-filter: #efe6db;
+            --text-dark: #1a1a1a;
+            --green-pct: #8cc66f;
+            --red-pct: #ff7676;
+            --font-serif: 'Georgia', 'Times New Roman', serif;
+            --font-sans: 'Segoe UI', sans-serif;
+        }
+
+        /* --- ESTILOS GENERALES --- */
+        body {
+            background-color: #E7D9CB;
+            font-family: "FreightText Pro", serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* --- TOPBAR --- */
+        .topbar {
+            background-color: #3D4435; /* Olive oscuro */
+            color: #C2C8CC;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        .topbar-left, .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topbar-center {
+            text-align: center;
+            flex-grow: 1;
+            font-style: italic;
+            font-size: 22px;
+            font-family: var(--font-serif);
+            letter-spacing: 1px;
+        }
+
+        .topbar a {
+            text-decoration: none;
+            color: #C2C8CC;
+            font-size: 14px;
+            margin: 0 5px;
+        }
+        .topbar a:hover { text-decoration: underline; }
+        .topbar-icon { width: 24px; height: 24px; filter: brightness(0.9); }
+
+        /* --- NAV STRIP --- */
+        .nav-strip {
+            background-color: #ffffff;
+            width: 85%;
+            max-width: 1200px;
+            margin: 25px auto;
+            padding: 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 60px;
+        }
+
+        .nav-item {
+            font-family: var(--font-serif);
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            font-size: 16px;
+            position: relative;
+            padding-bottom: 2px;
+        }
+
+        .nav-item.active { border-bottom: 2px solid #333; }
+
+        /* --- FILTROS CENTRADOS --- */
+        .filter-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        .filter-container {
+            background-color: var(--bg-filter);
+            border: 1px solid #d4cbbd;
+            padding: 10px 30px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            width: fit-content; /* Ajuste al contenido */
+            margin: 0 auto;
+        }
+
+        .ui-selectonemenu {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .ui-selectonemenu-label {
+            font-family: var(--font-serif) !important;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+        .ui-selectonemenu-trigger { display: none !important; }
+
+        /* --- KPI CARDS PERSONALIZADAS --- */
+        .kpi-grid {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto 40px auto;
+            padding: 0 20px;
+        }
+
+        .custom-card {
+            background-color: #ffffff;
+            padding: 25px 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 130px;
+        }
+
+        .card-title {
+            font-family: var(--font-serif);
+            font-size: 16px;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .card-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .kpi-number {
+            font-size: 34px;
+            font-family: var(--font-serif);
+            color: #000;
+            line-height: 1;
+        }
+
+        .kpi-badge { text-align: right; }
+
+        /* Estilo para la frase de porcentaje dinámica */
+        .pct-val {
+            font-size: 14px; /* Ajustado para texto largo */
+            font-weight: bold;
+            display: block;
+            font-family: var(--font-sans);
+        }
+        /* Estas clases se concatenan con tu bean: pct-green / pct-red */
+        .pct-green { color: var(--green-pct); }
+        .pct-red { color: var(--red-pct); }
+
+        /* --- CHARTS --- */
+        .charts-grid {
+            display: flex;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto 50px auto;
+            padding: 0 20px;
+        }
+
+        .chart-box {
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .chart-header {
+            border-bottom: 1px solid #000;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+    </style>
+</h:head>
+
+<h:body>
+
+    <div class="topbar">
+        <div class="topbar-left">
+            <h:graphicImage name="edicion.png" alt="Empleados" styleClass="topbar-icon"/>
+            <h:outputLink value="AdminEmpleados.xhtml"> Empleados </h:outputLink>
+        </div>
+        <div class="topbar-center">
+            <div>
+                <a href="principalAdministrador.xhtml">EVENTOS CAMPESTRE</a><br />
+                <a href="#">Inventario</a>
+                <a href="Articulos.xhtml">Artículos</a>
+                <a href="Cotizaciones.xhtml">Cotizaciones</a>
+                <a href="Rentas.xhtml">Rentas</a>
+                <a href="Dashboard.xhtml">Informes</a>
+                <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <span>Administrador</span>
+            <h:graphicImage name="administrador.png" alt="admin" styleClass="topbar-icon"/>
+        </div>
+    </div>
+
+    <div class="nav-strip">
+        <ul class="nav-menu">
+            <li class="nav-item active"><a href="Dashboard.xhtml" style="color: inherit; text-decoration: none;">Vista General</a></li>
+            <li class="nav-item"><a href="DashboardRentas.xhtml" style="color: inherit; text-decoration: none;">Rentas</a></li>
+            <li class="nav-item"><a href="DashboardCotizaciones.xhtml" style="color: inherit; text-decoration: none;">Cotizaciones</a></li>
+            <li class="nav-item"><a href="DashboardClientes.xhtml" style="color: inherit; text-decoration: none;">Clientes</a></li>
+        </ul>
+    </div>
+
+    <h:form id="dashForm">
+
+        <div class="filter-wrapper">
+            <div class="filter-container">
+                <i class="pi pi-calendar" style="color:var(--text-dark);"></i>
+
+                <p:selectOneMenu value="#{dashboardBean.rangoSeleccionado}" style="width:160px;">
+                    <f:selectItem itemLabel="HOY" itemValue="HOY"/>
+                    <f:selectItem itemLabel="Ultimos 30 dias" itemValue="ULTIMOS_30"/>
+                    <f:selectItem itemLabel="Rango Personalizado" itemValue="ULTIMOS_N"/>
+                    <p:ajax listener="#{dashboardBean.updateDashboard}" update="@form"/>
+                </p:selectOneMenu>
+
+                <p:spinner value="#{dashboardBean.diasN}" min="1" max="365" size="3"
+                           rendered="#{dashboardBean.rangoSeleccionado eq 'ULTIMOS_N'}">
+                    <p:ajax listener="#{dashboardBean.updateDashboard}" update="@form"/>
+                </p:spinner>
+
+                <div style="font-size: 0.8em; color: #555; font-family: var(--font-serif);">
+                    <h:outputText value="#{dashboardBean.metrics.periodoActualInicio}">
+                        <f:convertDateTime pattern="dd MMM"/>
+                    </h:outputText>
+                    -
+                    <h:outputText value="#{dashboardBean.metrics.periodoActualFin}">
+                        <f:convertDateTime pattern="dd MMM"/>
+                    </h:outputText>
+                </div>
+
+                <i class="pi pi-pencil" style="font-size: 0.8em;"></i>
+            </div>
+        </div>
+
+        <div class="kpi-grid">
+
+            <div class="custom-card">
+                <span class="card-title">Rentas Exitosas</span>
+                <div class="card-body">
+                    <h:outputText id="kpiRentas" value="#{dashboardBean.metrics.totalRentas}" styleClass="kpi-number"/>
+
+                    <p:tooltip for="kpiRentas" position="top">
+                        <h:panelGroup>
+                            <h:outputText value="Actual: " style="font-weight: bold"/>
+                            <h:outputText value="#{dashboardBean.metrics.totalRentas}"/>
+                            <h:outputText value=" ("/>
+                            <h:outputText value="#{dashboardBean.metrics.periodoActualInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
+                            <h:outputText value=" – "/>
+                            <h:outputText value="#{dashboardBean.metrics.periodoActualFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
+                            <h:outputText value=")&#10;" escape="false"/>
+                            <h:outputText value="Comparativo: " style="font-weight: bold"/>
+                            <h:outputText value="#{dashboardBean.metrics.rentasExitosasAnterior}"/>
+                            <h:outputText value=" ("/>
+                            <h:outputText value="#{dashboardBean.metrics.periodoAnteriorInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
+                            <h:outputText value=" – "/>
+                            <h:outputText value="#{dashboardBean.metrics.periodoAnteriorFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
+                            <h:outputText value=")"/>
+                        </h:panelGroup>
+                    </p:tooltip>
+
+                    <div class="kpi-badge">
+                        <span class="pct-val pct-#{dashboardBean.getPctColor(dashboardBean.metrics.totalRentasPct)}">
+                            <h:outputText value="#{dashboardBean.fraseTotalRentas}"/>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="custom-card">
+                <span class="card-title">Ingresos Totales</span>
+                <div class="card-body">
+                    <h:outputText id="kpiDinero" styleClass="kpi-number" value="#{dashboardBean.metrics.dineroRentas}">
+                        <f:convertNumber type="currency" currencySymbol="$" locale="es_MX" minFractionDigits="2" maxFractionDigits="2"/>
+                    </h:outputText>
+
+                    <p:tooltip for="kpiDinero" position="top">
+                        <h:panelGroup>
+                            <h:outputText value="Actual: " style="font-weight: bold"/>
+                            <h:outputText value="#{dashboardBean.metrics.dineroRentas}"><f:convertNumber type="currency" currencySymbol="$" locale="es_MX" minFractionDigits="2" maxFractionDigits="2"/></h:outputText>
+                            <h:outputText value=" ("/>
+                            <h:outputText value="#{dashboardBean.metrics.periodoActualInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
+                            <h:outputText value=" – "/>
+                            <h:outputText value="#{dashboardBean.metrics.periodoActualFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
+                            <h:outputText value=")&#10;" escape="false"/>
+                            <h:outputText value="Comparativo: " style="font-weight: bold"/>
+                            <h:outputText value="#{dashboardBean.metrics.dineroRentasAnterior}"><f:convertNumber type="currency" currencySymbol="$" locale="es_MX" minFractionDigits="2" maxFractionDigits="2"/></h:outputText>
+                            <h:outputText value=" ("/>
+                            <h:outputText value="#{dashboardBean.metrics.periodoAnteriorInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
+                            <h:outputText value=" – "/>
+                            <h:outputText value="#{dashboardBean.metrics.periodoAnteriorFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
+                            <h:outputText value=")"/>
+                        </h:panelGroup>
+                    </p:tooltip>
+
+                    <div class="kpi-badge">
+                        <span class="pct-val pct-#{dashboardBean.getPctColor(dashboardBean.metrics.dineroRentasPct)}">
+                            <h:outputText value="#{dashboardBean.fraseDineroRentas}"/>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="custom-card">
+                <span class="card-title">Promedio / Renta</span>
+                <div class="card-body">
+                    <h:outputText id="kpiPromedio" styleClass="kpi-number" style="font-size: 28px;" value="#{dashboardBean.metrics.promedioGanancia}">
+                        <f:convertNumber type="currency" currencySymbol="$" locale="es_MX" minFractionDigits="2" maxFractionDigits="2"/>
+                    </h:outputText>
+
+                    <p:tooltip for="kpiPromedio" position="top">
+                        <h:panelGroup>
+                            <h:outputText value="Actual: " style="font-weight: bold"/>
+                            <h:outputText value="#{dashboardBean.metrics.promedioGanancia}"><f:convertNumber type="currency" currencySymbol="$" locale="es_MX" minFractionDigits="2" maxFractionDigits="2"/></h:outputText>
+                            <h:outputText value=" ("/>
+                            <h:outputText value="#{dashboardBean.metrics.periodoActualInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
+                            <h:outputText value=" – "/>
+                            <h:outputText value="#{dashboardBean.metrics.periodoActualFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
+                            <h:outputText value=")&#10;" escape="false"/>
+                            <h:outputText value="Comparativo: " style="font-weight: bold"/>
+                            <h:outputText value="#{dashboardBean.metrics.promedioGananciaAnterior}"><f:convertNumber type="currency" currencySymbol="$" locale="es_MX" minFractionDigits="2" maxFractionDigits="2"/></h:outputText>
+                            <h:outputText value=" ("/>
+                            <h:outputText value="#{dashboardBean.metrics.periodoAnteriorInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
+                            <h:outputText value=" – "/>
+                            <h:outputText value="#{dashboardBean.metrics.periodoAnteriorFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
+                            <h:outputText value=")"/>
+                        </h:panelGroup>
+                    </p:tooltip>
+
+                    <div class="kpi-badge">
+                        <span class="pct-val pct-#{dashboardBean.getPctColor(dashboardBean.metrics.promedioGananciaPct)}">
+                            <h:outputText value="#{dashboardBean.frasePromedioGanancia}"/>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-box" style="flex: 1.5;">
+                <div class="chart-header">Efectividad del proceso</div>
+                <p:barChart model="#{dashboardBean.barModel}" style="width: 100%; height: 240px;"/>
+            </div>
+
+            <div class="chart-box" style="flex: 1;">
+                <div class="chart-header" style="border:none;">Top Artículos</div>
+                <p:pieChart model="#{dashboardBean.pieModel}" style="width: 80%; height: 140px;"/>
+            </div>
+        </div>
+
+    </h:form>
+</h:body>
+</html>
