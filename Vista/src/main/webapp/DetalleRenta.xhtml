@@ -231,29 +231,42 @@
             padding: 8px 10px;
         }
 
-        .dialog-asignar .ui-dialog-titlebar {
+        .dialog-asignar .ui-dialog-titlebar,
+        .dialog-modificar .ui-dialog-titlebar {
             background-color: #3D4435 !important;
             border-color: #3D4435 !important;
-        }
-
-        .dialog-asignar .ui-dialog-title {
             color: white !important;
         }
 
-        .dialog-asignar .ui-dialog-content {
-            background-color: #3D4435 !important;
+        .dialog-asignar .ui-dialog-title,
+        .dialog-modificar .ui-dialog-title {
             color: white !important;
         }
 
-        .dialog-asignar .ui-dialog-content .ui-button {
-            background-color: black !important;
-            color: white !important;
-            border: none !important;
+        .dialog-asignar .ui-dialog-content,
+        .dialog-modificar .ui-dialog-content {
+            background-color: #E7D9CB !important; /* Fondo claro para formulario */
+            color: black !important;
+            padding: 20px !important;
         }
 
-        .dialog-asignar .ui-dialog-content .ui-button-flat {
-            margin-left: 10px !important;
+        /* Estilos formulario modificación */
+        .campo-formulario {
+            margin-bottom: 12px;
         }
+        .campo-formulario label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-family: 'Minerva Modern', serif;
+        }
+        .campo-formulario .ui-inputtext,
+        .campo-formulario .ui-calendar input {
+            width: 100%;
+            box-sizing: border-box;
+            font-family: 'Minerva Modern', serif;
+        }
+
     </style>
 </h:head>
 <h:body>
@@ -282,19 +295,20 @@
             <div class="detalle-container">
                 <div class="cliente-info-box">
                     <div class="cliente-row">
-                        <div style="margin-bottom: 20px;">
+                        <div style="margin-bottom: 20px; display: flex; gap: 15px;">
                             <h:commandLink action="Cotizaciones.xhtml" title="Regresar" rendered="#{rentaUI.rentaSeleccionada.estado eq 'SOLICITADA'}">
-                                <h:graphicImage value="resources/retornar.png"
-                                                alt="Regresar"
-                                                width="40"
-                                                height="40"
-                                                style="cursor: pointer;" /> </h:commandLink>
+                                <h:graphicImage value="resources/retornar.png" alt="Regresar" width="40" height="40" style="cursor: pointer;" />
+                            </h:commandLink>
                             <h:commandLink action="Rentas.xhtml" title="Regresar" rendered="#{rentaUI.rentaSeleccionada.estado ne 'SOLICITADA'}">
-                                <h:graphicImage value="resources/retornar.png"
-                                                alt="Regresar"
-                                                width="40"
-                                                height="40"
-                                                style="cursor: pointer;" /> </h:commandLink>
+                                <h:graphicImage value="resources/retornar.png" alt="Regresar" width="40" height="40" style="cursor: pointer;" />
+                            </h:commandLink>
+
+                            <p:commandButton styleClass="btn modificar"
+                                             update=":formModificar"
+                                             process="@this"
+                                             oncomplete="if (!args.validationFailed) PF('dlgModificar').show();"
+                                             value="✎ Modificar">
+                            </p:commandButton>
                         </div>
                     </div>
                     <div class="cliente-info">
@@ -426,8 +440,8 @@
                 </div>
             </div>
             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
-                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
                 <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
             </p:confirmDialog>
         </h:form>
     </div>
@@ -460,6 +474,82 @@
                                  update=":formDetalle"
                                  oncomplete="PF('dialogAsignarEmpleado').hide();"
                                  styleClass="ui-button-flat" />
+            </div>
+        </h:form>
+    </p:dialog>
+
+    <p:dialog header="Modificar Datos de Renta"
+              widgetVar="dlgModificar"
+              modal="true"
+              width="500"
+              closable="true"
+              resizable="false"
+              styleClass="dialog-modificar"
+              appendTo="@(body)">
+
+        <h:form id="formModificar">
+            <p:messages id="msgsMod" showDetail="true" closable="true" />
+
+            <div class="ui-fluid">
+                <div class="campo-formulario">
+                    <p:outputLabel for="nombreMod" value="Nombre del Cliente:" />
+                    <p:inputText id="nombreMod"
+                                 value="#{rentaUI.rentaSeleccionada.idCliente.nombre}"
+                                 required="true" />
+                </div>
+
+                <div class="campo-formulario">
+                    <p:outputLabel for="direccionMod" value="Dirección:" />
+                    <p:inputText id="direccionMod"
+                                 value="#{rentaUI.rentaSeleccionada.idCliente.direccion}"
+                                 required="true" />
+                </div>
+
+                <div class="campo-formulario">
+                    <p:outputLabel for="telefonoMod" value="Teléfono:" />
+                    <p:inputText id="telefonoMod"
+                                 value="#{rentaUI.rentaSeleccionada.idCliente.telefono}"
+                                 required="true" />
+                </div>
+
+                <div class="campo-formulario">
+                    <p:outputLabel for="fechaMod" value="Fecha:" />
+                    <p:datePicker id="fechaMod"
+                                  value="#{rentaUI.rentaSeleccionada.fecha}"
+                                  pattern="dd/MM/yyyy"
+                                  showIcon="true"
+                                  required="true" />
+                </div>
+
+                <div class="campo-formulario">
+                    <p:outputLabel for="horaMod" value="Hora:" />
+                    <p:datePicker id="horaMod"
+                                  value="#{rentaUI.rentaSeleccionada.hora}"
+                                  timeOnly="true"
+                                  pattern="HH:mm"
+                                  showIcon="true"
+                                  required="true" />
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <p:commandButton value="Guardar Cambios"
+                                 action="#{rentaUI.guardarModificacion}"
+                                 process=":formModificar"
+                                 update=":formDetalle :formModificar:msgsMod"
+                                 oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('dlgModificar').hide();}"
+                                 styleClass="btn">
+                    <p:confirm header="Confirmación"
+                               message="¿Está seguro de que desea guardar los cambios en este artículo?"
+                               icon="pi pi-exclamation-triangle" />
+                </p:commandButton>
+
+                <p:commandButton value="Cancelar"
+                                 actionListener="#{rentaUI.cancelarModificacion}"
+                                 update=":formDetalle"
+                                 oncomplete="PF('dlgModificar').hide();"
+                                 styleClass="btn"
+                                 style="margin-left: 10px;" />
             </div>
         </h:form>
     </p:dialog>

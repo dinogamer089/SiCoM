@@ -56,6 +56,7 @@ public class RentaBeanUI implements Serializable {
 
     public void cargarRentaSeleccionada() {
         if (idRentaSeleccionada != null) {
+            // Recargar desde BD para asegurar datos frescos
             this.rentaSeleccionada = rentaHelper.findById(idRentaSeleccionada);
             actualizarListaEstadosPosibles();
         }
@@ -187,8 +188,28 @@ public class RentaBeanUI implements Serializable {
 
     public void cancelarAsignacion() {
         this.idEmpleadoSeleccionado = null;
-
         cargarRentaSeleccionada();
+    }
+
+    public void guardarModificacion() {
+        try {
+            if (rentaSeleccionada != null) {
+                rentaHelper.actualizarRenta(rentaSeleccionada);
+
+
+                mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Datos de la renta actualizados.");
+                cargarRentaSeleccionada();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron guardar los cambios: " + e.getMessage());
+            FacesContext.getCurrentInstance().validationFailed();
+        }
+    }
+
+    public void cancelarModificacion() {
+        cargarRentaSeleccionada();
+        mostrarMensaje(FacesMessage.SEVERITY_INFO, "Info", "Modificación cancelada.");
     }
 
     public void obtenerTodasLasCotizaciones() {

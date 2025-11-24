@@ -25,7 +25,7 @@ public class Renta {
     private String estado;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.MERGE)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "idCliente", nullable = false)
     private Cliente idCliente;
