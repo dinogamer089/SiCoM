@@ -7,9 +7,9 @@ import mx.desarollo.entity.Cliente;
 import mx.desarollo.entity.Detallerenta;
 import mx.desarollo.entity.Renta;
 
-import java.util.List;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 public class RentaDAO extends AbstractDAO<Renta> {
     private final EntityManager entityManager;
@@ -19,7 +19,7 @@ public class RentaDAO extends AbstractDAO<Renta> {
         this.entityManager = em;
     }
 
-    public List<Renta> obtenerTodosCotizaciones(){
+    public List<Renta> obtenerTodosCotizaciones() {
         return entityManager
                 .createQuery("SELECT r FROM Renta r " +
                         "LEFT JOIN FETCH r.detallesRenta dr " +
@@ -38,7 +38,6 @@ public class RentaDAO extends AbstractDAO<Renta> {
                             "WHERE r.id = :id", Renta.class)
                     .setParameter("id", idRenta)
                     .getSingleResult();
-
         } catch (NoResultException e) {
             return null;
         }
@@ -62,7 +61,7 @@ public class RentaDAO extends AbstractDAO<Renta> {
         }
     }
 
-    public List<Renta> obtenerTodosRentas(){
+    public List<Renta> obtenerTodosRentas() {
         return entityManager
                 .createQuery("SELECT r FROM Renta r " +
                         "LEFT JOIN FETCH r.detallesRenta dr " +
@@ -81,9 +80,7 @@ public class RentaDAO extends AbstractDAO<Renta> {
      * Metodo para obtener las rentas disponibles (sin asignar) y las asignadas al empleado logueado.
      * Utiliza LEFT JOIN FETCH para cargar cliente, empleado y detalles en una sola consulta.
      * Filtra por estados: 'Pendiente' para rentas libres y 'En proceso' para las propias.
-     * @Throws Si la base de datos rechaza la consulta.
-     * @Params Objeto de tipo Integer idEmpleadoLogueado
-     * @return Una lista de objetos Renta ordenados por fecha y hora, o null si no se encuentran resultados.
+     * @return lista ordenada por fecha y hora, o null si no hay resultados.
      */
     public List<Renta> obtenerRentasDisponiblesYAsignadas(Integer idEmpleadoLogueado) {
         try {
@@ -93,10 +90,8 @@ public class RentaDAO extends AbstractDAO<Renta> {
                             "LEFT JOIN FETCH r.idCliente " +
                             "LEFT JOIN FETCH r.idEmpleado " +
                             "WHERE " +
-                            // CASO A: Rentas en el "Pool" (Sin empleado asignado) listas para tomar
                             "(r.idEmpleado IS NULL AND r.estado IN ('Pendiente a reparto', 'Pendiente a recoleccion')) " +
                             "OR " +
-                            // CASO B: Rentas que YA tomé yo (y están en proceso)
                             "(r.idEmpleado.id = :empId AND r.estado IN ('En reparto', 'En recoleccion')) " +
                             "ORDER BY r.fecha ASC, r.hora ASC", Renta.class)
                     .setParameter("empId", idEmpleadoLogueado)
@@ -131,6 +126,7 @@ public class RentaDAO extends AbstractDAO<Renta> {
             renta.setIdCliente(cliente);
             renta.setFecha(fecha);
             renta.setHora(hora);
+
             // Calcular total a partir de los detalles
             java.math.BigDecimal total = java.math.BigDecimal.ZERO;
             if (detalles != null) {
@@ -154,7 +150,6 @@ public class RentaDAO extends AbstractDAO<Renta> {
                     if (d.getCantidad() == null) {
                         d.setCantidad(1);
                     }
-                    // Asegurar precios requeridos por el esquema
                     java.math.BigDecimal pu = (d.getPrecioUnitario() != null)
                             ? d.getPrecioUnitario()
                             : (d.getIdarticulo() != null ? d.getIdarticulo().getPrecio() : java.math.BigDecimal.ZERO);
@@ -176,3 +171,4 @@ public class RentaDAO extends AbstractDAO<Renta> {
         }
     }
 }
+
