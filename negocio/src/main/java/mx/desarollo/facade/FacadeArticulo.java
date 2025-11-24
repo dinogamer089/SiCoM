@@ -64,4 +64,15 @@ public class FacadeArticulo {
     public java.util.Optional<Articulo> obtenerArticuloPorId(Integer id) {
         return delegateArticulo.findById(id);
     }
+
+    /**
+     * Variante para UI que necesita la imagen precargada para evitar LazyInitialization en JSF.
+     */
+    public java.util.Optional<Articulo> obtenerArticuloConImagenPorId(Integer id) {
+        return delegateArticulo.findByIdWithImage(id);
+    }
+
+    public void actualizarArticulo(Articulo articulo) {
+        delegateArticulo.updateArticulo(articulo);
+    }
 }

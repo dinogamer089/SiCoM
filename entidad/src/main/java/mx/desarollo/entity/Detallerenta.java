@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "detallerenta")
 public class Detallerenta {
@@ -27,6 +29,16 @@ public class Detallerenta {
     @NotNull
     @Column(name = "cantidad", nullable = false)
     private Integer cantidad;
+
+    // Precio unitario del artículo en el momento de la cotización
+    @NotNull
+    @Column(name = "precio_unitario", nullable = false, precision = 10, scale = 2)
+    private BigDecimal precioUnitario;
+
+    // Precio total del renglón (cantidad * precio_unitario)
+    @NotNull
+    @Column(name = "precio_total", nullable = false, precision = 10, scale = 2)
+    private BigDecimal precioTotal;
 
     public Integer getId() {
         return id;
@@ -58,6 +70,27 @@ public class Detallerenta {
 
     public void setCantidad(Integer cantidad) {
         this.cantidad = cantidad;
+    }
+
+    public void setArticulo(Articulo articulo) {
+        this.idarticulo = articulo;
+    }
+
+    // Métodos auxiliares para compatibilidad con la lógica del carrito
+    public BigDecimal getPrecioUnitario() {
+        return precioUnitario;
+    }
+
+    public void setPrecioUnitario(BigDecimal precioUnitario) {
+        this.precioUnitario = precioUnitario;
+    }
+
+    public BigDecimal getPrecioTotal() {
+        return precioTotal;
+    }
+
+    public void setPrecioTotal(BigDecimal precioTotal) {
+        this.precioTotal = precioTotal;
     }
 
 }
