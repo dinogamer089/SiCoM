@@ -7,6 +7,10 @@
        xmlns:p="http://primefaces.org/ui"
        xml:lang="es" lang="es">
 
+<f:metadata>
+    <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
+</f:metadata>
+
 <h:head>
     <title>Gestión de Artículos</title>
     <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
@@ -224,6 +228,36 @@
             min-width: 300px !important;
             max-width: 400px !important;
         }
+
+        .ui-confirm-dialog.ui-widget-content,
+        .ui-confirm-dialog .ui-dialog-titlebar {
+            background-color: #3D4435 !important;
+            border-color: #3D4435 !important;
+        }
+
+        .ui-confirm-dialog .ui-dialog-content,
+        .ui-confirm-dialog .ui-dialog-buttonpane {
+            background-color: #3D4435 !important;
+        }
+
+        .ui-confirm-dialog .ui-dialog-title,
+        .ui-confirm-dialog .ui-confirm-dialog-message,
+        .ui-confirm-dialog .ui-icon {
+            color: white !important;
+        }
+
+        .ui-confirm-dialog .ui-confirmdialog-yes,
+        .ui-confirm-dialog .ui-confirmdialog-no.ui-button-flat {
+            background-color: black !important;
+            color: white !important;
+        }
+
+        .ui-confirm-dialog .ui-dialog-titlebar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px !important;
+        }
     </style>
 </h:head>
 
@@ -234,11 +268,12 @@
             <a href="AdminEmpleados.xhtml">Empleados</a>
         </div>
         <div class="topbar-center">
-            <a href="#">EVENTOS CAMPESTRE</a><br />
+            <a href="principalAdministrador.xhtml">EVENTOS CAMPESTRE</a><br />
             <a href="#">Inventario</a>
-            <a href="#">Artículos</a>
-            <a href="#">Cotizaciones</a>
-            <a href="#">Rentas</a>
+            <a href="Articulos.xhtml">Artículos</a>
+            <a href="Cotizaciones.xhtml">Cotizaciones</a>
+            <a href="Rentas.xhtml">Rentas</a>
+            <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
         </div>
         <div class="topbar-right">
             <span>Administrador</span>
@@ -247,7 +282,7 @@
     </div>
 
     <div class="content">
-        <h1 class="title">Inventario</h1>
+        <h1 class="title">Artículos</h1>
 
         <h:form>
             <div class="button-bar">
@@ -256,7 +291,12 @@
                                  type="button"
                                  onclick="PF('dlgAlta').show();" />
 
-                <button class="btn modificar" type="button">✎ Modificar</button>
+                <p:commandButton value="✎ Modificar"
+                                 styleClass="btn modificar"
+                                 update=":formModificar"
+                                 process="@this"
+                                 oncomplete="if (!args.validationFailed) PF('dlgModificar').show();"
+                />
                 <button class="btn eliminar" type="button">🗑 Eliminar</button>
             </div>
         </h:form>
@@ -529,5 +569,121 @@
         </h:form>
     </p:dialog>
 
+    <p:dialog header="Modificar Artículo"
+              widgetVar="dlgModificar"
+              modal="true"
+              width="600"
+              closable="true"
+              resizable="false"
+              fitViewport="true"
+              responsive="true"
+              style="max-width:700px;">
+
+        <h:form id="formModificar">
+            <p:messages id="msgsMod" showDetail="true" closable="true" />
+
+            <div style="max-height: 60vh; overflow-y: auto; padding-right: 10px;">
+
+                <h:panelGroup layout="block" styleClass="ui-fluid form-compacto dialog-form"
+                              rendered="#{articuloUI.seleccionada != null}">
+                    <div class="campo-formulario">
+                        <p:outputLabel for="nombreMod" value="Nombre: *" />
+                        <p:inputText id="nombreMod" value="#{articuloUI.seleccionada.nombre}" required="true" />
+                    </div>
+                    <div class="campo-formulario">
+                        <p:outputLabel for="catMod" value="Categoría: *" />
+                        <p:selectOneMenu id="catMod" value="#{articuloUI.seleccionada.categoria}" required="true">
+                            <f:selectItem itemLabel="Seleccione..." itemValue="#{null}" />
+                            <f:selectItem itemLabel="MESA" itemValue="MESA" />
+                            <f:selectItem itemLabel="TEXTIL" itemValue="TEXTIL" />
+                            <f:selectItem itemLabel="SILLA" itemValue="SILLA" />
+                            <f:selectItem itemLabel="CARPA" itemValue="CARPA" />
+                            <f:selectItem itemLabel="COOLER" itemValue="COOLER" />
+                            <f:selectItem itemLabel="CALENTON" itemValue="CALENTON" />
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="campo-formulario">
+                        <p:outputLabel for="precioMod" value="Precio: *" />
+                        <p:inputNumber id="precioMod" value="#{articuloUI.seleccionada.precio}" decimalPlaces="2" required="true" minValue="0" />
+                    </div>
+                    <div class="campo-formulario">
+                        <p:outputLabel for="unidadesMod" value="Unidades: *" />
+                        <p:inputNumber id="unidadesMod" value="#{articuloUI.seleccionada.unidades}" decimalPlaces="0" required="true" minValue="0" />
+                    </div>
+                    <div class="campo-formulario">
+                        <p:outputLabel for="formaMod" value="Forma:" />
+                        <p:selectOneMenu id="formaMod" value="#{articuloUI.seleccionada.forma}">
+                            <f:selectItem itemLabel="N/A" itemValue="#{null}" />
+                            <f:selectItem itemLabel="REDONDA" itemValue="REDONDA" />
+                            <f:selectItem itemLabel="RECTANGULAR" itemValue="RECTANGULAR" />
+                            <f:selectItem itemLabel="UNIVERSAL" itemValue="UNIVERSAL" />
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="campo-formulario">
+                        <p:outputLabel for="textilMod" value="Tipo Textil:" />
+                        <p:selectOneMenu id="textilMod" value="#{articuloUI.seleccionada.textilTipo}">
+                            <f:selectItem itemLabel="N/A" itemValue="#{null}" />
+                            <f:selectItem itemLabel="MANTEL" itemValue="MANTEL" />
+                            <f:selectItem itemLabel="CAMINO" itemValue="CAMINO" />
+                            <f:selectItem itemLabel="CUBRE" itemValue="CUBRE" />
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="campo-formulario" style="margin-top: 15px;">
+                        <p:outputLabel value="Imagen Actual:" style="display:block; margin-bottom:5px;"/>
+                        <img src="#{articuloUI.getImagenBase64(articuloUI.seleccionada)}"
+                             alt="actual"
+                             style="width: 80px; height: auto; border: 1px solid #ccc; padding: 2px; border-radius: 4px; display: block; margin-bottom: 10px;"/>
+
+                        <p:outputLabel value="Reemplazar imagen (opcional):" style="font-size: 0.9em; color: #666; display:block; margin-bottom:2px;"/>
+                        <input type="file" id="imagenUploadMod" accept="image/jpeg,image/png" style="width: 100%;"/>
+                    </div>
+                </h:panelGroup>
+                <div class="botones-dialogo" style="padding: 20px 0 10px 0; text-align: center;">
+
+                    <p:commandButton value="Guardar Cambios"
+                                     action="#{articuloUI.guardarModificacion}"
+                                     process=":formModificar"
+                                     update=":articulosForm :formModificar:msgsMod"
+                                     oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('dlgModificar').hide(); mostrarToastSimple('Artículo actualizado'); }"
+                                     styleClass="btn">
+                        <p:confirm header="Confirmación"
+                                   message="¿Está seguro de que desea guardar los cambios en este artículo?"
+                                   icon="pi pi-exclamation-triangle" />
+                    </p:commandButton>
+
+                    <p:commandButton value="Cancelar"
+                                     actionListener="#{articuloUI.cancelarModificacion}"
+                                     update=":articulosForm"
+                                     oncomplete="PF('dlgModificar').hide();"
+                                     process="@this"
+                                     styleClass="btn" style="margin-left: 10px;" />
+                </div>
+            </div>
+            <script type="text/javascript">
+                //<![CDATA[
+                (function(){
+                    var elMod = document.getElementById('imagenUploadMod');
+                    if(elMod) elMod.value = '';
+
+                    if (elMod && !elMod.dataset.listenerAttached) {
+                        elMod.addEventListener('change', function(){
+                            if (!elMod.files || elMod.files.length === 0) return;
+                            var fd = new FormData();
+                            fd.append('imagen', elMod.files[0]);
+                            fetch('upload-image', { method: 'POST', body: fd, credentials: 'same-origin' })
+                                .then(function(){ console.log('Imagen mod cargada en sesion'); })
+                                .catch(function(){ console.error('Error upload'); });
+                        });
+                        elMod.dataset.listenerAttached = 'true';
+                    }
+                })();
+                //]]>
+            </script>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+            </p:confirmDialog>
+        </h:form>
+    </p:dialog>
 </h:body>
 </html>

@@ -57,4 +57,15 @@ public class DelegateArticulo {
     public java.util.Optional<Articulo> findById(Integer id) {
         return ServiceLocator.getInstanceArticuloDAO().find(id);
     }
+
+    /**
+     * Obtiene un artículo con su imagen precargada por id.
+     */
+    public java.util.Optional<Articulo> findByIdWithImage(Integer id) {
+        return ServiceLocator.getInstanceArticuloDAO().findWithImage(id);
+    }
+
+    public void updateArticulo(Articulo articulo) {
+        ServiceLocator.getInstanceArticuloDAO().updateWithImage(articulo);
+    }
 }
