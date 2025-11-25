@@ -256,6 +256,8 @@ public class TarjetaAlmacenBeanUI implements Serializable {
 
     // Getters y Setters
     public List<Articulo> getArticulos() {
+        // Siempre obtener la lista fresca para que se actualice cuando se agregan nuevos articulos
+        cargarArticulos();
         return articulos;
     }
 
