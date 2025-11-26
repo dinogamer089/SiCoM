@@ -31,19 +31,18 @@
             font-family:"Minerva Modern", serif;
             color:var(--ink);
             background:var(--paper);
-            /* espacio para que el contenido no quede debajo del topbar fijo */
             padding-top:110px;
         }
         .layout{ min-height:100vh; display:flex; flex-direction:column; }
 
-        /* === TOPBAR TOMADO DE CARRITO (SIN FECHA) + FIJO + SHRINK === */
+        /* === TOPBAR TOMADO DE CARRITO === */
         .topbar {
             background-color: var(--olive);
             color: var(--white);
             padding: 15px 40px 10px 40px;
             display: flex;
             flex-direction: column;
-            position: fixed;      /* antes relative */
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
@@ -77,6 +76,11 @@
             font-size: 2rem;
             letter-spacing: 0.05em;
             transition: font-size 0.25s ease;
+        }
+
+        .tb-brand a {
+            color: var(--white);
+            text-decoration: none;
         }
 
         .tb-right {
@@ -238,7 +242,7 @@
         .p-stock { font-size: 0.8em; color: #777; background: #f0f0f0; padding: 2px 6px; border-radius: 4px; }
         .p-price { font-weight: 600; }
 
-        /* === ESTILOS MODAL CARRITO (como en Carrito.xhtml) === */
+        /* === ESTILOS MODAL CARRITO === */
         .custom-cart-modal.ui-dialog {
             position: fixed !important;
             top: 75px !important;
@@ -366,9 +370,6 @@
 </h:head>
 
 <h:body>
-    <f:metadata>
-        <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
-    </f:metadata>
     <h:form id="formRenta">
 
         <div class="layout">
@@ -377,11 +378,15 @@
             <header class="topbar">
                 <div class="tb-row1">
                     <div class="tb-left">
-                        <i class="pi pi-facebook"/>
-                        <i class="pi pi-whatsapp"/>
-                        <i class="pi pi-home"/>
+                        <a href="https://www.facebook.com/cositastanbellas?locale=es_LA" class="tb-icon"><i class="pi pi-facebook"/></a>
+                        <a href="https://w.app/eventoscampestre" class="tb-icon"><i class="pi pi-whatsapp"/></a>
+                        <a href="principal_cliente.xhtml" class="tb-icon" title="Inicio">
+                            <i class="pi pi-home"/>
+                        </a>
                     </div>
-                    <div class="tb-brand">EVENTOS CAMPESTRE</div>
+                    <div class="tb-brand">
+                        <a href="principal_cliente.xhtml">EVENTOS CAMPESTRE</a>
+                    </div>
                     <div class="tb-right">
                         <p:commandLink onclick="PF('carritoModal').show(); return false;"
                                        style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 5px; cursor: pointer;">
@@ -393,9 +398,9 @@
                     </div>
                 </div>
                 <nav class="tb-row2">
-                    <a href="#acerca">Acerca de</a>
-                    <a href="#renta">Renta</a>
-                    <a href="#contacto">Contacto</a>
+                    <a href="acercaDe.xhtml">Acerca de</a>
+                    <a href="renta_cliente.xhtml">Renta</a>
+                    <a href="contacto.xhtml">Contacto</a>
                 </nav>
             </header>
 
