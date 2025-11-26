@@ -53,7 +53,7 @@ public class Renta {
     @Column(name = "total", nullable = false, precision = 10, scale = 2)
     private BigDecimal total;
 
-    @OneToMany(mappedBy = "idrenta")
+    @OneToMany(mappedBy = "idrenta", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id ASC")
     private List<Detallerenta> detallesRenta;
 
