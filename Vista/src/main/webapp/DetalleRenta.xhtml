@@ -427,7 +427,6 @@
                         <div class="articulos-title">Artículos</div>
                         <p:commandButton value="✎ Editar Artículos"
                                          styleClass="btn"
-                                         actionListener="#{rentaUI.prepararModificacionArticulos}"
                                          update=":formModificarArticulos"
                                          oncomplete="PF('dlgModificarArticulos').show()"
                                          style="font-size: 14px; padding: 5px 15px !important;" />
@@ -513,7 +512,7 @@
         </h:form>
     </p:dialog>
 
-    <p:dialog header="Modificar Datos de Renta" widgetVar="dlgModificar" modal="true" width="500" styleClass="dialog-modificar" appendTo="@(body)">
+    <p:dialog header="Modificar Datos de la Renta" widgetVar="dlgModificar" modal="true" width="500" styleClass="dialog-modificar" appendTo="@(body)">
         <h:form id="formModificar">
             <p:messages id="msgsMod" showDetail="true" closable="true" />
             <div class="ui-fluid">
@@ -561,7 +560,7 @@
                     </h:outputText>
                 </p:column>
 
-                <p:column headerText="Cantidad (Editar)">
+                <p:column headerText="Cantidad">
                     <p:spinner value="#{det.cantidad}" min="1" size="5">
                         <p:ajax listener="#{rentaUI.recalcularTotal}" update=":formModificarArticulos:lblTotalDialog" />
                     </p:spinner>
