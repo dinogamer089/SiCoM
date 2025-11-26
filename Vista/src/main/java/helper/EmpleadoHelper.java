@@ -47,8 +47,4 @@ public class EmpleadoHelper implements Serializable {
             return null;
         }
     }
-
-    public List<Empleado> getAllEmpleadosDisponibles() {
-        return ServiceFacadeLocator.getInstanceFacadeEmpleado().getAllEmpleadosDisponibles();
-    }
 }

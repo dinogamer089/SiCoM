@@ -70,8 +70,4 @@ public class DelegateEmpleado {
     public Empleado findById(Integer id) {
         return ServiceLocator.getInstanceEmpleadoDAO().findById(id);
     }
-
-    public List<Empleado> findAllEmpleadosDisponibles(){
-        return ServiceLocator.getInstanceEmpleadoDAO().obtenerEmpleadosDisponibles();
-    }
 }
