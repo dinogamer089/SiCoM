@@ -108,10 +108,17 @@
             flex-grow: 1;
         }
 
+        /* CAMBIO: Flexbox para alinear titulo y boton */
+        .articulos-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
         .articulos-title {
             font-size: 24px;
             font-weight: bold;
-            margin-bottom: 15px;
             color: #000000;
             font-family: 'Minerva Modern', serif;
         }
@@ -245,12 +252,11 @@
 
         .dialog-asignar .ui-dialog-content,
         .dialog-modificar .ui-dialog-content {
-            background-color: #E7D9CB !important; /* Fondo claro para formulario */
-            color: black !important;
+            background-color: #3D4435 !important;
+            color: white !important;
             padding: 20px !important;
         }
 
-        /* Estilos formulario modificación */
         .campo-formulario {
             margin-bottom: 12px;
         }
@@ -270,6 +276,27 @@
     </style>
 </h:head>
 <h:body>
+    <div id="toastSimple" class="toast-simple toast-base" style="display:none; position: fixed; top: 80px; right: 20px; background: #f9f1e7; color: #333; border: 1px solid #ccc; border-left: 4px solid #5cb85c; z-index: 9999; padding: 15px 20px; border-radius: 4px;">
+        <span id="toastSimpleMessage"></span>
+    </div>
+    <script type="text/javascript">
+        //<![CDATA[
+        var simpleToastTimer;
+        function mostrarToastSimple(mensaje) {
+            clearTimeout(simpleToastTimer);
+            var toast = document.getElementById('toastSimple');
+            var message = document.getElementById('toastSimpleMessage');
+            if (toast && message) {
+                message.innerText = mensaje;
+                toast.style.display = 'block';
+                simpleToastTimer = setTimeout(function () {
+                    toast.style.display = 'none';
+                }, 3000);
+            }
+        }
+        //]]>
+    </script>
+
     <div class="topbar">
         <div class="topbar-left">
             <img src="resources/edicion.png" alt="Empleados" class="topbar-icon" />
@@ -308,6 +335,7 @@
                                              process="@this"
                                              oncomplete="if (!args.validationFailed) PF('dlgModificar').show();"
                                              value="✎ Modificar">
+                                <p:resetInput target=":formModificar" />
                             </p:commandButton>
                         </div>
                     </div>
@@ -349,25 +377,6 @@
                                 </h:outputText>
                             </span>
                         </div>
-
-                        <h:panelGroup class="cliente-row" layout="block" rendered="#{rentaUI.rentaSeleccionada.estado eq 'En reparto' and rentaUI.rentaSeleccionada.idEmpleado != null}">
-                            <span class="cliente-label">Pendiente a entregar por:</span>
-                            <span class="cliente-value">#{rentaUI.rentaSeleccionada.idEmpleado.nombre}</span> </h:panelGroup>
-
-                        <h:panelGroup class="cliente-row" layout="block" rendered="#{rentaUI.rentaSeleccionada.entregado != null}">
-                            <span class="cliente-label">Entregado por:</span>
-                            <span class="cliente-value" style="vertical-align: bottom">#{rentaUI.rentaSeleccionada.entregado}</span>
-                        </h:panelGroup>
-
-                        <h:panelGroup class="cliente-row" layout="block" rendered="#{rentaUI.rentaSeleccionada.estado eq 'En recoleccion' and rentaUI.rentaSeleccionada.idEmpleado != null}">
-                            <span class="cliente-label">Pendiente a recoger por:</span>
-                            <span class="cliente-value" style="vertical-align: bottom">#{rentaUI.rentaSeleccionada.idEmpleado.nombre}</span>
-                        </h:panelGroup>
-
-                        <h:panelGroup class="cliente-row" layout="block" rendered="#{rentaUI.rentaSeleccionada.recogido != null}">
-                            <span class="cliente-label">Recogido por:</span>
-                            <span class="cliente-value" style="vertical-align: bottom">#{rentaUI.rentaSeleccionada.recogido}</span>
-                        </h:panelGroup>
                     </div>
                     <div class="boton-centrado">
                         <p:commandButton value="Aprobar"
@@ -395,7 +404,15 @@
                 </div>
 
                 <div class="articulos-section">
-                    <div class="articulos-title">Artículos</div>
+                    <div class="articulos-header">
+                        <div class="articulos-title">Artículos</div>
+                        <p:commandButton value="✎ Editar Artículos"
+                                         styleClass="btn"
+                                         actionListener="#{rentaUI.prepararModificacionArticulos}"
+                                         update=":formModificarArticulos"
+                                         oncomplete="PF('dlgModificarArticulos').show()"
+                                         style="font-size: 14px; padding: 5px 15px !important;" />
+                    </div>
 
                     <div class="articulos-card">
                         <p:dataTable var="detalle"
@@ -407,35 +424,32 @@
                             <p:column headerText="Nombre del Artículo">
                                 <h:outputText value="#{detalle.idarticulo.nombre}" />
                             </p:column>
-
                             <p:column headerText="Categoria">
                                 <h:outputText value="#{detalle.idarticulo.categoria}" />
                             </p:column>
                             <p:column headerText="Imagen">
-                                <h:panelGroup>
-                                    <h:graphicImage value="#{articuloUI.getImagenBase64(detalle.idarticulo)}"
-                                                    width="40"
-                                                    height="40"
-                                                    style="object-fit: cover;"/>
-                                </h:panelGroup>
+                                <h:graphicImage value="#{articuloUI.getImagenBase64(detalle.idarticulo)}" width="40" height="40" style="object-fit: cover;"/>
                             </p:column>
                             <p:column headerText="Precio Unitario">
                                 <h:outputText value="#{detalle.idarticulo.precio}">
                                     <f:convertNumber type="currency" currencySymbol="$" />
                                 </h:outputText>
                             </p:column>
-
                             <p:column headerText="Cantidad Rentada">
                                 <h:outputText value="#{detalle.cantidad}" />
                             </p:column>
-
                             <p:column headerText="Subtotal">
                                 <h:outputText value="#{detalle.cantidad * detalle.idarticulo.precio}">
                                     <f:convertNumber type="currency" currencySymbol="$" />
                                 </h:outputText>
                             </p:column>
-
                         </p:dataTable>
+                        <div style="text-align: right; color: white; padding-top: 10px; font-weight: bold; font-size: 18px;">
+                            Total:
+                            <h:outputText value="#{rentaUI.rentaSeleccionada.total}">
+                                <f:convertNumber type="currency" currencySymbol="$" />
+                            </h:outputText>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -450,108 +464,165 @@
               header="Asignar Empleado"
               resizable="false" closable="false" appendTo="@(body)" styleClass="dialog-asignar">
         <h:form id="formDialog">
-            <h:panelGrid columns="2" cellpadding="5">
-                <p:outputLabel for="empSelect" value="Empleado:" />
-                <p:selectOneMenu id="empSelect" value="#{rentaUI.idEmpleadoSeleccionado}"
-                                 style="width: 250px;" required="true"
-                                 requiredMessage="Debe seleccionar un empleado">
-                    <f:selectItem itemLabel="Seleccione un empleado disponible..." itemValue="" noSelectionOption="true"/>
-                    <f:selectItems value="#{rentaUI.listaEmpleados}" var="e"
-                                   itemLabel="#{e.nombre}" itemValue="#{e.id}"/>
-                </p:selectOneMenu>
-            </h:panelGrid>
-            <hr />
+            <p:outputLabel for="empSelect" value="Empleado:" />
+            <p:selectOneMenu id="empSelect" value="#{rentaUI.idEmpleadoSeleccionado}" style="width: 250px;">
+                <f:selectItem itemLabel="Seleccione..." itemValue="" noSelectionOption="true"/>
+                <f:selectItems value="#{rentaUI.listaEmpleados}" var="e" itemLabel="#{e.nombre}" itemValue="#{e.id}"/>
+            </p:selectOneMenu>
             <div style="text-align: right; padding-top: 10px;">
-                <p:commandButton value="Asignar"
-                                 actionListener="#{rentaUI.asignarEmpleadoYActualizarEstado}"
-                                 process="@form"
-                                 update=":formDetalle"
-                                 oncomplete="if (!args.validationFailed) PF('dialogAsignarEmpleado').hide();" />
-
-                <p:commandButton value="Cancelar"
-                                 actionListener="#{rentaUI.cancelarAsignacion}"
-                                 process="@this"
-                                 update=":formDetalle"
-                                 oncomplete="PF('dialogAsignarEmpleado').hide();"
-                                 styleClass="ui-button-flat" />
+                <p:commandButton value="Asignar" actionListener="#{rentaUI.asignarEmpleadoYActualizarEstado}" process="@form" update=":formDetalle" oncomplete="PF('dialogAsignarEmpleado').hide();" />
+                <p:commandButton value="Cancelar" actionListener="#{rentaUI.cancelarAsignacion}" process="@this" update=":formDetalle" oncomplete="PF('dialogAsignarEmpleado').hide();" styleClass="ui-button-flat" />
             </div>
         </h:form>
     </p:dialog>
 
-    <p:dialog header="Modificar Datos de Renta"
-              widgetVar="dlgModificar"
+    <p:dialog header="Modificar Datos de Renta" widgetVar="dlgModificar" modal="true" width="500" styleClass="dialog-modificar" appendTo="@(body)">
+        <h:form id="formModificar">
+            <p:messages id="msgsMod" showDetail="true" closable="true" />
+            <div class="ui-fluid">
+                <div class="campo-formulario"><p:outputLabel value="Nombre:"/><p:inputText value="#{rentaUI.rentaSeleccionada.idCliente.nombre}" required="true"/></div>
+                <div class="campo-formulario"><p:outputLabel value="Dirección:"/><p:inputText value="#{rentaUI.rentaSeleccionada.idCliente.direccion}" required="true"/></div>
+                <div class="campo-formulario"><p:outputLabel value="Teléfono:"/><p:inputText value="#{rentaUI.rentaSeleccionada.idCliente.telefono}" required="true"/></div>
+                <div class="campo-formulario"><p:outputLabel value="Fecha:"/><p:datePicker value="#{rentaUI.rentaSeleccionada.fecha}" pattern="dd/MM/yyyy"/></div>
+                <div class="campo-formulario"><p:outputLabel value="Hora:"/><p:datePicker value="#{rentaUI.rentaSeleccionada.hora}" timeOnly="true" pattern="HH:mm"/></div>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <p:commandButton value="Guardar Cambios" action="#{rentaUI.guardarModificacion}" process="@form" update=":formDetalle :formModificar:msgsMod" styleClass="btn" oncomplete="if (!args.validationFailed) { PF('dlgModificar').hide(); mostrarToastSimple('Datos actualizados'); }">
+                    <p:confirm header="Confirmación" message="¿Guardar cambios?" icon="pi pi-exclamation-triangle" />
+                </p:commandButton>
+                <p:commandButton value="Cancelar" actionListener="#{rentaUI.cancelarModificacion}" update=":formDetalle" oncomplete="PF('dlgModificar').hide();" styleClass="btn" style="margin-left: 10px;" />
+            </div>
+        </h:form>
+    </p:dialog>
+
+    <p:dialog header="Modificar Artículos de la Renta"
+              widgetVar="dlgModificarArticulos"
               modal="true"
-              width="500"
+              width="800"
               closable="true"
               resizable="false"
               styleClass="dialog-modificar"
               appendTo="@(body)">
 
-        <h:form id="formModificar">
-            <p:messages id="msgsMod" showDetail="true" closable="true" />
+        <h:form id="formModificarArticulos">
+            <p:messages id="msgsArt" showDetail="true" closable="true" />
 
-            <div class="ui-fluid">
-                <div class="campo-formulario">
-                    <p:outputLabel for="nombreMod" value="Nombre del Cliente:" />
-                    <p:inputText id="nombreMod"
-                                 value="#{rentaUI.rentaSeleccionada.idCliente.nombre}"
-                                 required="true" />
-                </div>
+            <p:dataTable value="#{rentaUI.rentaSeleccionada.detallesRenta}"
+                         var="det"
+                         styleClass="custom-datatable"
+                         editable="true"
+                         editMode="cell"
+                         style="margin-bottom: 20px;">
 
-                <div class="campo-formulario">
-                    <p:outputLabel for="direccionMod" value="Dirección:" />
-                    <p:inputText id="direccionMod"
-                                 value="#{rentaUI.rentaSeleccionada.idCliente.direccion}"
-                                 required="true" />
-                </div>
+                <p:column headerText="Artículo">
+                    <h:outputText value="#{det.idarticulo.nombre}" />
+                </p:column>
 
-                <div class="campo-formulario">
-                    <p:outputLabel for="telefonoMod" value="Teléfono:" />
-                    <p:inputText id="telefonoMod"
-                                 value="#{rentaUI.rentaSeleccionada.idCliente.telefono}"
-                                 required="true" />
-                </div>
+                <p:column headerText="Precio Unit.">
+                    <h:outputText value="#{det.idarticulo.precio}">
+                        <f:convertNumber type="currency" currencySymbol="$" />
+                    </h:outputText>
+                </p:column>
 
-                <div class="campo-formulario">
-                    <p:outputLabel for="fechaMod" value="Fecha:" />
-                    <p:datePicker id="fechaMod"
-                                  value="#{rentaUI.rentaSeleccionada.fecha}"
-                                  pattern="dd/MM/yyyy"
-                                  showIcon="true"
-                                  required="true" />
-                </div>
+                <p:column headerText="Cantidad (Editar)">
+                    <p:spinner value="#{det.cantidad}" min="1" size="5">
+                        <p:ajax listener="#{rentaUI.recalcularTotal}" update=":formModificarArticulos:lblTotalDialog" />
+                    </p:spinner>
+                </p:column>
 
-                <div class="campo-formulario">
-                    <p:outputLabel for="horaMod" value="Hora:" />
-                    <p:datePicker id="horaMod"
-                                  value="#{rentaUI.rentaSeleccionada.hora}"
-                                  timeOnly="true"
-                                  pattern="HH:mm"
-                                  showIcon="true"
-                                  required="true" />
-                </div>
+                <p:column headerText="Subtotal">
+                    <h:outputText value="#{det.cantidad * det.idarticulo.precio}">
+                        <f:convertNumber type="currency" currencySymbol="$" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column style="width: 50px; text-align: center;">
+                    <p:commandButton icon="pi pi-trash"
+                                     actionListener="#{rentaUI.quitarDetalle(det)}"
+                                     update=":formModificarArticulos"
+                                     process="@this"
+                                     styleClass="ui-button-danger ui-button-flat"
+                                     title="Quitar" />
+                </p:column>
+            </p:dataTable>
+
+            <div style="text-align: right; margin-bottom: 20px; font-weight: bold; font-size: 1.2em;">
+                Total Calculado:
+                <h:outputText id="lblTotalDialog" value="#{rentaUI.rentaSeleccionada.total}">
+                    <f:convertNumber type="currency" currencySymbol="$" />
+                </h:outputText>
             </div>
 
-            <div style="text-align: center; margin-top: 20px;">
-                <p:commandButton value="Guardar Cambios"
-                                 action="#{rentaUI.guardarModificacion}"
-                                 process=":formModificar"
-                                 update=":formDetalle :formModificar:msgsMod"
-                                 oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('dlgModificar').hide();}"
+            <div style="text-align: center; margin-bottom: 20px;">
+                <p:commandButton value="+ Agregar Nuevo Artículo"
+                                 actionListener="#{rentaUI.cargarArticulosDisponibles}"
+                                 oncomplete="PF('dlgSeleccionarArticulo').show()"
+                                 update=":formSeleccionarArticulo"
+                                 styleClass="btn"/>
+            </div>
+
+            <div style="text-align: center; border-top: 1px solid #ccc; padding-top: 15px;">
+                <p:commandButton value="Guardar Todos los Cambios"
+                                 action="#{rentaUI.guardarCambiosArticulos}"
+                                 process="@form"
+                                 update=":formDetalle :formModificarArticulos:msgsArt"
+                                 oncomplete="if (!args.validationFailed) { PF('dlgModificarArticulos').hide(); mostrarToastSimple('Artículos actualizados'); }"
                                  styleClass="btn">
-                    <p:confirm header="Confirmación"
-                               message="¿Está seguro de que desea guardar los cambios en este artículo?"
-                               icon="pi pi-exclamation-triangle" />
+                    <p:confirm header="Confirmación" message="¿Confirmar cambios en artículos?" icon="pi pi-question-circle" />
                 </p:commandButton>
 
                 <p:commandButton value="Cancelar"
                                  actionListener="#{rentaUI.cancelarModificacion}"
                                  update=":formDetalle"
-                                 oncomplete="PF('dlgModificar').hide();"
+                                 oncomplete="PF('dlgModificarArticulos').hide();"
                                  styleClass="btn"
                                  style="margin-left: 10px;" />
             </div>
         </h:form>
     </p:dialog>
+
+    <p:dialog header="Seleccionar Artículo"
+              widgetVar="dlgSeleccionarArticulo"
+              modal="true"
+              width="700"
+              height="500"
+              styleClass="dialog-modificar"
+              appendTo="@(body)">
+
+        <h:form id="formSeleccionarArticulo">
+            <p:dataTable var="art" value="#{rentaUI.listaArticulosDisponibles}"
+                         paginator="true" rows="5"
+                         paginatorPosition="bottom"
+                         styleClass="custom-datatable">
+
+                <p:column headerText="Imagen" width="60">
+                    <h:graphicImage value="#{articuloUI.getImagenBase64(art)}" width="40" height="40" style="object-fit: cover;"/>
+                </p:column>
+                <p:column headerText="Nombre">
+                    <h:outputText value="#{art.nombre}" />
+                </p:column>
+                <p:column headerText="Categoría">
+                    <h:outputText value="#{art.categoria}" />
+                </p:column>
+                <p:column headerText="Precio">
+                    <h:outputText value="#{art.precio}">
+                        <f:convertNumber type="currency" currencySymbol="$" />
+                    </h:outputText>
+                </p:column>
+                <p:column style="text-align: center;">
+                    <p:commandButton value="Agregar"
+                                     actionListener="#{rentaUI.agregarArticulo(art)}"
+                                     update=":formModificarArticulos"
+                                     oncomplete="PF('dlgSeleccionarArticulo').hide();"
+                                     styleClass="btn"
+                                     style="padding: 5px 10px !important; font-size: 12px;" />
+                </p:column>
+            </p:dataTable>
+            <div style="text-align: right; margin-top: 10px;">
+                <p:commandButton value="Cerrar" onclick="PF('dlgSeleccionarArticulo').hide()" styleClass="btn" />
+            </div>
+        </h:form>
+    </p:dialog>
+
 </h:body>
 </html>
