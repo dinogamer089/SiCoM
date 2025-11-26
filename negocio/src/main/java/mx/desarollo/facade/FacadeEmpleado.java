@@ -31,8 +31,4 @@ public class FacadeEmpleado {
     public Empleado findById(Integer id) {
         return delegateEmpleado.findById(id);
     }
-
-    public List<Empleado> getAllEmpleadosDisponibles() {
-        return delegateEmpleado.findAllEmpleadosDisponibles();
-    }
 }

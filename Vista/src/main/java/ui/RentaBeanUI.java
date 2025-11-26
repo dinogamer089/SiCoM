@@ -65,7 +65,6 @@ public class RentaBeanUI implements Serializable {
 
     public void cargarRentaSeleccionada() {
         if (idRentaSeleccionada != null) {
-            // Recargar desde BD para asegurar datos frescos
             this.rentaSeleccionada = rentaHelper.findById(idRentaSeleccionada);
             actualizarListaEstadosPosibles();
         }
@@ -149,10 +148,10 @@ public class RentaBeanUI implements Serializable {
             this.estadoSiguiente = nuevoEstado;
             this.idEmpleadoSeleccionado = null;
 
-            this.listaEmpleados = empleadoHelper.getAllEmpleadosDisponibles();
+            this.listaEmpleados = empleadoHelper.getAllEmpleados();
 
             if (listaEmpleados == null || listaEmpleados.isEmpty()) {
-                mostrarMensaje(FacesMessage.SEVERITY_WARN, "Aviso", "No hay empleados disponibles en este momento.");
+                mostrarMensaje(FacesMessage.SEVERITY_WARN, "Aviso", "No hay empleados en este momento.");
                 cargarRentaSeleccionada();
                 return;
             }
@@ -292,10 +291,9 @@ public class RentaBeanUI implements Serializable {
         try {
             rentaHelper.actualizarRenta(rentaSeleccionada);
 
-            cargarRentaSeleccionada(); // Recargar de BD
+            cargarRentaSeleccionada();
             mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Lista de artículos actualizada correctamente.");
 
-            // Cerrar dialogo desde Java
             PrimeFaces.current().executeScript("PF('dlgModificarArticulos').hide();");
             PrimeFaces.current().ajax().update("formDetalle"); // Refrescar vista principal
 

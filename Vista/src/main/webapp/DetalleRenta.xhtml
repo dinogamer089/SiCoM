@@ -377,6 +377,25 @@
                                 </h:outputText>
                             </span>
                         </div>
+
+                        <h:panelGroup class="cliente-row" layout="block" rendered="#{rentaUI.rentaSeleccionada.estado eq 'En reparto' and rentaUI.rentaSeleccionada.idEmpleado != null}">
+                            <span class="cliente-label">Pendiente a entregar por:</span>
+                            <span class="cliente-value">#{rentaUI.rentaSeleccionada.idEmpleado.nombre}</span> </h:panelGroup>
+
+                        <h:panelGroup class="cliente-row" layout="block" rendered="#{rentaUI.rentaSeleccionada.entregado != null}">
+                            <span class="cliente-label">Entregado por:</span>
+                            <span class="cliente-value" style="vertical-align: bottom">#{rentaUI.rentaSeleccionada.entregado}</span>
+                        </h:panelGroup>
+
+                        <h:panelGroup class="cliente-row" layout="block" rendered="#{rentaUI.rentaSeleccionada.estado eq 'En recoleccion' and rentaUI.rentaSeleccionada.idEmpleado != null}">
+                            <span class="cliente-label">Pendiente a recoger por:</span>
+                            <span class="cliente-value" style="vertical-align: bottom">#{rentaUI.rentaSeleccionada.idEmpleado.nombre}</span>
+                        </h:panelGroup>
+
+                        <h:panelGroup class="cliente-row" layout="block" rendered="#{rentaUI.rentaSeleccionada.recogido != null}">
+                            <span class="cliente-label">Recogido por:</span>
+                            <span class="cliente-value" style="vertical-align: bottom">#{rentaUI.rentaSeleccionada.recogido}</span>
+                        </h:panelGroup>
                     </div>
                     <div class="boton-centrado">
                         <p:commandButton value="Aprobar"
@@ -464,14 +483,32 @@
               header="Asignar Empleado"
               resizable="false" closable="false" appendTo="@(body)" styleClass="dialog-asignar">
         <h:form id="formDialog">
-            <p:outputLabel for="empSelect" value="Empleado:" />
-            <p:selectOneMenu id="empSelect" value="#{rentaUI.idEmpleadoSeleccionado}" style="width: 250px;">
-                <f:selectItem itemLabel="Seleccione..." itemValue="" noSelectionOption="true"/>
-                <f:selectItems value="#{rentaUI.listaEmpleados}" var="e" itemLabel="#{e.nombre}" itemValue="#{e.id}"/>
-            </p:selectOneMenu>
+            <h:panelGrid columns="2" cellpadding="5">
+                <p:outputLabel for="empSelect" value="Empleado:" />
+                <p:selectOneMenu id="empSelect" value="#{rentaUI.idEmpleadoSeleccionado}"
+                                 style="width: 250px;" required="true"
+                                 requiredMessage="Debe seleccionar un empleado">
+                    <f:selectItem itemLabel="Seleccione un empleado disponible..." itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{rentaUI.listaEmpleados}" var="e"
+                                   itemLabel="#{e.nombre}" itemValue="#{e.id}"/>
+                </p:selectOneMenu>
+            </h:panelGrid>
+            <hr />
             <div style="text-align: right; padding-top: 10px;">
-                <p:commandButton value="Asignar" actionListener="#{rentaUI.asignarEmpleadoYActualizarEstado}" process="@form" update=":formDetalle" oncomplete="PF('dialogAsignarEmpleado').hide();" />
-                <p:commandButton value="Cancelar" actionListener="#{rentaUI.cancelarAsignacion}" process="@this" update=":formDetalle" oncomplete="PF('dialogAsignarEmpleado').hide();" styleClass="ui-button-flat" />
+                <p:commandButton value="Asignar"
+                                 actionListener="#{rentaUI.asignarEmpleadoYActualizarEstado}"
+                                 process="@form"
+                                 update=":formDetalle"
+                                 oncomplete="if (!args.validationFailed) PF('dialogAsignarEmpleado').hide();"
+                                 styleClass="btn" />
+
+                <p:commandButton value="Cancelar"
+                                 actionListener="#{rentaUI.cancelarAsignacion}"
+                                 process="@this"
+                                 update=":formDetalle"
+                                 oncomplete="PF('dialogAsignarEmpleado').hide();"
+                                 styleClass="btn"
+                                 style="margin-left: 10px;" />
             </div>
         </h:form>
     </p:dialog>
