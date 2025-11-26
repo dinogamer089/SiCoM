@@ -119,8 +119,7 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- *** Necesario para evitar "org/apache/poi/util/StringUtil" ***
-             (PF puede validar/leer metadata de archivos y toca POI) -->
+        <!-- Utilidades POI -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
@@ -136,13 +135,28 @@
             <artifactId>xmlbeans</artifactId>
             <version>${xmlbeans.version}</version>
         </dependency>
-        <!-- (sin dependencias extra de uploader; usamos PF native) -->
+
+        <!-- LIBRERÍAS DE CORREO (ANGUS MAIL) -->
+        <!-- 1. Motor de correo -->
+        <!-- API de Jakarta Activation (alineada) -->
         <dependency>
-            <groupId>mx.avanti.desarollo</groupId>
-            <artifactId>entidad</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
+            <groupId>jakarta.activation</groupId>
+            <artifactId>jakarta.activation-api</artifactId>
+            <version>2.1.3</version>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-mail</artifactId>
+            <version>2.0.2</version>
+        </dependency>
+
+        <!-- 2. Motor de activación (ESTA FALTABA Y CAUSABA EL ERROR) -->
+        <dependency>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-activation</artifactId>
+            <version>2.0.2</version>
+        </dependency>
+
     </dependencies>
 
     <build>
