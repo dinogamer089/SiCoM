@@ -153,64 +153,178 @@
         }
 
         .table-container {
-            background-color: white;
-            border: 1px solid #ccc;
+            background-color: transparent;
+            border: none;
             max-height: 500px;
             overflow-y: auto;
-            border-radius: 5px;
+            border-radius: 0 0 8px 8px;
+            padding: 5px 0;
         }
 
         .tarjeta-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0 25px;
+        }
+
+        .tarjeta-table thead {
+            display: table-header-group;
         }
 
         .tarjeta-table thead th {
-            background-color: black;
-            color: white;
-            padding: 12px 8px;
-            position: sticky;
-            top: 0;
-            z-index: 2;
-            font-size: 0.9em;
+            background-color: #3D4435;
+            color: #E7D9CB;
+            padding: 15px 16px;
+            text-align: left;
+            font-size: 0.95em;
+            font-weight: 600;
+            border: none;
+        }
+
+        .tarjeta-table thead th:first-child {
+            padding-left: 24px;
+        }
+
+        .tarjeta-table thead th:last-child {
+            padding-right: 24px;
         }
 
         .tarjeta-table tbody td {
-            background-color: #e9e9e9;
-            text-align: center;
-            padding: 10px 8px;
-            border-bottom: 1px solid #ddd;
+            background-color: #C2C8CC;
+            text-align: left;
+            padding: 20px 16px;
+            border: none;
+            border-left: none;
+            border-right: none;
+            font-size: 1em;
+            color: #000000;
+            vertical-align: middle;
+            box-shadow: none;
+            line-height: 1.5;
         }
 
-        .tarjeta-table tbody tr:nth-child(even) td {
-            background-color: #f3f3f3;
+        .tarjeta-table tbody td:not(:first-child) {
+            border-left: none;
+        }
+
+        .tarjeta-table tbody tr {
+            box-shadow: none;
+            background-color: #C2C8CC;
+        }
+
+        .tarjeta-table tbody tr td:first-child {
+            border-radius: 0;
+            padding-left: 24px;
+            border-right: 0;
+        }
+
+        .tarjeta-table tbody tr td:last-child {
+            border-radius: 0;
+            padding-right: 24px;
+            border-left: 0;
+        }
+
+        /* Eliminar cualquier espacio entre celdas */
+        .tarjeta-table tbody tr td {
+            margin: 0;
+            border-spacing: 0;
+        }
+
+        .tarjeta-table tbody tr:hover {
+            transform: none;
+            transition: all 0.2s ease;
         }
 
         .tarjeta-table tbody tr:hover td {
-            background-color: #dcdcdc;
+            background-color: #B5BCC2;
+            cursor: pointer;
+            box-shadow: none;
         }
 
-        .tarjeta-table tbody tr.fila-inicial td {
-            background-color: #d4edda !important;
-            font-weight: bold;
+
+        /* Estilos para columnas específicas */
+        .tarjeta-table tbody td:nth-child(1) {
+            width: 60px;
+            font-weight: 600;
+        }
+
+        .tarjeta-table tbody td:nth-child(4),
+        .tarjeta-table tbody td:nth-child(5),
+        .tarjeta-table tbody td:nth-child(6),
+        .tarjeta-table tbody td:nth-child(7) {
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .tarjeta-table tbody td:nth-child(8),
+        .tarjeta-table tbody td:nth-child(9),
+        .tarjeta-table tbody td:nth-child(10) {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
         }
 
         .tarjeta-header {
-            background-color: #3D4435;
-            color: white;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            text-align: center;
+            background-color: transparent;
+            color: #3D4435;
+            padding: 20px 0;
+            margin-bottom: 15px;
+            border-radius: 0;
+            text-align: left;
+            box-shadow: none;
+            border-bottom: 2px solid #C2C8CC;
         }
 
         .tarjeta-header h3 {
             margin: 0;
             font-family: "Minerva Modern", serif;
+            font-size: 1.6em;
+            letter-spacing: 0.5px;
+            font-weight: bold;
         }
+
+        /* Contenedor integrado */
+        h:panelGroup {
+            display: block;
+        }
+
+        /* Mensaje de tabla vacía */
+        .empty-table-message {
+            background-color: #F5EEE6;
+            padding: 40px;
+            text-align: center;
+            color: #8B7355;
+            font-style: italic;
+            border-radius: 8px;
+            border: 2px dashed #D4C4B0;
+        }
+
 
         .ui-inputfield, .ui-selectonemenu {
             width: 100%;
+        }
+
+        /* Mensajes de advertencia en rojo */
+        .ui-messages-warn,
+        .ui-message-warn {
+            background-color: #f8d7da !important;
+            border-color: #dc3545 !important;
+            color: #721c24 !important;
+        }
+
+        .ui-messages-warn .ui-messages-warn-icon,
+        .ui-message-warn .ui-message-warn-icon {
+            color: #dc3545 !important;
+        }
+
+        .ui-messages-warn .ui-messages-warn-summary,
+        .ui-message-warn .ui-message-warn-summary {
+            color: #721c24 !important;
+            font-weight: bold;
+        }
+
+        .ui-messages-warn .ui-messages-warn-detail,
+        .ui-message-warn .ui-message-warn-detail {
+            color: #721c24 !important;
         }
 
         .ui-datepicker {
@@ -218,13 +332,13 @@
         }
 
         .amount-positive {
-            color: #28a745;
-            font-weight: bold;
+            color: #000000;
+            font-weight: normal;
         }
 
         .amount-negative {
-            color: #dc3545;
-            font-weight: bold;
+            color: #000000;
+            font-weight: normal;
         }
 
         .toggle-buttons {
@@ -428,15 +542,15 @@
         </h:form>
 
         <h:form id="formTarjeta">
-            <div class="tarjeta-header" rendered="#{not empty tarjetaAlmacenUI.tarjetaDelDia}">
-                <h3>#{tarjetaAlmacenUI.nombreArticuloSeleccionado}</h3>
-            </div>
+            <h:panelGroup rendered="#{not empty tarjetaAlmacenUI.tarjetaDelDia}">
+                <div class="tarjeta-header">
+                    <h3>#{tarjetaAlmacenUI.nombreArticuloSeleccionado}</h3>
+                </div>
 
-            <div class="table-container" rendered="#{not empty tarjetaAlmacenUI.tarjetaDelDia}">
+                <div class="table-container">
                 <h:dataTable value="#{tarjetaAlmacenUI.tarjetaDelDia}"
                             var="fila"
-                            styleClass="tarjeta-table"
-                            rowClasses="#{fila.concepto == 'Inventario Inicial' ? 'fila-inicial' : ''}">
+                            styleClass="tarjeta-table">
 
                     <h:column>
                         <f:facet name="header">Fecha</f:facet>
@@ -501,7 +615,14 @@
                         </h:outputText>
                     </h:column>
                 </h:dataTable>
-            </div>
+                </div>
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{empty tarjetaAlmacenUI.tarjetaDelDia}">
+                <div class="empty-table-message">
+                    <p style="margin: 0; font-size: 1.1em;">Seleccione un artículo y una fecha para generar la tarjeta de almacén</p>
+                </div>
+            </h:panelGroup>
         </h:form>
     </div>
 </h:body>

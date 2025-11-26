@@ -115,15 +115,6 @@ public class TarjetaAlmacenBeanUI implements Serializable {
             // Generar tarjeta
             tarjetaDelDia = new ArrayList<>();
 
-            // Agregar fila inicial si hay inventario o movimientos
-            if (inventarioInicial > 0 || (movimientos != null && !movimientos.isEmpty())) {
-                BigDecimal precio = articulo.getPrecio();
-                TarjetaAlmacenDTO filaInicial = TarjetaAlmacenHelper.generarFilaInicial(
-                    fechaConsulta, inventarioInicial, precio);
-                tarjetaDelDia.add(filaInicial);
-                System.out.println("Fila inicial agregada");
-            }
-
             // Agregar movimientos
             if (movimientos != null && !movimientos.isEmpty()) {
                 List<TarjetaAlmacenDTO> filas = TarjetaAlmacenHelper.generarTarjeta(
@@ -205,18 +196,14 @@ public class TarjetaAlmacenBeanUI implements Serializable {
             // Generar tarjeta
             tarjetaDelDia = new ArrayList<>();
 
-            // Agregar fila inicial
-            BigDecimal precio = articulo.getPrecio();
-            TarjetaAlmacenDTO filaInicial = TarjetaAlmacenHelper.generarFilaInicial(
-                fechaInicio, inventarioInicial, precio);
-            tarjetaDelDia.add(filaInicial);
-
             // Agregar movimientos
-            List<TarjetaAlmacenDTO> filas = TarjetaAlmacenHelper.generarTarjeta(
-                movimientos, inventarioInicial);
-            tarjetaDelDia.addAll(filas);
+            if (movimientos != null && !movimientos.isEmpty()) {
+                List<TarjetaAlmacenDTO> filas = TarjetaAlmacenHelper.generarTarjeta(
+                    movimientos, inventarioInicial);
+                tarjetaDelDia.addAll(filas);
+            }
 
-            if (tarjetaDelDia.size() <= 1) {
+            if (tarjetaDelDia.isEmpty()) {
                 FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO,
                         "Informacion", "No hay movimientos en este rango"));
