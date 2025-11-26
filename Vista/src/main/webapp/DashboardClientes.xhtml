@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Dashboard Clientes - Eventos Campestre</title>
+    <style>
+        :root {
+            --bg-olive: #3e4637;
+            --bg-body: #eaddcf;
+            --bg-filter: #efe6db;
+            --text-dark: #1a1a1a;
+            --olive-mid: #6b7a52;
+            --olive-soft: #90a36a;
+            --font-serif: 'Georgia', 'Times New Roman', serif;
+            --font-sans: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: #E7D9CB;
+            font-family: "FreightText Pro", var(--font-serif);
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+        }
+
+        .topbar {
+            background-color: #3D4435;
+            color: #C2C8CC;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        .topbar-left, .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topbar-center {
+            text-align: center;
+            flex-grow: 1;
+            font-style: italic;
+            font-size: 22px;
+            font-family: var(--font-serif);
+            letter-spacing: 1px;
+        }
+
+        .topbar a {
+            text-decoration: none;
+            color: #C2C8CC;
+            font-size: 14px;
+            margin: 0 5px;
+        }
+
+        .topbar a:hover { text-decoration: underline; }
+        .topbar-icon { width: 24px; height: 24px; filter: brightness(0.9); }
+
+        /* --- NAV STRIP --- */
+        .nav-strip {
+            background-color: #ffffff;
+            width: 85%;
+            max-width: 1200px;
+            margin: 25px auto;
+            padding: 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 60px;
+        }
+
+        .nav-item {
+            font-family: var(--font-serif);
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            font-size: 16px;
+            position: relative;
+            padding-bottom: 2px;
+        }
+
+        .nav-item.active { border-bottom: 2px solid #333; }
+
+        .filter-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        .filter-container {
+            background-color: var(--bg-filter);
+            border: 1px solid #d4cbbd;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 4px;
+        }
+
+        .filter-container .ui-outputlabel {
+            font-family: var(--font-serif);
+            font-weight: bold;
+            color: #3D4435;
+        }
+
+        /* --- KPI CARDS PERSONALIZADAS --- */
+        .kpi-grid {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto 40px auto;
+            padding: 0 20px;
+        }
+
+        .custom-card {
+            background-color: #ffffff;
+            padding: 25px 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 130px;
+        }
+
+        .card-title {
+            font-family: var(--font-serif);
+            font-size: 16px;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .card-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .kpi-number {
+            font-size: 34px;
+            font-family: var(--font-serif);
+            color: #000;
+            line-height: 1;
+        }
+
+        .kpi-badge { text-align: right; }
+
+        .content-section {
+            max-width: 1200px;
+            margin: 0 auto 40px auto;
+            padding: 0 20px 30px 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        .chart-box, .panel-box {
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-radius: 4px;
+        }
+
+        .chart-title {
+            font-family: var(--font-serif);
+            font-size: 18px;
+            color: #3D4435;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #3D4435;
+            padding-bottom: 5px;
+        }
+    </style>
+</h:head>
+<h:body>
+
+    <div class="topbar">
+        <div class="topbar-left">
+            <h:graphicImage name="edicion.png" alt="Empleados" styleClass="topbar-icon"/>
+            <h:outputLink value="AdminEmpleados.xhtml"> Empleados </h:outputLink>
+        </div>
+        <div class="topbar-center">
+            <div>
+                <a href="principalAdministrador.xhtml">EVENTOS CAMPESTRE</a><br />
+                <a href="#">Inventario</a>
+                <a href="Articulos.xhtml">Artículos</a>
+                <a href="Cotizaciones.xhtml">Cotizaciones</a>
+                <a href="Rentas.xhtml">Rentas</a>
+                <a href="Dashboard.xhtml">Informes</a>
+                <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <span>Administrador</span>
+            <h:graphicImage name="administrador.png" alt="admin" styleClass="topbar-icon"/>
+        </div>
+    </div>
+
+    <div class="nav-strip">
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="Dashboard.xhtml" style="color: inherit; text-decoration: none;">Vista General</a></li>
+            <li class="nav-item"><a href="DashboardRentas.xhtml" style="color: inherit; text-decoration: none;">Rentas</a></li>
+            <li class="nav-item"><a href="DashboardCotizaciones.xhtml" style="color: inherit; text-decoration: none;">Cotizaciones</a></li>
+            <li class="nav-item active"><a href="DashboardClientes.xhtml" style="color: inherit; text-decoration: none;">Clientes</a></li>
+        </ul>
+    </div>
+
+    <h:form id="formClientes">
+
+        <div class="filter-wrapper">
+            <div class="filter-container">
+                <h:panelGroup styleClass="filter-item">
+                    <p:outputLabel for="inicio" value="Desde:" />
+                    <p:datePicker id="inicio" value="#{dashboardClientesBean.fechaInicio}" pattern="yyyy-MM-dd" showIcon="true"/>
+                </h:panelGroup>
+
+                <h:panelGroup styleClass="filter-item">
+                    <p:outputLabel for="fin" value="Hasta:" />
+                    <p:datePicker id="fin" value="#{dashboardClientesBean.fechaFin}" pattern="yyyy-MM-dd" showIcon="true"/>
+                </h:panelGroup>
+
+                <p:commandButton value="Actualizar Dashboard"
+                                 actionListener="#{dashboardClientesBean.recargar}"
+                                 form=":formClientes"
+                                 update=":formClientes"
+                                 process=":formClientes"
+                                 style="background-color: #3D4435; border:none; font-family: var(--font-serif);" />
+            </div>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="custom-card">
+                <div class="card-title">Clientes totales</div>
+                <div class="card-body">
+                    <span class="kpi-number">#{dashboardClientesBean.clientesTotales}</span>
+                </div>
+            </div>
+
+            <div class="custom-card" style="border-left-color: var(--olive-mid);">
+                <div class="card-title">Clientes nuevos (mes)</div>
+                <div class="card-body">
+                    <span class="kpi-number">#{dashboardClientesBean.clientesNuevos}</span>
+                </div>
+            </div>
+
+            <div class="custom-card" style="border-left-color: var(--olive-soft);">
+                <div class="card-title">Clientes frecuentes</div>
+                <div class="card-body">
+                    <span class="kpi-number">#{dashboardClientesBean.clientesFrecuentes}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <div class="chart-box">
+                <div class="chart-title">Crecimiento de clientes (mes)</div>
+                <p:lineChart model="#{dashboardClientesBean.growthModel}"
+                             style="width:100%; height:360px;"/>
+            </div>
+
+            <div class="chart-box">
+                <div class="chart-title">Clientes mas frecuentes</div>
+                <p:barChart model="#{dashboardClientesBean.rankingModel}"
+                            style="width:100%; height:420px;"
+                            extender="clientesBarExt"/>
+            </div>
+        </div>
+
+    </h:form>
+
+    <h:outputScript target="body">
+        function clientesBarExt() {
+            const chart = this.cfg.config;
+            chart.options.plugins = chart.options.plugins || {};
+            chart.options.plugins.legend = { display: false };
+            chart.options.animation = chart.options.animation || {};
+            chart.options.animation.onComplete = function() {
+                const ctx = this.ctx;
+                ctx.save();
+                ctx.fillStyle = '#333';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'middle';
+                ctx.font = '12px Segoe UI';
+                const dataset = this.data.datasets[0];
+                const meta = this.getDatasetMeta(0);
+                meta.data.forEach(function(bar, index) {
+                    const value = dataset.data[index];
+                    ctx.fillText(value, bar.x + 6, bar.y);
+                });
+                ctx.restore();
+            };
+        }
+    </h:outputScript>
+</h:body>
+</html>
