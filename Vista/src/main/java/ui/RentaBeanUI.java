@@ -227,13 +227,6 @@ public class RentaBeanUI implements Serializable {
         rentas = rentaHelper.obtenerTodasRentas();
     }
 
-    public void prepararModificacionArticulos() {
-        if(idRentaSeleccionada != null) {
-            this.rentaSeleccionada = rentaHelper.findById(idRentaSeleccionada);
-        }
-        recalcularTotal();
-    }
-
     public void cargarArticulosDisponibles() {
         this.listaArticulosDisponibles = articuloHelper.obtenerTodas();
     }
