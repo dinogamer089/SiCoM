@@ -20,6 +20,7 @@ public class EmpleadoBeanUI implements Serializable
 
     private List<Empleado> empleados;
     private Empleado empleadoSeleccionado;
+    private Integer empleadoAEliminarId;
     private Empleado nuevoEmpleado;
     private String nuevaContrasena;
 
@@ -52,6 +53,12 @@ public class EmpleadoBeanUI implements Serializable
         this.operacionExitosa = false;
     }
     // --- FIN: prepararModalReset ---
+
+    // --- INICIO: recargarEmpleados ---
+    public void recargarEmpleados() {
+        cargarEmpleados();
+    }
+    // --- FIN: recargarEmpleados ---
 
     // --- INICIO: guardarEmpleado ---
     public void guardarEmpleado() {
@@ -164,23 +171,114 @@ public class EmpleadoBeanUI implements Serializable
     }
     // --- FIN: restablecerContrasena ---
 
+    // --- INICIO: prepararEliminacion ---
+    public void prepararEliminacion() {
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        boolean permitirEliminar = true;
+
+        if (empleadoSeleccionado == null || empleadoSeleccionado.getId() == null) {
+            permitirEliminar = false;
+        } else if (facadeEmpleado.tieneAsignacionesPendientes(empleadoSeleccionado.getId())) {
+            permitirEliminar = false;
+            ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                    "No se puede eliminar",
+                    "No se puede eliminar el empleado ya que tiene asignaciones pendientes."));
+            ctx.validationFailed();
+        }
+
+        PrimeFaces.current().ajax().addCallbackParam("permitirEliminar", permitirEliminar);
+    }
+    // --- FIN: prepararEliminacion ---
+
     // --- INICIO: eliminarEmpleado ---
     public void eliminarEmpleado() {
         if (empleadoSeleccionado != null) {
+            FacesContext ctx = FacesContext.getCurrentInstance();
             try {
+                Integer empleadoId = empleadoSeleccionado.getId();
+                if (empleadoId != null && facadeEmpleado.tieneAsignacionesPendientes(empleadoId)) {
+                    ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                            "No se puede eliminar",
+                            "No se puede eliminar el empleado ya que tiene asignaciones pendientes."));
+                    ctx.validationFailed();
+                    return;
+                }
+
                 facadeEmpleado.deleteEmpleado(empleadoSeleccionado);
                 cargarEmpleados();
                 empleadoSeleccionado = null;
 
+            } catch (IllegalStateException ise) {
+                ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                        "No se puede eliminar", "No se puede eliminar el empleado ya que tiene asignaciones pendientes."));
+                ctx.validationFailed();
             } catch (Exception e) {
-                FacesContext.getCurrentInstance().addMessage(null,
+                ctx.addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
                                 "No se pudo eliminar el empleado: " + e.getMessage()));
+                ctx.validationFailed();
                 e.printStackTrace();
             }
         }
     }
     // --- FIN: eliminarEmpleado ---
+
+    // --- INICIO: eliminarEmpleadoPorId ---
+    /**
+     * EliminaciÃ³n parametrizada por ID para evitar dependencias del estado seleccionado.
+     */
+    public void eliminarEmpleadoPorId(Integer empleadoId) {
+        if (empleadoId == null) {
+            return;
+        }
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        try {
+            Empleado empleado = facadeEmpleado.findById(empleadoId);
+            if (empleado == null) {
+                return;
+            }
+
+            if (facadeEmpleado.tieneAsignacionesPendientes(empleadoId)) {
+                ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                        "No se puede eliminar",
+                        "No se puede eliminar el empleado ya que tiene asignaciones pendientes."));
+                ctx.validationFailed();
+                return;
+            }
+
+            facadeEmpleado.deleteEmpleado(empleado);
+            cargarEmpleados();
+            if (empleadoSeleccionado != null && empleadoSeleccionado.getId() != null
+                    && empleadoSeleccionado.getId().equals(empleadoId)) {
+                empleadoSeleccionado = null;
+            }
+        } catch (IllegalStateException ise) {
+            ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                    "No se puede eliminar", "No se puede eliminar el empleado ya que tiene asignaciones pendientes."));
+            ctx.validationFailed();
+        } catch (Exception e) {
+            ctx.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                            "No se pudo eliminar el empleado: " + e.getMessage()));
+            ctx.validationFailed();
+            e.printStackTrace();
+        }
+    }
+    // --- FIN: eliminarEmpleadoPorId ---
+
+    // --- INICIO: eliminarEmpleadoPorId (desde request param) ---
+    public void eliminarEmpleadoPorId() {
+        String param = FacesContext.getCurrentInstance().getExternalContext()
+                .getRequestParameterMap().get("empleadoId");
+        Integer id = null;
+        try {
+            if (param != null) {
+                id = Integer.valueOf(param);
+            }
+        } catch (NumberFormatException ignored) { }
+        eliminarEmpleadoPorId(id);
+    }
+    // --- FIN: eliminarEmpleadoPorId (desde request param) ---
 
     // --- INICIO: obtenerMensajeRaiz ---
     private String obtenerMensajeRaiz(Throwable throwable) {
@@ -206,6 +304,8 @@ public class EmpleadoBeanUI implements Serializable
     }
     public void setEmpleadoSeleccionado(Empleado empleadoSeleccionado) { this.empleadoSeleccionado = empleadoSeleccionado;
     }
+    public Integer getEmpleadoAEliminarId() { return empleadoAEliminarId; }
+    public void setEmpleadoAEliminarId(Integer empleadoAEliminarId) { this.empleadoAEliminarId = empleadoAEliminarId; }
     public Empleado getNuevoEmpleado() { return nuevoEmpleado;
     }
     public void setNuevoEmpleado(Empleado nuevoEmpleado) { this.nuevoEmpleado = nuevoEmpleado;
