@@ -173,7 +173,7 @@
 
         .tarjeta-table thead th {
             background-color: #3D4435;
-            color: #E7D9CB;
+            color: #FFFFFF;
             padding: 15px 16px;
             text-align: left;
             font-size: 0.95em;
@@ -327,10 +327,6 @@
             color: #721c24 !important;
         }
 
-        .ui-datepicker {
-            width: 100% !important;
-        }
-
         .amount-positive {
             color: #000000;
             font-weight: normal;
@@ -370,39 +366,26 @@
             cursor: default;
         }
 
-        /* Mejoras para PrimeFaces datePicker */
-        .filter-field .p-datepicker {
-            display: flex;
-            align-items: center;
+        /* Estilos mínimos para el calendario */
+        .filter-field .ui-calendar {
             width: 100%;
+            position: relative;
         }
 
-        .filter-field .p-datepicker .p-inputtext {
-            padding: 8px 12px;
-            border: 1px solid #ccc;
-            border-radius: 4px 0 0 4px;
-            font-family: "FreightText Pro", serif;
-            font-size: 1em;
-            flex: 1;
-            border-right: none;
-        }
-
-        .filter-field .p-datepicker-trigger {
-            background-color: #f5f5f5;
-            border: 1px solid #ccc;
-            border-radius: 0 4px 4px 0;
-            padding: 8px 12px;
-            color: #3D4435;
+        /* Botón del calendario a la derecha */
+        .filter-field .ui-datepicker-trigger {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s;
         }
 
-        .filter-field .p-datepicker-trigger:hover {
-            background-color: #e0e0e0;
+        .filter-field .ui-calendar .ui-inputfield {
+            width: 100%;
+            padding-right: 40px;
         }
+
 
         .ui-inputfield {
             padding: 8px 12px;
@@ -424,7 +407,6 @@
 </h:head>
 
 <h:body>
-    <!-- TOPBAR -->
     <div class="topbar">
         <div class="topbar-left">
             <img src="resources/edicion.png" alt="Empleados" class="topbar-icon" />
@@ -444,7 +426,6 @@
         </div>
     </div>
 
-    <!-- CONTENIDO -->
     <div class="content">
         <h1 class="title">Tarjeta de Almacen - Control de Movimientos</h1>
 
@@ -471,52 +452,50 @@
                     <div class="filter-field">
                         <label for="articulo">Articulo:</label>
                         <p:selectOneMenu id="articulo"
-                                        value="#{tarjetaAlmacenUI.articuloSeleccionadoId}">
+                                         value="#{tarjetaAlmacenUI.articuloSeleccionadoId}">
                             <f:selectItem itemLabel="-- Seleccione --" itemValue="#{null}" />
                             <f:selectItems value="#{tarjetaAlmacenUI.articulos}"
-                                         var="art"
-                                         itemLabel="#{art.nombre}"
-                                         itemValue="#{art.id}" />
+                                           var="art"
+                                           itemLabel="#{art.nombre}"
+                                           itemValue="#{art.id}" />
                         </p:selectOneMenu>
                     </div>
 
                     <p:outputPanel id="panelFechas" layout="block" styleClass="filter-row-inline">
-                        <!-- Consulta por dia -->
                         <h:panelGroup rendered="#{!tarjetaAlmacenUI.consultaPorRango}">
                             <div class="filter-field">
                                 <label for="fecha">Fecha:</label>
                                 <p:datePicker id="fecha"
-                                             value="#{tarjetaAlmacenUI.fechaConsulta}"
-                                             pattern="dd/MM/yyyy"
-                                             showIcon="true"
-                                             locale="es"
-                                             readonlyInput="true"
-                                             placeholder="Selecciona una fecha" />
+                                              value="#{tarjetaAlmacenUI.fechaConsulta}"
+                                              pattern="dd/MM/yyyy"
+                                              showIcon="true"
+                                              locale="es"
+                                              readonlyInput="true"
+                                              placeholder="Selecciona una fecha" />
                             </div>
                         </h:panelGroup>
 
-                        <!-- Consulta por rango -->
                         <h:panelGroup rendered="#{tarjetaAlmacenUI.consultaPorRango}">
                             <div class="filter-field">
                                 <label for="fechaInicio">Fecha Inicio:</label>
                                 <p:datePicker id="fechaInicio"
-                                             value="#{tarjetaAlmacenUI.fechaInicio}"
-                                             pattern="dd/MM/yyyy"
-                                             showIcon="true"
-                                             locale="es"
-                                             readonlyInput="true"
-                                             placeholder="Selecciona fecha inicio" />
+                                              value="#{tarjetaAlmacenUI.fechaInicio}"
+                                              pattern="dd/MM/yyyy"
+                                              showIcon="true"
+                                              locale="es"
+                                              readonlyInput="true"
+                                              placeholder="Selecciona fecha inicio" />
                             </div>
 
                             <div class="filter-field">
                                 <label for="fechaFin">Fecha Fin:</label>
                                 <p:datePicker id="fechaFin"
-                                             value="#{tarjetaAlmacenUI.fechaFin}"
-                                             pattern="dd/MM/yyyy"
-                                             showIcon="true"
-                                             locale="es"
-                                             readonlyInput="true"
-                                             placeholder="Selecciona fecha fin" />
+                                              value="#{tarjetaAlmacenUI.fechaFin}"
+                                              pattern="dd/MM/yyyy"
+                                              showIcon="true"
+                                              locale="es"
+                                              readonlyInput="true"
+                                              placeholder="Selecciona fecha fin" />
                             </div>
                         </h:panelGroup>
                     </p:outputPanel>
@@ -548,73 +527,73 @@
                 </div>
 
                 <div class="table-container">
-                <h:dataTable value="#{tarjetaAlmacenUI.tarjetaDelDia}"
-                            var="fila"
-                            styleClass="tarjeta-table">
+                    <h:dataTable value="#{tarjetaAlmacenUI.tarjetaDelDia}"
+                                 var="fila"
+                                 styleClass="tarjeta-table">
 
-                    <h:column>
-                        <f:facet name="header">Fecha</f:facet>
-                        <h:outputText value="#{fila.fechaFormateada}" />
-                    </h:column>
+                        <h:column>
+                            <f:facet name="header">Fecha</f:facet>
+                            <h:outputText value="#{fila.fechaFormateada}" />
+                        </h:column>
 
-                    <h:column>
-                        <f:facet name="header">Movimiento</f:facet>
-                        <h:outputText value="Renta ##{fila.idRenta}"
-                                     rendered="#{fila.idRenta != null}" />
-                        <h:outputText value="-"
-                                     rendered="#{fila.idRenta == null}" />
-                    </h:column>
+                        <h:column>
+                            <f:facet name="header">Movimiento</f:facet>
+                            <h:outputText value="Renta ##{fila.idRenta}"
+                                          rendered="#{fila.idRenta != null}" />
+                            <h:outputText value="-"
+                                          rendered="#{fila.idRenta == null}" />
+                        </h:column>
 
-                    <h:column>
-                        <f:facet name="header">Concepto</f:facet>
-                        <h:outputText value="#{fila.concepto}" />
-                    </h:column>
+                        <h:column>
+                            <f:facet name="header">Concepto</f:facet>
+                            <h:outputText value="#{fila.concepto}" />
+                        </h:column>
 
-                    <h:column>
-                        <f:facet name="header">Inventario Inicial</f:facet>
-                        <h:outputText value="#{fila.inventarioInicial}" />
-                    </h:column>
+                        <h:column>
+                            <f:facet name="header">Inventario Inicial</f:facet>
+                            <h:outputText value="#{fila.inventarioInicial}" />
+                        </h:column>
 
-                    <h:column>
-                        <f:facet name="header">Entrada</f:facet>
-                        <h:outputText value="#{fila.entrada}"
-                                     styleClass="#{fila.entrada > 0 ? 'amount-positive' : ''}" />
-                    </h:column>
+                        <h:column>
+                            <f:facet name="header">Entrada</f:facet>
+                            <h:outputText value="#{fila.entrada}"
+                                          styleClass="#{fila.entrada > 0 ? 'amount-positive' : ''}" />
+                        </h:column>
 
-                    <h:column>
-                        <f:facet name="header">Salida</f:facet>
-                        <h:outputText value="#{fila.salida}"
-                                     styleClass="#{fila.salida > 0 ? 'amount-negative' : ''}" />
-                    </h:column>
+                        <h:column>
+                            <f:facet name="header">Salida</f:facet>
+                            <h:outputText value="#{fila.salida}"
+                                          styleClass="#{fila.salida > 0 ? 'amount-negative' : ''}" />
+                        </h:column>
 
-                    <h:column>
-                        <f:facet name="header">Existencia</f:facet>
-                        <h:outputText value="#{fila.existencia}" />
-                    </h:column>
+                        <h:column>
+                            <f:facet name="header">Existencia</f:facet>
+                            <h:outputText value="#{fila.existencia}" />
+                        </h:column>
 
-                    <h:column>
-                        <f:facet name="header">Debe</f:facet>
-                        <h:outputText value="#{fila.debe}"
-                                     styleClass="#{fila.debePositivo ? 'amount-positive' : ''}">
-                            <f:convertNumber type="currency" currencySymbol="$" />
-                        </h:outputText>
-                    </h:column>
+                        <h:column>
+                            <f:facet name="header">Debe</f:facet>
+                            <h:outputText value="#{fila.debe}"
+                                          styleClass="#{fila.debePositivo ? 'amount-positive' : ''}">
+                                <f:convertNumber type="currency" currencySymbol="$" />
+                            </h:outputText>
+                        </h:column>
 
-                    <h:column>
-                        <f:facet name="header">Haber</f:facet>
-                        <h:outputText value="#{fila.haber}"
-                                     styleClass="#{fila.haberPositivo ? 'amount-negative' : ''}">
-                            <f:convertNumber type="currency" currencySymbol="$" />
-                        </h:outputText>
-                    </h:column>
+                        <h:column>
+                            <f:facet name="header">Haber</f:facet>
+                            <h:outputText value="#{fila.haber}"
+                                          styleClass="#{fila.haberPositivo ? 'amount-negative' : ''}">
+                                <f:convertNumber type="currency" currencySymbol="$" />
+                            </h:outputText>
+                        </h:column>
 
-                    <h:column>
-                        <f:facet name="header">Saldo</f:facet>
-                        <h:outputText value="#{fila.saldo}">
-                            <f:convertNumber type="currency" currencySymbol="$" />
-                        </h:outputText>
-                    </h:column>
-                </h:dataTable>
+                        <h:column>
+                            <f:facet name="header">Saldo</f:facet>
+                            <h:outputText value="#{fila.saldo}">
+                                <f:convertNumber type="currency" currencySymbol="$" />
+                            </h:outputText>
+                        </h:column>
+                    </h:dataTable>
                 </div>
             </h:panelGroup>
 
