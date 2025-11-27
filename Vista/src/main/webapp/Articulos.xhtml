@@ -228,6 +228,36 @@
             min-width: 300px !important;
             max-width: 400px !important;
         }
+
+        .ui-confirm-dialog.ui-widget-content,
+        .ui-confirm-dialog .ui-dialog-titlebar {
+            background-color: #3D4435 !important;
+            border-color: #3D4435 !important;
+        }
+
+        .ui-confirm-dialog .ui-dialog-content,
+        .ui-confirm-dialog .ui-dialog-buttonpane {
+            background-color: #3D4435 !important;
+        }
+
+        .ui-confirm-dialog .ui-dialog-title,
+        .ui-confirm-dialog .ui-confirm-dialog-message,
+        .ui-confirm-dialog .ui-icon {
+            color: white !important;
+        }
+
+        .ui-confirm-dialog .ui-confirmdialog-yes,
+        .ui-confirm-dialog .ui-confirmdialog-no.ui-button-flat {
+            background-color: black !important;
+            color: white !important;
+        }
+
+        .ui-confirm-dialog .ui-dialog-titlebar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px !important;
+        }
     </style>
 </h:head>
 
@@ -609,13 +639,20 @@
                     </div>
                 </h:panelGroup>
                 <div class="botones-dialogo" style="padding: 20px 0 10px 0; text-align: center;">
+
                     <p:commandButton value="Guardar Cambios"
                                      action="#{articuloUI.guardarModificacion}"
                                      process=":formModificar"
                                      update=":articulosForm :formModificar:msgsMod"
                                      oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('dlgModificar').hide(); mostrarToastSimple('Artículo actualizado'); }"
-                                     styleClass="btn" />
+                                     styleClass="btn">
+                        <p:confirm header="Confirmación"
+                                   message="¿Está seguro de que desea guardar los cambios en este artículo?"
+                                   icon="pi pi-exclamation-triangle" />
+                    </p:commandButton>
+
                     <p:commandButton value="Cancelar"
+                                     actionListener="#{articuloUI.cancelarModificacion}"
                                      update=":articulosForm"
                                      oncomplete="PF('dlgModificar').hide();"
                                      process="@this"
@@ -642,6 +679,10 @@
                 })();
                 //]]>
             </script>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+            </p:confirmDialog>
         </h:form>
     </p:dialog>
 </h:body>

@@ -1,9 +1,9 @@
 package mx.desarollo.delegate;
 
 import mx.avanti.desarollo.dao.EmpleadoDAO;
+import mx.avanti.desarollo.dao.RentaDAO;
 import mx.desarollo.entity.Empleado;
 import mx.avanti.desarollo.integration.ServiceLocator;
-import mx.desarollo.entity.Renta;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.List;
@@ -12,9 +12,11 @@ import java.util.Optional;
 public class DelegateEmpleado {
 
     private final EmpleadoDAO empleadoDAO;
+    private final RentaDAO rentaDAO;
 
     public DelegateEmpleado() {
         this.empleadoDAO = ServiceLocator.getInstanceEmpleadoDAO();
+        this.rentaDAO = ServiceLocator.getInstanceRentaDAO();
     }
 
     /**
@@ -64,6 +66,12 @@ public class DelegateEmpleado {
      * Elimina un empleado de la base de datos.
      */
     public void deleteEmpleado(Empleado empleado) {
+        if (empleado != null && empleado.getId() != null) {
+            boolean tieneAsignaciones = rentaDAO.existeAsignacionPendiente(empleado.getId());
+            if (tieneAsignaciones) {
+                throw new IllegalStateException("No se puede eliminar el empleado ya que tiene asignaciones pendientes.");
+            }
+        }
         empleadoDAO.delete(empleado);
     }
 
@@ -73,5 +81,14 @@ public class DelegateEmpleado {
 
     public List<Empleado> findAllEmpleadosDisponibles(){
         return ServiceLocator.getInstanceEmpleadoDAO().obtenerEmpleadosDisponibles();
+    }
+
+    /**
+     * Valida si un empleado tiene asignaciones pendientes.
+     * @param empleadoId id del empleado
+     * @return true si tiene rentas en reparto o recoleccion, false en caso contrario
+     */
+    public boolean tieneAsignacionesPendientes(Integer empleadoId){
+        return rentaDAO.existeAsignacionPendiente(empleadoId);
     }
 }
