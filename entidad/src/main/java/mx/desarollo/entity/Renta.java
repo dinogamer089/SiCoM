@@ -25,7 +25,7 @@ public class Renta {
     private String estado;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.MERGE)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "idCliente", nullable = false)
     private Cliente idCliente;
@@ -53,7 +53,7 @@ public class Renta {
     @Column(name = "total", nullable = false, precision = 10, scale = 2)
     private BigDecimal total;
 
-    @OneToMany(mappedBy = "idrenta")
+    @OneToMany(mappedBy = "idrenta", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id ASC")
     private List<Detallerenta> detallesRenta;
 

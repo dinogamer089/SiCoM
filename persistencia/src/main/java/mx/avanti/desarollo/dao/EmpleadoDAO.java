@@ -42,14 +42,4 @@ public class EmpleadoDAO extends AbstractDAO<Empleado> {
             return null;
         }
     }
-
-    public List<Empleado> obtenerEmpleadosDisponibles() {
-        String jpql = "SELECT e FROM Empleado e " +
-                "WHERE e.id NOT IN " +
-                "(SELECT r.idEmpleado.id FROM Renta r " +
-                " WHERE r.idEmpleado IS NOT NULL " +
-                " AND r.estado NOT IN ('Finalizada'))";
-
-        return entityManager.createQuery(jpql, Empleado.class).getResultList();
-    }
 }
