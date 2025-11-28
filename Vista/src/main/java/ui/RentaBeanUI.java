@@ -266,7 +266,7 @@ public class RentaBeanUI implements Serializable {
             nuevoDetalle.setIdarticulo(articulo);
             nuevoDetalle.setCantidad(1);
             nuevoDetalle.setPrecioUnitario(articulo.getPrecio());
-            nuevoDetalle.setPrecioTotal(articulo.getPrecio()); // 1 * precio
+            nuevoDetalle.setPrecioTotal(articulo.getPrecio());
 
             rentaSeleccionada.getDetallesRenta().add(nuevoDetalle);
         }
@@ -288,7 +288,7 @@ public class RentaBeanUI implements Serializable {
             mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Lista de artículos actualizada correctamente.");
 
             PrimeFaces.current().executeScript("PF('dlgModificarArticulos').hide();");
-            PrimeFaces.current().ajax().update("formDetalle"); // Refrescar vista principal
+            PrimeFaces.current().ajax().update("formDetalle");
 
         } catch (Exception e) {
             e.printStackTrace();
