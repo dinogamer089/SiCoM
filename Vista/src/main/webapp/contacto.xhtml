@@ -1,5 +1,7 @@
 <?xml version='1.0' encoding='UTF-8' ?>
+
 <!DOCTYPE html>
+
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
@@ -49,9 +51,11 @@
         .btn-black { background: #000 !important; border: 1px solid #000 !important; color: #fff !important; border-radius: 0 !important; padding: 8px 30px !important; text-transform: uppercase; font-weight: bold !important; margin-top: 10px; }
         .btn-black:hover { background: #333 !important; }
         .cta-btn{ background:#000 !important; border:1px solid #000 !important; color:#fff !important; }
+
         /* Footer */
         .footer { background: var(--olive); color: #e9eadf; display: grid; grid-template-columns: 1fr auto 1fr; gap: 26px; align-items: center; padding: 22px 18px; margin-top: auto; }
         .footer__right { text-align: right; }
+
         /* Modal Carrito */
         .custom-cart-modal.ui-dialog { position: fixed !important; top: 75px !important; right: 40px !important; left: auto !important; box-shadow: 0 5px 30px rgba(0,0,0,0.15) !important; z-index: 1001 !important; }
         .ui-dialog .ui-dialog-titlebar { background-color: var(--olive) !important; color: var(--white) !important; border: none !important; padding: 10px 15px !important; }
@@ -65,7 +69,25 @@
         .modal-qty-selector .ui-inputnumber input { background: transparent !important; border: none !important; width: 40px !important; text-align: center; }
         .modal-item-price { font-weight: 600; min-width: 60px; text-align: right; font-size: 0.95rem; }
 
-        @media (max-width: 800px) { .contact-grid { grid-template-columns: 1fr; gap: 40px; } .form-row { flex-direction: column; gap: 15px; } .footer { grid-template-columns: 1fr; } .footer__right { text-align: center; } }
+        @media (max-width: 800px) {
+            .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+            .form-row { flex-direction: column; gap: 15px; }
+            .footer { grid-template-columns: 1fr; }
+            .footer__right { text-align: center; }
+        }
+
+        /* Errores de validación */
+        .error-msg {
+            color: #b00020;
+            font-size: 0.8rem;
+            margin-top: 4px;
+            font-family: sans-serif;
+        }
+
+        .ui-inputfield.ui-state-error,
+        .ui-inputtextarea.ui-state-error {
+            border-color: #b00020 !important;
+        }
         /*]]>*/
     </style>
 
@@ -74,7 +96,11 @@
             var topbar = document.querySelector('.topbar');
             if (!topbar) return;
             window.addEventListener('scroll', function () {
-                if (window.scrollY > 120) { topbar.classList.add('topbar--shrink'); } else { topbar.classList.remove('topbar--shrink'); }
+                if (window.scrollY > 120) {
+                    topbar.classList.add('topbar--shrink');
+                } else {
+                    topbar.classList.remove('topbar--shrink');
+                }
             });
         });
     </script>
@@ -82,7 +108,6 @@
 
 <h:body>
     <h:form id="formContacto">
-        <p:growl id="msgs" showDetail="true" />
 
         <div class="layout">
             <header class="topbar">
@@ -98,7 +123,8 @@
                         <a href="principal_cliente.xhtml">EVENTOS CAMPESTRE</a>
                     </div>
                     <div class="tb-right">
-                        <p:commandLink onclick="PF('carritoModal').show(); return false;" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                        <p:commandLink onclick="PF('carritoModal').show(); return false;"
+                                       style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 5px; cursor: pointer;">
                             <i class="pi pi-shopping-cart" style="font-size: 1.4rem;"/>
                             <h:panelGroup id="tb-count-group">
                                 <span class="tb-count">#{carritoBean.carrito.conteoTotalItems}</span>
@@ -123,51 +149,146 @@
                     <div class="c-right">
                         <div class="form-row">
                             <div class="form-col">
-                                <label class="lbl">Nombre</label>
-                                <p:inputText value="#{contactoBean.nombre}" required="true"/>
+                                <label class="lbl" for="nombre">Nombre</label>
+                                <p:inputText id="nombre"
+                                             value="#{contactoBean.nombre}"
+                                             required="true"
+                                             requiredMessage="Por favor, escribe tu nombre."
+                                             validatorMessage="El nombre debe tener entre 2 y 50 caracteres.">
+                                    <f:validateLength minimum="2" maximum="50" />
+                                </p:inputText>
+                                <p:message for="nombre" display="text" styleClass="error-msg" />
                             </div>
+
                             <div class="form-col">
-                                <label class="lbl">Apellido</label>
-                                <p:inputText value="#{contactoBean.apellido}"/>
+                                <label class="lbl" for="apellido">Apellido</label>
+                                <p:inputText id="apellido"
+                                             value="#{contactoBean.apellido}"
+                                             required="true"
+                                             requiredMessage="Por favor, escribe tu apellido."
+                                             validatorMessage="El apellido debe tener entre 2 y 50 caracteres.">
+                                    <f:validateLength minimum="2" maximum="50" />
+                                </p:inputText>
+                                <p:message for="apellido" display="text" styleClass="error-msg" />
                             </div>
                         </div>
+
                         <div class="form-col" style="margin-bottom:25px;">
-                            <label class="lbl">Correo electrónico</label>
-                            <p:inputText value="#{contactoBean.correo}" required="true"/>
+                            <label class="lbl" for="correo">Correo electrónico</label>
+                            <p:inputText id="correo"
+                                         value="#{contactoBean.correo}"
+                                         required="true"
+                                         requiredMessage="El correo electrónico es obligatorio."
+                                         validatorMessage="El correo no tiene un formato válido.">
+                                <f:validateRegex pattern="^[\\w._%+-]+@[\\w.-]+\\.[A-Za-z]{2,6}$" />
+                            </p:inputText>
+                            <p:message for="correo" display="text" styleClass="error-msg" />
                         </div>
+
                         <div class="form-col" style="margin-bottom:25px;">
-                            <label class="lbl">Asunto</label>
-                            <p:inputText value="#{contactoBean.asunto}" required="true"/>
+                            <label class="lbl" for="asunto">Asunto</label>
+                            <p:inputText id="asunto"
+                                         value="#{contactoBean.asunto}"
+                                         required="true"
+                                         requiredMessage="El asunto es obligatorio."
+                                         validatorMessage="El asunto debe tener entre 3 y 100 caracteres.">
+                                <f:validateLength minimum="3" maximum="100" />
+                            </p:inputText>
+                            <p:message for="asunto" display="text" styleClass="error-msg" />
                         </div>
+
                         <div class="form-col" style="margin-bottom:25px;">
-                            <label class="lbl">Mensaje</label>
-                            <p:inputTextarea value="#{contactoBean.mensaje}" rows="6" required="true"/>
+                            <label class="lbl" for="mensaje">Mensaje</label>
+                            <p:inputTextarea id="mensaje"
+                                             value="#{contactoBean.mensaje}"
+                                             rows="6"
+                                             required="true"
+                                             requiredMessage="Por favor, escribe tu mensaje."
+                                             validatorMessage="El mensaje debe tener al menos 10 caracteres.">
+                                <f:validateLength minimum="10" maximum="1000" />
+                            </p:inputTextarea>
+                            <p:message for="mensaje" display="text" styleClass="error-msg" />
                         </div>
-                        <p:commandButton value="ENVIAR" action="#{contactoBean.enviar}" update="@form" styleClass="btn-black" />
+
+                        <p:commandButton value="ENVIAR"
+                                         action="#{contactoBean.enviar}"
+                                         update="@form"
+                                         styleClass="btn-black" />
                     </div>
                 </div>
             </div>
 
-            <p:dialog header="Mi carrito" widgetVar="carritoModal" draggable="false" resizable="false" showEffect="fade" hideEffect="fade" styleClass="custom-cart-modal" closeOnEscape="true" responsive="true" width="350">
+            <p:dialog header="Mi carrito"
+                      widgetVar="carritoModal"
+                      draggable="false"
+                      resizable="false"
+                      showEffect="fade"
+                      hideEffect="fade"
+                      styleClass="custom-cart-modal"
+                      closeOnEscape="true"
+                      responsive="true"
+                      width="350">
                 <p:ajax event="close" update=":formContacto:tb-count-group" />
                 <h:panelGroup id="modalCarritoContent" layout="block" styleClass="modal-cart-content">
-                    <p:outputPanel rendered="#{carritoBean.carrito.vacio}" style="display:block; text-align:center; padding: 20px 0; font-style: italic;">Tu carrito esta vacio.</p:outputPanel>
-                    <p:dataList value="#{carritoBean.carrito.items}" var="item" type="none" styleClass="dl-reset" rendered="#{not carritoBean.carrito.vacio}">
+                    <p:outputPanel rendered="#{carritoBean.carrito.vacio}"
+                                   style="display:block; text-align:center; padding: 20px 0; font-style: italic;">
+                        Tu carrito esta vacio.
+                    </p:outputPanel>
+
+                    <p:dataList value="#{carritoBean.carrito.items}"
+                                var="item"
+                                type="none"
+                                styleClass="dl-reset"
+                                rendered="#{not carritoBean.carrito.vacio}">
                         <div class="modal-item-row">
-                            <p:commandLink actionListener="#{carritoBean.eliminarItem(item)}" update=":formContacto:modalCarritoContent :formContacto:tb-count-group" styleClass="modal-btn-remove"><i class="pi pi-minus-circle"/></p:commandLink>
-                            <h:graphicImage rendered="#{not empty item.articulo}" value="#{articuloUI.getImagenBase64(item.articulo)}" styleClass="modal-item-img"/>
+                            <p:commandLink actionListener="#{carritoBean.eliminarItem(item)}"
+                                           update=":formContacto:modalCarritoContent :formContacto:tb-count-group"
+                                           styleClass="modal-btn-remove">
+                                <i class="pi pi-minus-circle"/>
+                            </p:commandLink>
+
+                            <h:graphicImage rendered="#{not empty item.articulo}"
+                                            value="#{articuloUI.getImagenBase64(item.articulo)}"
+                                            styleClass="modal-item-img"/>
+
                             <h:outputText value="#{item.articulo.nombre}" styleClass="modal-item-name"/>
+
                             <div class="modal-qty-selector">
-                                <p:commandLink actionListener="#{carritoBean.decrementarCantidad(item)}" update=":formContacto:modalCarritoContent :formContacto:tb-count-group" disabled="#{item.cantidad le 1}"><i class="pi pi-minus" style="font-size: 0.7rem;"/></p:commandLink>
-                                <h:outputText value="#{item.cantidad}" style="width: 30px; text-align:center; font-weight:bold;"/>
-                                <p:commandLink actionListener="#{carritoBean.incrementarCantidad(item)}" update=":formContacto:modalCarritoContent :formContacto:tb-count-group"><i class="pi pi-plus" style="font-size: 0.7rem;"/></p:commandLink>
+                                <p:commandLink actionListener="#{carritoBean.decrementarCantidad(item)}"
+                                               update=":formContacto:modalCarritoContent :formContacto:tb-count-group"
+                                               disabled="#{item.cantidad le 1}">
+                                    <i class="pi pi-minus" style="font-size: 0.7rem;"/>
+                                </p:commandLink>
+
+                                <h:outputText value="#{item.cantidad}"
+                                              style="width: 30px; text-align:center; font-weight:bold;"/>
+
+                                <p:commandLink actionListener="#{carritoBean.incrementarCantidad(item)}"
+                                               update=":formContacto:modalCarritoContent :formContacto:tb-count-group">
+                                    <i class="pi pi-plus" style="font-size: 0.7rem;"/>
+                                </p:commandLink>
                             </div>
-                            <h:outputText value="#{item.precioTotal}" styleClass="modal-item-price"><f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="0"/></h:outputText>
+
+                            <h:outputText value="#{item.precioTotal}" styleClass="modal-item-price">
+                                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="0"/>
+                            </h:outputText>
                         </div>
                     </p:dataList>
-                    <h:panelGroup layout="block" style="margin-top: 15px; border-top: 2px solid var(--olive); padding-top: 15px;" rendered="#{not carritoBean.carrito.vacio}">
-                        <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; margin-bottom: 15px;"><span>Total:</span><h:outputText value="#{carritoBean.carrito.total}"><f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="0"/></h:outputText></div>
-                        <p:button value="Ver Carrito Completo" outcome="/Carrito.xhtml" styleClass="cta-btn" style="width: 100%;"/>
+
+                    <h:panelGroup layout="block"
+                                  style="margin-top: 15px; border-top: 2px solid var(--olive); padding-top: 15px;"
+                                  rendered="#{not carritoBean.carrito.vacio}">
+                        <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; margin-bottom: 15px;">
+                            <span>Total:</span>
+                            <h:outputText value="#{carritoBean.carrito.total}">
+                                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="0"/>
+                            </h:outputText>
+                        </div>
+
+                        <p:button value="Ver Carrito Completo"
+                                  outcome="/Carrito.xhtml"
+                                  styleClass="cta-btn"
+                                  style="width: 100%;"/>
                     </h:panelGroup>
                 </h:panelGroup>
             </p:dialog>
