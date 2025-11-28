@@ -89,10 +89,13 @@ public class RentaDAO extends AbstractDAO<Renta> {
                             "LEFT JOIN FETCH r.idCliente " +
                             "LEFT JOIN FETCH r.idEmpleado " +
                             "WHERE " +
-                            // CASO A: Rentas en el "Pool" (Sin empleado asignado) listas para tomar
-                            "(r.idEmpleado IS NULL AND r.estado IN ('Pendiente a reparto', 'Pendiente a recoleccion')) " +
+                            // CASO 1: Pendiente a REPARTO (Solo si no tiene dueño)
+                            "(r.estado = 'Pendiente a reparto' AND r.idEmpleado IS NULL) " +
                             "OR " +
-                            // CASO B: Rentas que YA tomé yo (y están en proceso)
+                            // CASO 2: Pendiente a RECOLECCION (Sale siempre pública para todos)
+                            "(r.estado = 'Pendiente a recoleccion') " +
+                            "OR " +
+                            // CASO 3: Mis tareas activas (Lo que ya estoy haciendo)
                             "(r.idEmpleado.id = :empId AND r.estado IN ('En reparto', 'En recoleccion')) " +
                             "ORDER BY r.fecha ASC, r.hora ASC", Renta.class)
                     .setParameter("empId", idEmpleadoLogueado)

@@ -117,7 +117,10 @@ public class RentaHelper {
             case "Confirmado":              return "Pendiente a reparto";
             case "Pendiente a reparto":     return "En reparto";      // Aquí el empleado se la asigna
             case "En reparto":              return "Entregado";       // Aquí llega al cliente
-            case "Entregado":               return "Pendiente a recoleccion";
+
+            // CORRECCION: El empleado se detiene aquí. El admin debe moverlo a Pendiente a recoleccion
+            case "Entregado":               return null;
+
             case "Pendiente a recoleccion": return "En recoleccion";  // Aquí el empleado se la asigna (retorno)
             case "En recoleccion":          return "Finalizada";      // Fin del ciclo
             default:                        return null;
