@@ -22,17 +22,38 @@
         .topbar-center { text-align: center; flex-grow: 1; font-style: italic; font-size: 22px; }
         .content { padding: 20px 60px; font-family: 'Minerva Modern', serif; }
         .title { font-size: 26px; margin-bottom: 20px; color: #000000; }
-        .rentas-list { display: flex; gap: 20px; flex-wrap: wrap; }
+        .rentas-list { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
 
         .renta-card {
-            width: 280px; background-color: #3D4435; color: white; padding: 15px; display: flex; gap: 15px; align-items: center;
-            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3); cursor: pointer; transition: transform 0.2s;
+            width: 280px;
+            background-color: #3D4435;
+            color: white;
+            padding: 15px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-sizing: border-box;
         }
         .renta-card:hover { transform: translateY(-5px); }
-        .renta-info { display: flex; flex-direction: column; font-weight: bold; font-size: 14px; }
+        .renta-info { display: flex; flex-direction: column; font-weight: bold; font-size: 14px; flex: 1; min-width: 0; }
+
+        /* Clase para romper direcciones largas */
+        .renta-address {
+            font-weight: normal;
+            font-size: 12px;
+            white-space: normal;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            line-height: 1.2;
+            margin-bottom: 5px;
+            display: block;
+        }
+
         .renta-status { font-size: 14px; font-style: italic; margin-top: 5px; color: #C2C8CC; }
         .renta-date { font-size: 12px; margin-top: 2px; color: white; }
-
         .badge { padding: 2px 6px; border-radius: 3px; font-size: 10px; color: black; font-weight: bold; margin-bottom: 5px; display: inline-block; }
         .badge-pool { background: orange; }
         .badge-mine { background: #98FB98; }
@@ -48,51 +69,44 @@
     </div>
 
     <div class="content">
-        <h1 class="title">Bolsa de Trabajo y Mis Entregas</h1>
-
         <h:form id="formEmpleados">
             <p:growl id="msgs" showDetail="true" />
 
             <div class="rentas-list">
                 <ui:repeat value="#{empleadoRentaUI.rentasPendientes}" var="rent">
 
-                    <h:commandLink action="#{empleadoRentaUI.irADetalle(rent)}" style="text-decoration: none; color: inherit;">
-                        <div class="renta-card" style="#{rent.idEmpleado == null ? 'border-left: 5px solid orange;' : 'border-left: 5px solid #98FB98;'}">
+                    <h:link outcome="DetalleRentaEmpleado" style="text-decoration: none; color: inherit; display: block;">
+                        <f:param name="idRenta" value="#{rent.id}" />
+
+                        <div class="renta-card" style="#{(rent.estado eq 'Pendiente a recoleccion' or rent.idEmpleado == null) ? 'border-left: 5px solid orange;' : 'border-left: 5px solid #98FB98;'}">
 
                             <div>
                                 <h:graphicImage value="resources/cotizacion.png" width="30" height="35"/>
                             </div>
 
                             <div class="renta-info">
-                                <h:panelGroup rendered="#{rent.idEmpleado == null}">
+                                <h:panelGroup rendered="#{rent.idEmpleado == null or rent.estado eq 'Pendiente a recoleccion'}">
                                     <span class="badge badge-pool">DISPONIBLE</span>
                                 </h:panelGroup>
-                                <h:panelGroup rendered="#{rent.idEmpleado != null}">
+                                <h:panelGroup rendered="#{rent.idEmpleado != null and rent.estado ne 'Pendiente a recoleccion'}">
                                     <span class="badge badge-mine">ASIGNADA A MÍ</span>
                                 </h:panelGroup>
 
-                                <h:outputText value="#{rent.idCliente.nombre}" style="font-size: 16px; margin-bottom: 3px;"/>
-                                <h:outputText value="#{rent.idCliente.direccion}" style="font-weight: normal; font-size: 12px;"/>
+                                <h:outputText value="#{rent.idCliente.nombre}" style="font-size: 16px; margin-bottom: 3px; display: block;"/>
+                                <h:outputText value="#{rent.idCliente.direccion}" styleClass="renta-address"/>
 
                                 <div class="renta-date">
-                                    📅 <h:outputText value="#{rent.fecha}">
-                                    <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
-                                </h:outputText>
-
-                                    ⏰ <h:outputText value="#{rent.hora}">
-                                    <f:convertDateTime pattern="HH:mm" type="localTime"/>
-                                </h:outputText>
+                                    📅 <h:outputText value="#{rent.fecha}"><f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/></h:outputText>
+                                    ⏰ <h:outputText value="#{rent.hora}"><f:convertDateTime pattern="HH:mm" type="localTime"/></h:outputText>
                                 </div>
                                 <h:outputText value="#{rent.estado.toUpperCase()}" styleClass="renta-status"/>
                             </div>
                         </div>
-                    </h:commandLink>
+                    </h:link>
                 </ui:repeat>
 
                 <h:panelGroup rendered="#{empty empleadoRentaUI.rentasPendientes}">
-                    <div style="padding: 20px; font-size: 18px; color: #555;">
-                        No hay tareas disponibles ni asignadas en este momento.
-                    </div>
+                    <div style="padding: 20px; font-size: 18px; color: #555;">No hay tareas disponibles.</div>
                 </h:panelGroup>
             </div>
         </h:form>
