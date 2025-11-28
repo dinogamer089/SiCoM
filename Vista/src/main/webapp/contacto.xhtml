@@ -109,6 +109,12 @@
 <h:body>
     <h:form id="formContacto">
 
+        <!-- Growl para mostrar la confirmación que ya manda el bean -->
+        <p:growl id="msgs"
+                 showDetail="true"
+                 life="5000"
+                 globalOnly="true" />
+
         <div class="layout">
             <header class="topbar">
                 <div class="tb-row1">
@@ -124,7 +130,7 @@
                     </div>
                     <div class="tb-right">
                         <p:commandLink onclick="PF('carritoModal').show(); return false;"
-                                       style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                       style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 5px; cursor: pointer%;">
                             <i class="pi pi-shopping-cart" style="font-size: 1.4rem;"/>
                             <h:panelGroup id="tb-count-group">
                                 <span class="tb-count">#{carritoBean.carrito.conteoTotalItems}</span>
@@ -180,7 +186,9 @@
                                          required="true"
                                          requiredMessage="El correo electrónico es obligatorio."
                                          validatorMessage="El correo no tiene un formato válido.">
-                                <f:validateRegex pattern="^[\\w._%+-]+@[\\w.-]+\\.[A-Za-z]{2,6}$" />
+                                <!-- REGEX CORREGIDA -->
+                                <f:validateRegex
+                                        pattern="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+[.][A-Za-z]{2,}$" />
                             </p:inputText>
                             <p:message for="correo" display="text" styleClass="error-msg" />
                         </div>
@@ -212,7 +220,7 @@
 
                         <p:commandButton value="ENVIAR"
                                          action="#{contactoBean.enviar}"
-                                         update="@form"
+                                         update="@form msgs"
                                          styleClass="btn-black" />
                     </div>
                 </div>
