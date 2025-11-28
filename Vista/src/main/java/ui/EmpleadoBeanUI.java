@@ -180,9 +180,7 @@ public class EmpleadoBeanUI implements Serializable
             permitirEliminar = false;
         } else if (facadeEmpleado.tieneAsignacionesPendientes(empleadoSeleccionado.getId())) {
             permitirEliminar = false;
-            ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
-                    "No se puede eliminar",
-                    "No se puede eliminar el empleado ya que tiene asignaciones pendientes."));
+            PrimeFaces.current().executeScript("mostrarToastSimple('No se puede eliminar el empleado ya que tiene asignaciones pendientes.');");
             ctx.validationFailed();
         }
 
@@ -197,9 +195,7 @@ public class EmpleadoBeanUI implements Serializable
             try {
                 Integer empleadoId = empleadoSeleccionado.getId();
                 if (empleadoId != null && facadeEmpleado.tieneAsignacionesPendientes(empleadoId)) {
-                    ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
-                            "No se puede eliminar",
-                            "No se puede eliminar el empleado ya que tiene asignaciones pendientes."));
+                    PrimeFaces.current().executeScript("mostrarToastSimple('No se puede eliminar el empleado ya que tiene asignaciones pendientes.');");
                     ctx.validationFailed();
                     return;
                 }
@@ -209,8 +205,7 @@ public class EmpleadoBeanUI implements Serializable
                 empleadoSeleccionado = null;
 
             } catch (IllegalStateException ise) {
-                ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
-                        "No se puede eliminar", "No se puede eliminar el empleado ya que tiene asignaciones pendientes."));
+                PrimeFaces.current().executeScript("mostrarToastSimple('No se puede eliminar el empleado ya que tiene asignaciones pendientes.');");
                 ctx.validationFailed();
             } catch (Exception e) {
                 ctx.addMessage(null,
@@ -239,9 +234,7 @@ public class EmpleadoBeanUI implements Serializable
             }
 
             if (facadeEmpleado.tieneAsignacionesPendientes(empleadoId)) {
-                ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
-                        "No se puede eliminar",
-                        "No se puede eliminar el empleado ya que tiene asignaciones pendientes."));
+                PrimeFaces.current().executeScript("mostrarToastSimple('No se puede eliminar el empleado ya que tiene asignaciones pendientes.');");
                 ctx.validationFailed();
                 return;
             }
@@ -253,8 +246,7 @@ public class EmpleadoBeanUI implements Serializable
                 empleadoSeleccionado = null;
             }
         } catch (IllegalStateException ise) {
-            ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
-                    "No se puede eliminar", "No se puede eliminar el empleado ya que tiene asignaciones pendientes."));
+            PrimeFaces.current().executeScript("mostrarToastSimple('No se puede eliminar el empleado ya que tiene asignaciones pendientes.');");
             ctx.validationFailed();
         } catch (Exception e) {
             ctx.addMessage(null,
