@@ -493,8 +493,12 @@
         <h:form>
             <div style="text-align: center; padding: 10px;">
                 <p:commandButton value="Datos del Cliente" icon="pi pi-user"
-                                 onclick="PF('dlgOpcionesModificar').hide(); PF('dlgModificar').show();"
-                                 type="button" styleClass="btn-opcion-modificar"/>
+                                 actionListener="#{rentaUI.cargarRentaSeleccionada}"
+                                 update=":formModificar"
+                                 oncomplete="PF('dlgOpcionesModificar').hide(); PF('dlgModificar').show();"
+                                 styleClass="btn-opcion-modificar">
+                    <p:resetInput target=":formModificar" />
+                </p:commandButton>
 
                 <p:commandButton value="Artículos de la Renta" icon="pi pi-list"
                                  actionListener="#{rentaUI.cargarArticulosDisponibles}"
