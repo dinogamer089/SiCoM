@@ -77,6 +77,27 @@ public class RentaDAO extends AbstractDAO<Renta> {
     }
 
     /**
+     * Verifica si un empleado tiene asignadas rentas en reparto o recoleccion.
+     * @param empleadoId ID del empleado a validar.
+     * @return true si existe al menos una renta en esos estados, false en otro caso.
+     */
+    public boolean existeAsignacionPendiente(Integer empleadoId) {
+        if (empleadoId == null) {
+            return false;
+        }
+
+        Long total = entityManager.createQuery(
+                        "SELECT COUNT(r) FROM Renta r " +
+                                "WHERE r.idEmpleado.id = :empId " +
+                                "AND r.estado IN ('En reparto', 'En recoleccion')",
+                        Long.class)
+                .setParameter("empId", empleadoId)
+                .getSingleResult();
+
+        return total != null && total > 0;
+    }
+
+    /**
      * Metodo para obtener las rentas disponibles (sin asignar) y las asignadas al empleado logueado.
      * Utiliza LEFT JOIN FETCH para cargar cliente, empleado y detalles en una sola consulta.
      * Filtra por estados: 'Pendiente' para rentas libres y 'En proceso' para las propias.
