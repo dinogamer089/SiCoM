@@ -33,4 +33,12 @@ public class ServiceLocator {
     public static StockReservadoDAO getInstanceStockReservadoDAO() {
         return new StockReservadoDAO(getEntityManager());
     }
+
+    public static StockDiarioDAO getInstanceStockDiarioDAO() {
+        return new StockDiarioDAO(getEntityManager(), true);
+    }
+
+    public static MovimientoAlmacenDAO getInstanceMovimientoAlmacenDAO() {
+        return new MovimientoAlmacenDAO(getEntityManager());
+    }
 }

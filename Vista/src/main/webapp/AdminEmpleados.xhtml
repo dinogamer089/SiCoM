@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
@@ -90,7 +90,7 @@
         }
         /* --- FIN: Estilos del Contenido Principal de la Pagina --- */
 
-        /* --- INICIO: Estilos de Botones de Acción (Alta, Eliminar, Reset) --- */
+        /* --- INICIO: Estilos de Botones de Accion (Alta, Eliminar, Reset) --- */
         .botones {
             display: flex;
             gap: 25px;
@@ -120,7 +120,7 @@
         .btn-alta i, .btn-eliminar i, .btn-reset i {
             margin-right: 6px;
         }
-        /* --- FIN: Estilos de Botones de Acción --- */
+        /* --- FIN: Estilos de Botones de Accion --- */
 
         /* --- INICIO: Estilos de la Lista de Empleados --- */
         .lista-empleados {
@@ -454,6 +454,20 @@
         }
         /* --- FIN: ESTILOS DE TOAST --- */
 
+        /* --- INICIO: Estilos de mensajes globales --- */
+        .global-messages .ui-messages-warn,
+        .global-messages .ui-message-warn {
+            background: #f8d7da !important;
+            border: 1px solid #f5c2c7 !important;
+            color: #842029 !important;
+        }
+
+        .global-messages .ui-messages-warn-summary,
+        .global-messages .ui-messages-warn-detail {
+            color: #842029 !important;
+        }
+        /* --- FIN: Estilos de mensajes globales --- */
+
         /* --- INICIO: Media Queries (Responsivo) --- */
         @media (max-width: 768px) {
             .modal-content {
@@ -462,12 +476,12 @@
                 max-width: 95%;
             }
 
-            .modal-campos, .modal-correo-contrasena {
+            .modal-campos, .modal-correo-Contrasena {
                 flex-direction: column;
                 gap: 10px;
             }
 
-            .modal-campos input, .modal-correo-contrasena input {
+            .modal-campos input, .modal-correo-Contrasena input {
                 width: 100%;
                 min-width: auto;
             }
@@ -544,7 +558,7 @@
             <div>
                 <a href="principalAdministrador.xhtml">EVENTOS CAMPESTRE</a><br />
                 <a href="#">Inventario</a>
-                <a href="Articulos.xhtml">Artículos</a>
+                <a href="Articulos.xhtml">Articulos</a>
                 <a href="Cotizaciones.xhtml">Cotizaciones</a>
                 <a href="Rentas.xhtml">Rentas</a>
                 <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
@@ -562,7 +576,9 @@
                 <h2>Empleados</h2>
             </div>
 
-            <div class="botones">
+            <p:messages id="globalMessages" autoUpdate="true" showDetail="true" closable="true" styleClass="global-messages" />
+
+            <h:panelGroup id="botonesPanel" layout="block" styleClass="botones">
                 <p:commandButton value="Alta"
                                  icon="fa-solid fa-plus"
                                  styleClass="btn-alta"
@@ -573,7 +589,7 @@
 
                 <p:commandButton
                         styleClass="btn-reset"
-                        value="Restablecer Contraseña"
+                        value="Restablecer Contrasena"
                         icon="fa-solid fa-key"
                         rendered="#{empleadoUI.empleadoSeleccionado != null}"
                         action="#{empleadoUI.prepararModalReset}"
@@ -583,7 +599,7 @@
 
                 <p:commandButton
                         styleClass="btn-reset"
-                        value="Restablecer Contraseña"
+                        value="Restablecer Contrasena"
                         icon="fa-solid fa-key"
                         rendered="#{empleadoUI.empleadoSeleccionado == null}"
                         disabled="true"
@@ -594,9 +610,10 @@
                         value="Eliminar"
                         icon="fa-solid fa-trash"
                         rendered="#{empleadoUI.empleadoSeleccionado != null}"
+                        action="#{empleadoUI.prepararEliminacion}"
                         process="@this"
-                        update="modalEliminarContent"
-                        oncomplete="PF('dialogEliminar').show()" />
+                        update="mainForm:globalMessages modalEliminarContent"
+                        oncomplete="if (args &amp;&amp; args.permitirEliminar) { PF('dialogEliminar').show(); }" />
 
                 <p:commandButton
                         styleClass="btn-eliminar"
@@ -605,25 +622,20 @@
                         rendered="#{empleadoUI.empleadoSeleccionado == null}"
                         disabled="true"
                         style="opacity: 0.6; cursor: not-allowed;" />
-            </div>
-            <div id="toastNotification" class="toast-notification toast-base">
-                <span id="toastDeleteMessage">Empleado eliminado:</span>
-                <div style="font-style: italic; font-size: 0.9em;">(<span id="countdown">5</span> segundos)</div>
-                <div class="progress-bar-container">
-                    <div id="progressBar" class="progress-bar"></div>
-                </div>
-                <a href="#" onclick="deshacerEliminacion(); return false;">Deshacer</a>
-            </div>
-
+            </h:panelGroup>
+            <div id="toastContainer"></div>
             <div id="toastSimple" class="toast-simple toast-base">
                 <span id="toastSimpleMessage"></span>
             </div>
             <h:panelGroup id="listaEmpleadosPanel" layout="block" styleClass="lista-empleados">
                 <ui:repeat value="#{empleadoUI.empleados}" var="emp">
                     <h:commandLink
-                            styleClass="empleado #{empleadoUI.empleadoSeleccionado.id == emp.id ? 'seleccionado' : ''}">
+                            styleClass="empleado #{empleadoUI.empleadoSeleccionado.id == emp.id ? 'seleccionado' : ''}"
+                            pt:data-emp-id="#{emp.id}"
+                            id="empRow_#{emp.id}"
+                            onclick="marcarSeleccion(this);">
                         <f:setPropertyActionListener target="#{empleadoUI.empleadoSeleccionado}" value="#{emp}"/>
-                        <f:ajax render="mainForm"/>
+                        <f:ajax execute="@this" render="mainForm:botonesPanel" oncomplete="reaplicarPendientes();"/>
 
                         <div class="col-empleado nombre">
                             <i class="fa-solid fa-id-card"></i>
@@ -668,11 +680,11 @@
 
                 <div class="modal-renglon modal-correo-contrasena">
                     <p:inputText id="correo" value="#{empleadoUI.nuevoEmpleado.correo}"
-                                 placeholder="Correo Electrónico" required="true"
+                                 placeholder="Correo Electronico" required="true"
                                  requiredMessage="Correo es obligatorio." />
                     <p:password id="pass" value="#{empleadoUI.nuevoEmpleado.contrasena}"
-                                placeholder="Contraseña" required="true"
-                                requiredMessage="Contraseña es obligatoria." />
+                                placeholder="Contrasena" required="true"
+                                requiredMessage="Contrasena es obligatoria." />
                 </div>
 
                 <div class="modal-renglon modal-botones">
@@ -686,7 +698,7 @@
                                      action="#{empleadoUI.guardarEmpleado}"
                                      process="modalAltaForm"
                                      update="mainForm:listaEmpleadosPanel modalMessages"
-                                     oncomplete="if (!args.validationFailed) { PF('dialogAlta').hide(); mostrarToastSimple('¡Empleado guardado exitosamente!'); }"/>
+                                     oncomplete="if (!args.validationFailed) { PF('dialogAlta').hide(); mostrarToastSimple('Empleado guardado exitosamente!'); }"/>
                 </div>
             </p:dialog>
             <p:dialog id="modalEliminar"
@@ -719,7 +731,7 @@
                         <p:commandButton value="Confirmar"
                                          styleClass="btn-listo"
                                          type="button"
-                                         onclick="PF('dialogEliminar').hide(); mostrarToastEliminar('#{empleadoUI.empleadoSeleccionado.nombre} #{empleadoUI.empleadoSeleccionado.apellidoPaterno}');" />
+                                         onclick="PF('dialogEliminar').hide(); confirmarEliminacion('#{empleadoUI.empleadoSeleccionado.id}','#{empleadoUI.empleadoSeleccionado.nombre} #{empleadoUI.empleadoSeleccionado.apellidoPaterno}');" />
                     </div>
                 </h:panelGroup>
             </p:dialog>
@@ -734,11 +746,11 @@
                       style="max-width: 700px; width: 90%;">
                 <f:facet name="header">
                     <i class="fa-solid fa-key"></i>
-                    <span>Restablecer Contraseña</span>
+                    <span>Restablecer Contrasena</span>
                 </f:facet>
 
                 <div class="modal-renglon modal-cuerpo-texto">
-                    <span>Establecer nueva contraseña para el empleado:</span>
+                    <span>Establecer nueva contrasena para el empleado:</span>
                     <span class="nombre-empleado-bold">
                         #{empleadoUI.empleadoSeleccionado.nombre} #{empleadoUI.empleadoSeleccionado.apellidoPaterno}
                     </span>
@@ -746,9 +758,9 @@
 
                 <div class="modal-renglon modal-correo-contrasena" style="justify-content: center; flex-direction: column;">
                     <p:password id="newPass" value="#{empleadoUI.nuevaContrasena}"
-                                placeholder="Escribir nueva contraseña"
+                                placeholder="Escribir nueva contrasena"
                                 required="true"
-                                requiredMessage="La contraseña no puede estar vacía."
+                                requiredMessage="La contrasena no puede estar vacia."
                                 style="width: 50%; min-width: 200px;"/>
                     <p:message for="newPass" styleClass="error-message"/>
                 </div>
@@ -764,7 +776,7 @@
                                      action="#{empleadoUI.restablecerContrasena}"
                                      process="modalResetForm"
                                      update="mainForm"
-                                     oncomplete="if (!args.validationFailed) { PF('dialogReset').hide(); mostrarToastSimple('¡Contraseña actualizada!'); }"/>
+                                     oncomplete="if (!args.validationFailed) { PF('dialogReset').hide(); mostrarToastSimple('Contrasena actualizada!'); }"/>
                 </div>
             </p:dialog>
             <h:commandButton id="btnResetModal" style="display:none;"
@@ -772,23 +784,36 @@
                 <f:ajax render="modalAltaForm"
                         onerror="alert('Error de AJAX al resetear modal. Revisa la consola.');"/>
             </h:commandButton>
-
-            <h:commandButton id="btnConfirmarEliminacionReal" style="display:none;"
-                             action="#{empleadoUI.eliminarEmpleado}">
-                <f:ajax execute="@this" render="mainForm"/>
-            </h:commandButton>
+            <p:remoteCommand name="rcEliminarEmpleado" action="#{empleadoUI.eliminarEmpleadoPorId}"
+                             process="@this" update="mainForm:listaEmpleadosPanel mainForm:globalMessages"/>
+            <p:remoteCommand name="rcRecargarLista" action="#{empleadoUI.recargarEmpleados}"
+                             process="@this" update="mainForm:listaEmpleadosPanel"/>
         </div>
     </h:form>
     <script type="text/javascript">
         //<![CDATA[
 
-        var deleteTimer;
-        var progressInterval;
         var simpleToastTimer;
+        var pendingDeletes = {};
+
+        function marcarSeleccion(row) {
+            if (!row) return;
+            document.querySelectorAll('.empleado.seleccionado').forEach(function(el) {
+                el.classList.remove('seleccionado');
+            });
+            row.classList.add('seleccionado');
+        }
+
+        function reaplicarPendientes() {
+            if (!pendingDeletes) return;
+            Object.keys(pendingDeletes).forEach(function(id) {
+                ocultarRenglon(id);
+            });
+        }
 
         // --- INICIO: mostrarToastSimple ---
         /**
-         * Muestra una notificación simple que desaparece sola.
+         * Muestra una notificacion simple que desaparece sola.
          */
         function mostrarToastSimple(mensaje) {
             clearTimeout(simpleToastTimer);
@@ -804,65 +829,89 @@
         }
         // --- FIN: mostrarToastSimple ---
 
-        // --- INICIO: mostrarToastEliminar ---
-        /**
-         * Muestra la notificación de eliminación con contador y opción "Deshacer".
-         */
-        function mostrarToastEliminar(nombreEmpleado) {
-            clearTimeout(deleteTimer);
-            clearInterval(progressInterval);
+        // --- INICIO: confirmarEliminacion ---
+        function confirmarEliminacion(empleadoId, nombreEmpleado) {
+            if (!empleadoId) return;
+            ocultarRenglon(empleadoId);
+            crearToastEliminar(empleadoId, nombreEmpleado);
+        }
 
-            var toast = document.getElementById('toastNotification');
-            var progressBar = document.getElementById('progressBar');
-            var countdown = document.getElementById('countdown');
-            var messageElement = document.getElementById('toastDeleteMessage');
-            if (nombreEmpleado) {
-                messageElement.innerHTML = 'Empleado eliminado: <strong style="font-style: italic; padding-left: 5px;">' + nombreEmpleado + '</strong>';
-            } else {
-                messageElement.innerText = 'Empleado eliminado:';
+        function ocultarRenglon(empleadoId) {
+            var row = document.querySelector('[data-emp-id="' + empleadoId + '"]');
+            if (row) {
+                row.style.opacity = '0.4';
+                setTimeout(function () {
+                    row.style.display = 'none';
+                }, 150);
             }
+        }
+
+        function crearToastEliminar(empleadoId, nombreEmpleado) {
+            var container = document.getElementById('toastContainer');
+            var toast = document.createElement('div');
+            toast.className = 'toast-notification toast-base';
+
+            var nombreHtml = nombreEmpleado ? '<strong style="font-style: italic; padding-left: 5px;">' + nombreEmpleado + '</strong>' : '';
+            toast.innerHTML =
+                '<span>Empleado eliminado: ' + nombreHtml + '</span>' +
+                '<div style="font-style: italic; font-size: 0.9em;">(<span class="countdown">3</span> segundos)</div>' +
+                '<div class="progress-bar-container"><div class="progress-bar"></div></div>' +
+                '<a href="#" class="undo-link">Deshacer</a>';
+
+            container.appendChild(toast);
+
+            var progressBar = toast.querySelector('.progress-bar');
+            var countdown = toast.querySelector('.countdown');
+            var undoLink = toast.querySelector('.undo-link');
+
+            var totalTime = 3000;
+            var elapsed = 0;
+            var updateInterval = 100;
+
+            var progressInterval = setInterval(function() {
+                elapsed += updateInterval;
+                var percentage = Math.min(100, (elapsed / totalTime) * 100);
+                if (progressBar) progressBar.style.width = percentage + '%';
+                if (countdown) countdown.innerText = Math.ceil((totalTime - elapsed) / 1000);
+            }, updateInterval);
+
+            var deleteTimer = setTimeout(function() {
+                clearInterval(progressInterval);
+                rcEliminarEmpleado([{name: 'empleadoId', value: empleadoId}]);
+                if (toast && toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+                delete pendingDeletes[empleadoId];
+            }, totalTime);
+
+            undoLink.onclick = function(e) {
+                e.preventDefault();
+                deshacerEliminacion(empleadoId);
+            };
+
+            pendingDeletes[empleadoId] = {
+                timer: deleteTimer,
+                interval: progressInterval,
+                toast: toast
+            };
 
             toast.style.display = 'block';
-            progressBar.style.width = '0%';
-            countdown.innerText = '3';
-
-            var timeLeft = 3;
-            var totalTime = 3000;
-            var updateInterval = 100;
-            var steps = totalTime / updateInterval;
-            var currentStep = 0;
-
-            progressInterval = setInterval(function() {
-                currentStep++;
-                var percentage = (currentStep / steps) * 100;
-                progressBar.style.width = percentage + '%';
-
-                var newTimeLeft = Math.ceil((totalTime - (currentStep * updateInterval)) / 1000);
-
-                if (newTimeLeft < timeLeft) {
-                    timeLeft = newTimeLeft;
-                    countdown.innerText = timeLeft;
-                }
-
-                if (currentStep >= steps) {
-                    clearInterval(progressInterval);
-                }
-            }, updateInterval);
-            deleteTimer = setTimeout(function() {
-                toast.style.display = 'none';
-                document.getElementById('mainForm:btnConfirmarEliminacionReal').click();
-            }, totalTime);
         }
-        // --- FIN: mostrarToastEliminar ---
 
-        // --- INICIO: deshacerEliminacion ---
-        function deshacerEliminacion() {
-            clearTimeout(deleteTimer);
-            clearInterval(progressInterval);
-            document.getElementById('toastNotification').style.display = 'none';
-            mostrarToastSimple('Eliminación cancelada');
+        function deshacerEliminacion(empleadoId) {
+            var pending = pendingDeletes[empleadoId];
+            if (!pending) {
+                return;
+            }
+            clearTimeout(pending.timer);
+            clearInterval(pending.interval);
+            if (pending.toast && pending.toast.parentNode) {
+                pending.toast.parentNode.removeChild(pending.toast);
+            }
+            delete pendingDeletes[empleadoId];
+            rcRecargarLista();
+            mostrarToastSimple('Eliminacion cancelada');
         }
-        // --- FIN: deshacerEliminacion ---
 
         // --- INICIO: DOMContentLoaded ---
         document.addEventListener('DOMContentLoaded', function () {
@@ -878,3 +927,12 @@
     </script>
 </h:body>
 </html>
+
+
+
+
+
+
+
+
+
