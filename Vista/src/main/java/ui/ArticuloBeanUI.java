@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Base64;
 import java.util.List;
+import java.io.Serializable; import java.util.List;
 
 @Named("articuloUI")
 @SessionScoped
