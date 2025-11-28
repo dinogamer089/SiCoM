@@ -180,7 +180,9 @@
                                          required="true"
                                          requiredMessage="El correo electrónico es obligatorio."
                                          validatorMessage="El correo no tiene un formato válido.">
-                                <f:validateRegex pattern="^[\\w._%+-]+@[\\w.-]+\\.[A-Za-z]{2,6}$" />
+                                <!-- REGEX CORREGIDA -->
+                                <f:validateRegex
+                                        pattern="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+[.][A-Za-z]{2,}$" />
                             </p:inputText>
                             <p:message for="correo" display="text" styleClass="error-msg" />
                         </div>
