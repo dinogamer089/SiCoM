@@ -71,6 +71,11 @@
             font-family: "Cinzel", serif;
         }
 
+        .tb-brand a {
+            color: var(--white);
+            text-decoration: none;
+        }
+
         .tb-right {
             display: flex;
             justify-content: flex-end;
@@ -552,11 +557,15 @@
         <div class="topbar">
             <div class="tb-row1">
                 <div class="tb-left">
-                    <i class="pi pi-facebook"/>
-                    <i class="pi pi-whatsapp"/>
-                    <i class="pi pi-home"/>
+                    <a href="https://www.facebook.com/cositastanbellas?locale=es_LA" class="tb-icon"><i class="pi pi-facebook"/></a>
+                    <a href="https://w.app/eventoscampestre" class="tb-icon"><i class="pi pi-whatsapp"/></a>
+                    <a href="principal_cliente.xhtml" class="tb-icon" title="Inicio">
+                        <i class="pi pi-home"/>
+                    </a>
                 </div>
-                <div class="tb-brand">EVENTOS CAMPESTRE</div>
+                <div class="tb-brand">
+                    <a href="principal_cliente.xhtml">EVENTOS CAMPESTRE</a>
+                </div>
                 <div class="tb-right">
                     <h:panelGroup layout="block" style="display:flex; align-items:center; gap:8px; margin-right:10px;">
                         <h:outputText value="Fecha de evento:"/>
