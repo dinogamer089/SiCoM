@@ -1,6 +1,7 @@
 package mx.desarollo.delegate;
 
 import mx.avanti.desarollo.dao.EmpleadoDAO;
+import mx.avanti.desarollo.dao.RentaDAO;
 import mx.desarollo.entity.Empleado;
 import mx.avanti.desarollo.integration.ServiceLocator;
 import mx.desarollo.entity.Renta;
@@ -12,9 +13,11 @@ import java.util.Optional;
 public class DelegateEmpleado {
 
     private final EmpleadoDAO empleadoDAO;
+    private final RentaDAO rentaDAO;
 
     public DelegateEmpleado() {
         this.empleadoDAO = ServiceLocator.getInstanceEmpleadoDAO();
+        this.rentaDAO = ServiceLocator.getInstanceRentaDAO();
     }
 
     /**
@@ -69,5 +72,14 @@ public class DelegateEmpleado {
 
     public Empleado findById(Integer id) {
         return ServiceLocator.getInstanceEmpleadoDAO().findById(id);
+    }
+
+    /**
+     * Valida si un empleado tiene asignaciones pendientes.
+     * @param empleadoId id del empleado
+     * @return true si tiene rentas en reparto o recoleccion, false en caso contrario
+     */
+    public boolean tieneAsignacionesPendientes(Integer empleadoId){
+        return rentaDAO.existeAsignacionPendiente(empleadoId);
     }
 }

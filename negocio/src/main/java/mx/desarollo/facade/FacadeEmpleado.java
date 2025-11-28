@@ -31,4 +31,8 @@ public class FacadeEmpleado {
     public Empleado findById(Integer id) {
         return delegateEmpleado.findById(id);
     }
+
+    public boolean tieneAsignacionesPendientes(Integer empleadoId) {
+        return delegateEmpleado.tieneAsignacionesPendientes(empleadoId);
+    }
 }
