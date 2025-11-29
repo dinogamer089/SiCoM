@@ -26,12 +26,7 @@
             font-style: normal;
         }
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            background: #E7D9CB;
-        }
+        body, html { margin: 0; padding: 0; height: 100%; background: #E7D9CB; }
 
         /* TOPBAR */
         .topbar {
@@ -258,29 +253,16 @@
     </style>
 </h:head>
 <h:body>
-    <f:metadata>
-        <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
-    </f:metadata>
     <div class="topbar">
-        <div class="topbar-left"><span style="font-size:14px;">Módulo Operativo</span></div>
-
-        <div class="topbar-center">MIS TAREAS PENDIENTES</div>
-
+        <div class="topbar-left">
+            <span style="font-size:14px;">Módulo Operativo</span>
+        </div>
+        <div class="topbar-center">
+            DETALLE DE TAREA
+        </div>
         <div class="topbar-right">
-            <h:form style="margin:0; padding:0;">
-                <div class="dropdown">
-                    <span>Empleado</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="topbar-icon">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                        <polyline points="16 17 21 12 16 7"></polyline>
-                        <line x1="21" y1="12" x2="9" y2="12"></line>
-                    </svg>
-
-                    <div class="dropdown-content">
-                        <h:commandLink action="#{loginUI.logout}" value="Cerrar Sesión" />
-                    </div>
-                </div>
-            </h:form>
+            <span>Empleado</span>
+            <img src="resources/administrador.png" alt="user" style="width:20px; height:20px; margin-left:10px;" />
         </div>
     </div>
 
