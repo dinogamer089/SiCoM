@@ -16,6 +16,7 @@ import mx.desarollo.entity.Empleado;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,8 @@ public class RentaBeanUI implements Serializable {
     private Integer idRentaSeleccionada;
     private List<String> listaEstadosRenta;
     private String estadoSiguiente;
+    private LocalDate minDate;
+    private LocalDate fechaOriginal;
 
     private List<Empleado> listaEmpleados;
     private Integer idEmpleadoSeleccionado;
@@ -55,6 +58,7 @@ public class RentaBeanUI implements Serializable {
         rentaHelper = new RentaHelper();
         empleadoHelper = new EmpleadoHelper();
         articuloHelper = new ArticuloHelper();
+        minDate = LocalDate.now();
     }
 
     @PostConstruct
@@ -66,6 +70,10 @@ public class RentaBeanUI implements Serializable {
     public void cargarRentaSeleccionada() {
         if (idRentaSeleccionada != null) {
             this.rentaSeleccionada = rentaHelper.findById(idRentaSeleccionada);
+
+            if (this.rentaSeleccionada != null) {
+                this.fechaOriginal = this.rentaSeleccionada.getFecha();
+            }
             actualizarListaEstadosPosibles();
         }
     }
@@ -202,15 +210,24 @@ public class RentaBeanUI implements Serializable {
     public void guardarModificacion() {
         try {
             if (rentaSeleccionada != null) {
-                rentaHelper.actualizarRenta(rentaSeleccionada);
+                rentaHelper.actualizarRenta(rentaSeleccionada, fechaOriginal);
 
+                mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Datos actualizados y stock ajustado correctamente.");
 
-                mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Datos de la renta actualizados.");
+                this.fechaOriginal = rentaSeleccionada.getFecha();
+
                 cargarRentaSeleccionada();
+                PrimeFaces.current().executeScript("PF('dlgModificar').hide();");
             }
+        } catch (RuntimeException re) {
+            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error de Stock", re.getMessage());
+
+            rentaSeleccionada.setFecha(fechaOriginal);
+            FacesContext.getCurrentInstance().validationFailed();
+
         } catch (Exception e) {
             e.printStackTrace();
-            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron guardar los cambios: " + e.getMessage());
+            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error Crítico", "No se pudieron guardar los cambios: " + e.getMessage());
             FacesContext.getCurrentInstance().validationFailed();
         }
     }
@@ -282,17 +299,18 @@ public class RentaBeanUI implements Serializable {
 
     public void guardarCambiosArticulos() {
         try {
-            rentaHelper.actualizarRenta(rentaSeleccionada);
+            rentaHelper.actualizarRenta(rentaSeleccionada, fechaOriginal);
 
             cargarRentaSeleccionada();
-            mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Lista de artículos actualizada correctamente.");
+            mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Artículos actualizados y stock reservado.");
 
             PrimeFaces.current().executeScript("PF('dlgModificarArticulos').hide();");
             PrimeFaces.current().ajax().update("formDetalle");
 
         } catch (Exception e) {
             e.printStackTrace();
-            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo guardar: " + e.getMessage());
+            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Stock Insuficiente", e.getMessage());
+            FacesContext.getCurrentInstance().validationFailed();
         }
     }
 
@@ -363,5 +381,9 @@ public class RentaBeanUI implements Serializable {
 
     public void setIdEmpleadoSeleccionado(Integer idEmpleadoSeleccionado) {
         this.idEmpleadoSeleccionado = idEmpleadoSeleccionado;
+    }
+
+    public LocalDate getMinDate() {
+        return minDate;
     }
 }

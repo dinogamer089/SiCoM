@@ -49,4 +49,8 @@ public class DelegateRenta {
                                String estado) {
         ServiceLocator.getInstanceRentaDAO().registrarRenta(cliente, detalles, fecha, hora, estado);
     }
+
+    public void actualizarRentaConStock(Renta renta, LocalDate fechaAnterior) throws Exception {
+        ServiceLocator.getInstanceRentaDAO().actualizarRentaConStock(renta, fechaAnterior);
+    }
 }
