@@ -55,4 +55,8 @@ public class FacadeRenta {
     public java.util.List<Renta> obtenerRentasDisponiblesYAsignadas(Integer idEmpleado){
         return delegateRenta.obtenerRentasDisponiblesYAsignadas(idEmpleado);
     }
+
+    public void actualizarRentaConStock(Renta renta, LocalDate fechaAnterior) throws Exception {
+        delegateRenta.actualizarRentaConStock(renta, fechaAnterior);
+    }
 }
