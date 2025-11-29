@@ -31,6 +31,7 @@
             background: #E7D9CB;
         }
 
+        /* TOPBAR */
         .topbar {
             background-color: #3D4435;
             color: #C2C8CC;
@@ -39,17 +40,20 @@
             align-items: center;
             padding: 10px 20px;
         }
+
         .topbar-left, .topbar-right {
             display: flex;
             align-items: center;
             gap: 10px;
         }
+
         .topbar-center {
             text-align: center;
             flex-grow: 1;
             font-style: italic;
             font-size: 22px;
         }
+
         .topbar a {
             text-decoration: none;
             color: #C2C8CC;
@@ -57,13 +61,58 @@
             margin: 0 5px;
             font-style: italic;
         }
+
         .topbar a:hover {
             text-decoration: underline;
         }
-        .topbar img {
+
+        /* Estilos para imágenes */
+        .topbar img, .topbar-icon {
             width: 20px;
             height: 20px;
         }
+
+        /* DROPDOWN MENU */
+        .dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border-radius: 4px;
+        }
+
+        .dropdown-content a {
+            color: #333 !important;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            font-style: normal;
+            font-size: 14px;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+            text-decoration: none;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+
         .content {
             padding: 20px 60px;
             font-family: 'Minerva Modern', serif;
@@ -257,22 +306,40 @@
     </style>
 </h:head>
 <h:body>
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
+    </f:metadata>
     <div class="topbar">
         <div class="topbar-left">
-            <img src="resources/edicion.png" alt="Empleados" class="topbar-icon" />
-            <a href="AdminEmpleados.xhtml">Empleados</a>
+            <img src="#{request.contextPath}/resources/edicion.png" alt="Empleados" class="topbar-icon" />
+            <a href="#{request.contextPath}/AdminEmpleados.xhtml">Empleados</a>
         </div>
+
         <div class="topbar-center">
-            <a href="principalAdministrador.xhtml">EVENTOS CAMPESTRE</a><br />
-            <a href="#">Inventario</a>
+            <a href="principalAdministrador.xhtml"> EVENTOS CAMPESTRE</a><br />
             <a href="Articulos.xhtml">Artículos</a>
+            <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
             <a href="Cotizaciones.xhtml">Cotizaciones</a>
             <a href="Rentas.xhtml">Rentas</a>
-            <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
+            <a href="Dashboard.xhtml">Informes</a>
+            <a href="TarjetaAlmacen.xhtml">Inventario</a>
         </div>
+
         <div class="topbar-right">
-            <span>Administrador</span>
-            <img src="resources/administrador.png" alt="admin" class="topbar-icon" />
+            <h:form style="margin:0; padding:0;">
+                <div class="dropdown">
+                    <span>Administrador</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="topbar-icon">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+
+                    <div class="dropdown-content">
+                        <h:commandLink action="#{loginUI.logout}" value="Cerrar Sesión" />
+                    </div>
+                </div>
+            </h:form>
         </div>
     </div>
 
