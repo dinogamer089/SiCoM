@@ -26,7 +26,7 @@ public class StockReservadoDiario {
     private LocalDate fecha;
 
     @Column(name = "cantidad_reservada", columnDefinition = "int UNSIGNED not null")
-    private Long cantidadReservada;
+    private Integer cantidadReservada;
 
     public Long getId() {
         return id;
@@ -52,11 +52,11 @@ public class StockReservadoDiario {
         this.fecha = fecha;
     }
 
-    public Long getCantidadReservada() {
+    public Integer getCantidadReservada() {
         return cantidadReservada;
     }
 
-    public void setCantidadReservada(Long cantidadReservada) {
+    public void setCantidadReservada(Integer cantidadReservada) {
         this.cantidadReservada = cantidadReservada;
     }
 
