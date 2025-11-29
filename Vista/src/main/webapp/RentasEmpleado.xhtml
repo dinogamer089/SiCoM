@@ -18,8 +18,86 @@
     <style type="text/css">
         @font-face { font-family: "Minerva Modern"; src: url("resources/MinervaModern Bold.ttf") format("truetype"); font-weight: bold; }
         body, html { margin: 0; padding: 0; height: 100%; background: #E7D9CB; }
-        .topbar { background-color: #3D4435; color: #C2C8CC; display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; }
-        .topbar-center { text-align: center; flex-grow: 1; font-style: italic; font-size: 22px; }
+        /* TOPBAR */
+        .topbar {
+            background-color: #3D4435;
+            color: #C2C8CC;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        .topbar-left, .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topbar-center {
+            text-align: center;
+            flex-grow: 1;
+            font-style: italic;
+            font-size: 22px;
+        }
+
+        .topbar a {
+            text-decoration: none;
+            color: #C2C8CC;
+            font-size: 16px;
+            margin: 0 5px;
+            font-style: italic;
+        }
+
+        .topbar a:hover {
+            text-decoration: underline;
+        }
+
+        /* Estilos para imágenes */
+        .topbar img, .topbar-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* DROPDOWN MENU */
+        .dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border-radius: 4px;
+        }
+
+        .dropdown-content a {
+            color: #333 !important;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            font-style: normal;
+            font-size: 14px;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+            text-decoration: none;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
         .content { padding: 20px 60px; font-family: 'Minerva Modern', serif; }
         .title { font-size: 26px; margin-bottom: 20px; color: #000000; }
         .rentas-list { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
@@ -68,7 +146,9 @@
     <div class="topbar">
         <div class="topbar-left"><span style="font-size:14px;">Módulo Operativo</span></div>
 
-        <div class="topbar-center">MIS TAREAS PENDIENTES</div>
+        <div class="topbar-center">
+            <div class="topbar-center">MIS TAREAS PENDIENTES</div>
+        </div>
 
         <div class="topbar-right">
             <h:form style="margin:0; padding:0;">
