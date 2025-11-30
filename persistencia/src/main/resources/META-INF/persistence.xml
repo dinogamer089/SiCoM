@@ -16,6 +16,9 @@
         <class>mx.desarollo.entity.Renta</class>
         <class>mx.desarollo.entity.Detallerenta</class>
         <class>mx.desarollo.entity.Cliente</class>
+        <class>mx.desarollo.entity.StockReservadoDiario</class>
+        <class>mx.desarollo.entity.StockDiario</class>
+        <class>mx.desarollo.entity.MovimientoAlmacen</class>
 
 
         <properties>
