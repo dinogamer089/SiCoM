@@ -79,6 +79,7 @@ public class RentaHelper {
         System.out.println("=== RentaHelper.actualizarRenta() ===");
         try {
             ServiceFacadeLocator.getInstanceFacadeRenta().actualizarRenta(renta);
+
             System.out.println("✓ Renta actualizada correctamente.");
         } catch (Exception e) {
             System.err.println("✗ ERROR al actualizar renta en RentaHelper:");
@@ -117,7 +118,10 @@ public class RentaHelper {
             case "Confirmado":              return "Pendiente a reparto";
             case "Pendiente a reparto":     return "En reparto";      // Aquí el empleado se la asigna
             case "En reparto":              return "Entregado";       // Aquí llega al cliente
-            case "Entregado":               return "Pendiente a recoleccion";
+
+            // CORRECCION: El empleado se detiene aquí. El admin debe moverlo a Pendiente a recoleccion
+            case "Entregado":               return null;
+
             case "Pendiente a recoleccion": return "En recoleccion";  // Aquí el empleado se la asigna (retorno)
             case "En recoleccion":          return "Finalizada";      // Fin del ciclo
             default:                        return null;
