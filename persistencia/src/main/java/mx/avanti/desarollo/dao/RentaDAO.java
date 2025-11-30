@@ -38,6 +38,7 @@ public class RentaDAO extends AbstractDAO<Renta> {
                             "WHERE r.id = :id", Renta.class)
                     .setParameter("id", idRenta)
                     .getSingleResult();
+
         } catch (NoResultException e) {
             return null;
         }
@@ -101,7 +102,9 @@ public class RentaDAO extends AbstractDAO<Renta> {
      * Metodo para obtener las rentas disponibles (sin asignar) y las asignadas al empleado logueado.
      * Utiliza LEFT JOIN FETCH para cargar cliente, empleado y detalles en una sola consulta.
      * Filtra por estados: 'Pendiente' para rentas libres y 'En proceso' para las propias.
-     * @return lista ordenada por fecha y hora, o null si no hay resultados.
+     * @Throws Si la base de datos rechaza la consulta.
+     * @Params Objeto de tipo Integer idEmpleadoLogueado
+     * @return Una lista de objetos Renta ordenados por fecha y hora, o null si no se encuentran resultados.
      */
     public List<Renta> obtenerRentasDisponiblesYAsignadas(Integer idEmpleadoLogueado) {
         try {
@@ -111,8 +114,13 @@ public class RentaDAO extends AbstractDAO<Renta> {
                             "LEFT JOIN FETCH r.idCliente " +
                             "LEFT JOIN FETCH r.idEmpleado " +
                             "WHERE " +
-                            "(r.idEmpleado IS NULL AND r.estado IN ('Pendiente a reparto', 'Pendiente a recoleccion')) " +
+                            // CASO 1: Pendiente a REPARTO (Solo si no tiene dueño)
+                            "(r.estado = 'Pendiente a reparto' AND r.idEmpleado IS NULL) " +
                             "OR " +
+                            // CASO 2: Pendiente a RECOLECCION (Sale siempre pública para todos)
+                            "(r.estado = 'Pendiente a recoleccion') " +
+                            "OR " +
+                            // CASO 3: Mis tareas activas (Lo que ya estoy haciendo)
                             "(r.idEmpleado.id = :empId AND r.estado IN ('En reparto', 'En recoleccion')) " +
                             "ORDER BY r.fecha ASC, r.hora ASC", Renta.class)
                     .setParameter("empId", idEmpleadoLogueado)
