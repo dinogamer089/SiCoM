@@ -37,13 +37,6 @@ public class EmpleadoHelper implements Serializable {
         ServiceFacadeLocator.getInstanceFacadeEmpleado().deleteEmpleado(empleado);
     }
 
-    /**
-     * Verifica si el empleado tiene entregas o recolecciones pendientes.
-     */
-    public boolean tieneAsignacionesPendientes(Integer empleadoId) {
-        return ServiceFacadeLocator.getInstanceFacadeEmpleado().tieneAsignacionesPendientes(empleadoId);
-    }
-
     public Empleado findById(int empleadoId) {
         try {
             Empleado empleado = ServiceFacadeLocator.getInstanceFacadeEmpleado().findById(empleadoId);
@@ -53,9 +46,5 @@ public class EmpleadoHelper implements Serializable {
             e.printStackTrace();
             return null;
         }
-    }
-
-    public List<Empleado> getAllEmpleadosDisponibles() {
-        return ServiceFacadeLocator.getInstanceFacadeEmpleado().getAllEmpleadosDisponibles();
     }
 }

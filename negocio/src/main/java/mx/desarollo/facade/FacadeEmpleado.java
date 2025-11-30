@@ -28,15 +28,11 @@ public class FacadeEmpleado {
         delegateEmpleado.deleteEmpleado(empleado);
     }
 
-    public boolean tieneAsignacionesPendientes(Integer empleadoId) {
-        return delegateEmpleado.tieneAsignacionesPendientes(empleadoId);
-    }
-
     public Empleado findById(Integer id) {
         return delegateEmpleado.findById(id);
     }
 
-    public List<Empleado> getAllEmpleadosDisponibles() {
-        return delegateEmpleado.findAllEmpleadosDisponibles();
+    public boolean tieneAsignacionesPendientes(Integer empleadoId) {
+        return delegateEmpleado.tieneAsignacionesPendientes(empleadoId);
     }
 }
