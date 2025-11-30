@@ -16,8 +16,6 @@
         <f:event type="preRenderView" listener="#{rentaUI.obtenerTodasLasRentas}" />
     </f:metadata>
 
-    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style type="text/css">
         @font-face {
             font-family: "Minerva Modern";
@@ -41,17 +39,20 @@
             align-items: center;
             padding: 10px 20px;
         }
+
         .topbar-left, .topbar-right {
             display: flex;
             align-items: center;
             gap: 10px;
         }
+
         .topbar-center {
             text-align: center;
             flex-grow: 1;
             font-style: italic;
             font-size: 22px;
         }
+
         .topbar a {
             text-decoration: none;
             color: #C2C8CC;
@@ -59,13 +60,16 @@
             margin: 0 5px;
             font-style: italic;
         }
+
         .topbar a:hover {
             text-decoration: underline;
         }
+
         .topbar img {
             width: 20px;
             height: 20px;
         }
+
         .content {
             padding: 20px 60px;
             font-family: 'Minerva Modern', serif;
@@ -73,7 +77,6 @@
 
         .title {
             font-size: 26px;
-            margin-bottom: 20px;
             color: #000000;
         }
 
@@ -136,6 +139,18 @@
             margin-right: 15px;
         }
 
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .filters-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
     </style>
 </h:head>
 <h:body>
@@ -159,44 +174,55 @@
     </div>
 
     <div class="content">
-        <h1 class="title">Rentas</h1>
-
         <h:form id="rentasForm">
             <p:growl id="messages" showDetail="true" life="3000"/>
 
-            <div class="rentas-list">
+            <div class="header-container">
+                <h1 class="title">Rentas</h1>
 
-                <h:panelGroup rendered="#{not empty rentaUI.rentas}">
-                    <ui:repeat value="#{rentaUI.rentas}" var="rent">
+                <div class="filters-container">
+                    <p:inputText value="#{rentaUI.filtroNombre}" placeholder="Buscar cliente..." style="width: 200px;">
+                        <p:ajax event="keyup" listener="#{rentaUI.filtrarRentas}" update="panelResultados" delay="300" />
+                    </p:inputText>
 
-                        <h:commandLink action="#{rentaUI.seleccionarRenta(rent)}" style="text-decoration: none; color: inherit;">
-                            <div class="renta-card">
-                                <div class="renta-details">
-                                    <img src="resources/cotizacion.png" alt="Renta" />
-
-                                    <div class="renta-info">
-                                        <h:outputText value="#{rent.idCliente.nombre}" style="font-size: 16px;"/>
-                                        <h:outputText value="#{rent.idCliente.telefono}" style="font-size: 14px;"/>
-
-                                        <h:outputText value="#{rent.estado}"
-                                                      styleClass="renta-status"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </h:commandLink>
-                    </ui:repeat>
-                </h:panelGroup>
-
-                <h:panelGroup rendered="#{empty rentaUI.rentas}">
-                    <div class="rent-card" style="background-color: #000000; cursor: default; justify-content: center; width: 300px;">
-                        <div class="rent-info" style="text-align: center; color: white">
-                            <h:outputText value="No existen rentas por el momento." />
-                        </div>
-                    </div>
-                </h:panelGroup>
-
+                    <p:selectOneMenu value="#{rentaUI.filtroEstado}" style="width: 200px;">
+                        <f:selectItem itemLabel="Todos los estados" itemValue="" />
+                        <f:selectItems value="#{rentaUI.estadosParaFiltro}" var="estado" itemLabel="#{estado}" itemValue="#{estado}"/>
+                        <p:ajax event="change" listener="#{rentaUI.filtrarRentas}" update="panelResultados" />
+                    </p:selectOneMenu>
+                </div>
             </div>
 
+            <h:panelGroup id="panelResultados">
+                <div class="rentas-list">
+                    <h:panelGroup rendered="#{not empty rentaUI.rentas}">
+                        <ui:repeat value="#{rentaUI.rentas}" var="rent">
+                            <h:commandLink action="#{rentaUI.seleccionarRenta(rent)}" style="text-decoration: none; color: inherit;">
+                                <div class="renta-card">
+                                    <div class="renta-details">
+                                        <img src="resources/cotizacion.png" alt="Renta" />
+
+                                        <div class="renta-info">
+                                            <h:outputText value="#{rent.idCliente.nombre}" style="font-size: 16px;"/>
+                                            <h:outputText value="#{rent.idCliente.telefono}" style="font-size: 14px;"/>
+
+                                            <h:outputText value="#{rent.estado}" styleClass="renta-status"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </h:commandLink>
+                        </ui:repeat>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{empty rentaUI.rentas}">
+                        <div class="rent-card" style="background-color: #000000; cursor: default; display:flex; justify-content: center; align-items:center; width: 300px; height: 120px; padding: 15px;">
+                            <div class="rent-info" style="text-align: center; color: white">
+                                <h:outputText value="No se encontraron rentas." />
+                            </div>
+                        </div>
+                    </h:panelGroup>
+                </div>
+            </h:panelGroup>
         </h:form>
     </div>
 </h:body>
