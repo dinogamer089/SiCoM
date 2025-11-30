@@ -2,6 +2,7 @@ package mx.desarollo.facade;
 
 import mx.desarollo.delegate.DelegateRenta;
 import mx.desarollo.entity.Cliente;
+import mx.desarollo.entity.Comentario;
 import mx.desarollo.entity.Detallerenta;
 import mx.desarollo.entity.Renta;
 
@@ -54,5 +55,13 @@ public class FacadeRenta {
      */
     public java.util.List<Renta> obtenerRentasDisponiblesYAsignadas(Integer idEmpleado){
         return delegateRenta.obtenerRentasDisponiblesYAsignadas(idEmpleado);
+    }
+
+    public List <Comentario> obtenerComentarios(Integer idRenta) {
+        return delegateRenta.obtenerComentarios(idRenta);
+    }
+
+    public void guardarComentario(Comentario comentario) {
+        delegateRenta.guardarComentario(comentario);
     }
 }

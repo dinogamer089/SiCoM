@@ -1,5 +1,6 @@
 package helper;
 
+import mx.desarollo.entity.Comentario;
 import mx.desarollo.entity.Renta;
 import mx.desarollo.integration.ServiceFacadeLocator;
 
@@ -8,10 +9,8 @@ import java.util.List;
 
 public class RentaHelper {
     public List<Renta> obtenerTodasCotizaciones() {
-        System.out.println("=== RentaHelper.obtenerTodasCotizaciones() ===");
         try {
             List<Renta> rentas = ServiceFacadeLocator.getInstanceFacadeRenta().obtenerCotizaciones();
-            System.out.println("✓ Rentas obtenidos: " + (rentas != null ? rentas.size() : "null"));
 
             // Si es null, retornar lista vacía en lugar de null
             if (rentas == null) {
@@ -41,10 +40,8 @@ public class RentaHelper {
     }
 
     public boolean cambiarEstado(Integer idRenta, String nuevoEstado) {
-        System.out.println("=== RentaHelper.cambiarEstado() ===");
         try {
             ServiceFacadeLocator.getInstanceFacadeRenta().cambiarEstado(idRenta, nuevoEstado);
-            System.out.println("✓ Estado cambiado correctamente vía Stored Procedure.");
             return true;
         } catch (Exception e) {
             System.err.println("✗ ERROR al cambiar estado:");
@@ -54,10 +51,8 @@ public class RentaHelper {
     }
 
     public List<Renta> obtenerTodasRentas() {
-        System.out.println("=== RentaHelper.obtenerTodasRentas() ===");
         try {
             List<Renta> rentas = ServiceFacadeLocator.getInstanceFacadeRenta().obtenerRentas();
-            System.out.println("✓ Rentas obtenidos: " + (rentas != null ? rentas.size() : "null"));
 
             // Si es null, retornar lista vacía en lugar de null
             if (rentas == null) {
@@ -76,11 +71,9 @@ public class RentaHelper {
     }
 
     public void actualizarRenta(Renta renta) throws Exception {
-        System.out.println("=== RentaHelper.actualizarRenta() ===");
         try {
             ServiceFacadeLocator.getInstanceFacadeRenta().actualizarRenta(renta);
 
-            System.out.println("✓ Renta actualizada correctamente.");
         } catch (Exception e) {
             System.err.println("✗ ERROR al actualizar renta en RentaHelper:");
             e.printStackTrace();
@@ -125,6 +118,32 @@ public class RentaHelper {
             case "Pendiente a recoleccion": return "En recoleccion";  // Aquí el empleado se la asigna (retorno)
             case "En recoleccion":          return "Finalizada";      // Fin del ciclo
             default:                        return null;
+        }
+    }
+
+    public List<Comentario> obtenerComentariosPorRenta(Integer idRenta) {
+        try {
+            List<Comentario> comentarios = ServiceFacadeLocator.getInstanceFacadeRenta().obtenerComentarios(idRenta);
+
+            if (comentarios == null) {
+                return new ArrayList<>();
+            }
+
+            return comentarios;
+        } catch (Exception e) {
+            System.err.println("✗ ERROR en RentaHelper:");
+            System.err.println("  Tipo: " + e.getClass().getName());
+            System.err.println("  Mensaje: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    public void guardarComentario(Comentario comentario) {
+        try {
+            ServiceFacadeLocator.getInstanceFacadeRenta().guardarComentario(comentario);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

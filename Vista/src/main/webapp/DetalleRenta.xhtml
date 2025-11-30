@@ -315,6 +315,131 @@
             border: 1px solid white !important;
             font-weight: bold !important;
         }
+
+        .dialog-comentarios .ui-dialog-titlebar {
+            background-color: #3D4435 !important;
+            border: none !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            position: relative !important;
+        }
+
+        .dialog-comentarios .ui-dialog-title {
+            color: white !important;
+            float: none !important;
+        }
+
+        .dialog-comentarios .ui-dialog-titlebar-close {
+            position: absolute !important;   /* Posición absoluta respecto al header */
+            right: 15px !important;          /* Pegado a la derecha */
+            top: 50% !important;             /* Centrado verticalmente */
+            transform: translateY(-50%) !important; /* Ajuste fino vertical */
+            margin: 0 !important;
+            float: none !important;
+        }
+
+        .dialog-comentarios .ui-dialog-content {
+            background-color: #3D4435 !important;
+            padding: 30px !important;
+        }
+
+        .contenedor-comentarios {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .columna-comentario {
+            display: flex;
+            flex-direction: column;
+            width: 48%;
+        }
+
+        .caja-comentario {
+            background-color: #D9D9D9;
+            color: black;
+            padding: 20px;
+            width: 100%;
+            min-height: 150px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            box-sizing: border-box;
+        }
+
+        .titulo-caja {
+            font-family: "FreightTextCmp Pro Semibold";
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            display: block;
+            text-transform: capitalize;
+            color: white;
+            text-align: left;
+        }
+
+        .texto-caja {
+            font-family: 'Minerva Modern', serif;
+            font-size: 1em;
+            line-height: 1.4;
+        }
+
+        .dialog-input-custom .ui-dialog-content {
+            padding: 0 !important;
+            background-color: #3D4435 !important; /* Todo el fondo verde */
+            border: none !important;
+        }
+
+        .dialog-input-custom.ui-dialog {
+            border: none !important;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important; /* Sombra elegante */
+        }
+
+        /* Encabezado personalizado */
+        .custom-dialog-header {
+            background-color: #3D4435;
+            color: white;
+            padding: 25px 30px 10px 30px;
+            font-family: "FreightTextCmp Pro Semibold";
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+
+        .custom-dialog-body {
+            background-color: #3D4435;
+            padding: 10px 30px 30px 30px;
+        }
+
+        .custom-textarea {
+            width: 100%;
+            background-color: #D9D9D9 !important;
+            color: black !important;
+            border: none !important;
+            border-radius: 0 !important;
+            padding: 15px !important;
+            font-family: 'Minerva Modern', serif !important;
+            box-sizing: border-box !important;
+            box-shadow: none !important;
+            font-size: 1rem;
+        }
+
+        .dialog-btn-container {
+            margin-top: 25px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-black {
+            background-color: black !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 0 !important;
+            font-weight: normal !important;
+            font-family: 'Minerva Modern', serif !important;
+            padding: 8px 25px !important;
+            text-transform: capitalize;
+            box-shadow: none !important;
+        }
     </style>
 </h:head>
 <h:body>
@@ -381,6 +506,15 @@
                         <p:confirm header="Confirmación de Aprobación"
                                    message="¿Está seguro de que desea aprobar esta cotización y convertirla en Renta?"
                                    icon="pi pi-exclamation-triangle" />
+                    </p:commandButton>
+                    <p:commandButton value="Ver detalles"
+                                     icon="pi pi-truck"
+                                     actionListener="#{rentaUI.cargarComentariosRenta}"
+                                     update=":dlgDetallesComentarios"
+                                     oncomplete="PF('dlgDetallesComentarios').show()"
+                                     styleClass="btn"
+                                     rendered="#{rentaUI.rentaSeleccionada.estado ne 'SOLICITADA'}"
+                                     style="margin-right: 5px; background-color: black !important; color: white !important; border:none;">
                     </p:commandButton>
                     <p:commandButton styleClass="btn modificar"
                                      process="@this"
@@ -690,6 +824,69 @@
             </div>
         </h:form>
     </p:dialog>
+    <p:dialog id="dlgDetallesComentarios"
+              header="Detalles Entrega / Recoleccion"
+              widgetVar="dlgDetallesComentarios"
+              modal="true"
+              width="700"
+              resizable="false"
+              styleClass="dialog-comentarios"
+              appendTo="@(body)">
 
+        <div class="contenedor-comentarios">
+            <div class="columna-comentario">
+                <h:outputText value="Entrega" styleClass="titulo-caja" />
+                <div class="caja-comentario">
+                    <div class="texto-caja">
+                        <h:outputText value="#{rentaUI.comentarioEntrega}" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="columna-comentario">
+                <h:outputText value="Recoleccion" styleClass="titulo-caja" />
+                <div class="caja-comentario">
+                    <div class="texto-caja">
+                        <h:outputText value="#{rentaUI.comentarioRecoleccion}" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </p:dialog>
+
+    <p:dialog id="dlgComentarioEstado"
+              widgetVar="dlgComentarioEstado"
+              modal="true"
+              width="600"
+              resizable="false"
+              closable="false"
+              showHeader="false"
+              styleClass="dialog-input-custom"
+              appendTo="@(body)">
+        <div class="custom-dialog-header">
+            <h:outputText value="#{rentaUI.tituloDialogoComentario}" />
+        </div>
+        <h:form id="formComentario">
+            <div class="custom-dialog-body">
+
+                <p:inputTextarea value="#{rentaUI.nuevoComentarioTexto}"
+                                 rows="6"
+                                 styleClass="custom-textarea"
+                                 placeholder="Escribe los detalles aquí..." />
+
+                <div class="dialog-btn-container">
+                    <p:commandButton value="Agregar"
+                                     actionListener="#{rentaUI.confirmarCambioConComentario}"
+                                     update=":formDetalle"
+                                     styleClass="btn-black" />
+
+                    <p:commandButton value="Sin detalles"
+                                     actionListener="#{rentaUI.confirmarCambioSinComentario}"
+                                     update=":formDetalle"
+                                     styleClass="btn-black" />
+                </div>
+            </div>
+        </h:form>
+    </p:dialog>
 </h:body>
 </html>

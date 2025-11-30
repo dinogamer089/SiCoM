@@ -135,4 +135,12 @@ public class DelegateRenta {
                                String estado) {
         ServiceLocator.getInstanceRentaDAO().registrarRenta(cliente, detalles, fecha, hora, estado);
     }
+
+    public List<Comentario> obtenerComentarios(Integer idRenta) {
+        return ServiceLocator.getInstanceRentaDAO().obtenerComentarios(idRenta);
+    }
+
+    public void guardarComentario(Comentario comentario) {
+        ServiceLocator.getInstanceRentaDAO().guardarComentario(comentario);
+    }
 }

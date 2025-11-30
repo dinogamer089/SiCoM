@@ -4,11 +4,13 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import mx.avanti.desarollo.persistence.AbstractDAO;
 import mx.desarollo.entity.Cliente;
+import mx.desarollo.entity.Comentario;
 import mx.desarollo.entity.Detallerenta;
 import mx.desarollo.entity.Renta;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Collections;
 import java.util.List;
 
 public class RentaDAO extends AbstractDAO<Renta> {
@@ -197,6 +199,40 @@ public class RentaDAO extends AbstractDAO<Renta> {
                 entityManager.getTransaction().rollback();
             }
             throw e;
+        }
+    }
+
+    /**
+     * Obtiene la lista de comentarios asociados a una renta especifica.
+     * @param idRenta El ID de la renta a consultar.
+     * @return Lista de objetos Comentario.
+     */
+    public List<Comentario> obtenerComentarios(Integer idRenta) {
+        if (idRenta == null) {
+            return Collections.emptyList();
+        }
+
+        try {
+            return entityManager.createQuery(
+                            "SELECT c FROM Comentario c WHERE c.idRenta.id = :idRenta", Comentario.class)
+                    .setParameter("idRenta", idRenta)
+                    .getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
+    }
+
+    public void guardarComentario(Comentario comentario) {
+        try {
+            entityManager.getTransaction().begin();
+            entityManager.persist(comentario);
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            if (entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+            }
+            e.printStackTrace();
         }
     }
 }
