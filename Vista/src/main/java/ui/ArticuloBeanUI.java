@@ -181,8 +181,7 @@ public class ArticuloBeanUI implements Serializable {
                 return;
             }
 
-            // 2 Validar Categoría (CORREGIDO)
-            // Al ser un Objeto/Enum, no usamos .trim(). Solo verificamos si es null.
+            // 2 Validar Categoría
             if (nuevoArticulo.getCategoria() == null) {
                 enviarRespuestaJS("error", "La categoría es obligatoria.");
                 return;
@@ -293,6 +292,37 @@ public class ArticuloBeanUI implements Serializable {
         try {
             if (seleccionada == null) return;
 
+            // --- VALIDACIONES MANUALES PARA MODIFICACION ---
+
+            // 1 Validar Nombre
+            if (seleccionada.getNombre() == null || seleccionada.getNombre().trim().isEmpty()) {
+                articulos = articuloHelper.obtenerTodas();
+                enviarRespuestaJS("error", "El nombre es obligatorio.");
+                return;
+            }
+
+            // 2 Validar Categoría
+            if (seleccionada.getCategoria() == null) {
+                articulos = articuloHelper.obtenerTodas();
+                enviarRespuestaJS("error", "La categoría es obligatoria.");
+                return;
+            }
+
+            // 3 Validar Precio
+            if (seleccionada.getPrecio() == null) {
+                articulos = articuloHelper.obtenerTodas();
+                enviarRespuestaJS("error", "El precio es obligatorio.");
+                return;
+            }
+
+            // 4 Validar Unidades
+            if (seleccionada.getUnidades() == null) {
+                articulos = articuloHelper.obtenerTodas();
+                enviarRespuestaJS("error", "Las unidades son obligatorias.");
+                return;
+            }
+
+            // 5 Imagen (Opcional en modificación)
             if (imagenBytes == null || imagenBytes.length == 0) {
                 var map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
                 byte[] content = (byte[]) map.get("uploadBytes");
@@ -330,17 +360,25 @@ public class ArticuloBeanUI implements Serializable {
 
         } catch (Exception e) {
             e.printStackTrace();
+            articulos = articuloHelper.obtenerTodas();
             enviarRespuestaJS("error", "No se pudo modificar el artículo: " + e.getMessage());
-            FacesContext.getCurrentInstance().validationFailed();
         }
     }
 
+    /**
+     * Metodo actualizado para revertir cambios en memoria si el usuario
+     * modificó campos pero luego decidió cancelar.
+     */
     public void cancelarModificacion() {
+        // Limpia buffers
         this.imagenBytes = null;
         this.imagenMime = null;
         var map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         map.remove("uploadBytes");
         map.remove("uploadMime");
+
+        // Esto arregla que la tabla se quede con datos editados si se da clic en Cancelar
+        articulos = articuloHelper.obtenerTodas();
     }
 
     private void enviarRespuestaJS(String tipo, String mensaje) {
