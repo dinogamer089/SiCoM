@@ -129,4 +129,27 @@ public class ArticuloDAO extends AbstractDAO<Articulo> {
             return null;
         });
     }
+
+    /**
+     * Verifica si existe un artículo con el mismo nombre (normalizado con trim/lower)
+     */
+    public boolean existsByNombre(String nombre) {
+        final String jpql = "SELECT COUNT(a) FROM Articulo a WHERE LOWER(TRIM(a.nombre)) = LOWER(TRIM(:nombre))";
+        Long count = execute(em -> em.createQuery(jpql, Long.class)
+                .setParameter("nombre", nombre)
+                .getSingleResult());
+        return count != null && count > 0;
+    }
+
+    /**
+     * Verifica si existe un artículo con el mismo nombre excluyendo un ID (para la modificacion)
+     */
+    public boolean existsByNombreExcludingId(String nombre, Integer excludeId) {
+        final String jpql = "SELECT COUNT(a) FROM Articulo a WHERE LOWER(TRIM(a.nombre)) = LOWER(TRIM(:nombre)) AND a.id <> :id";
+        Long count = execute(em -> em.createQuery(jpql, Long.class)
+                .setParameter("nombre", nombre)
+                .setParameter("id", excludeId)
+                .getSingleResult());
+        return count != null && count > 0;
+    }
 }

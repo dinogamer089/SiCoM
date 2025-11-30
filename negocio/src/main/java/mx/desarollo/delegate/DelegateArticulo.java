@@ -68,4 +68,18 @@ public class DelegateArticulo {
     public void updateArticulo(Articulo articulo) {
         ServiceLocator.getInstanceArticuloDAO().updateWithImage(articulo);
     }
+
+    /**
+     * Verifica si existe un artículo con el nombre indicado.
+     */
+    public boolean existsArticuloByNombre(String nombre) {
+        return ServiceLocator.getInstanceArticuloDAO().existsByNombre(nombre);
+    }
+
+    /**
+     * Verífica existencia por nombre excluyendo un id (para edición).
+     */
+    public boolean existsArticuloByNombreExcludingId(String nombre, Integer excludeId) {
+        return ServiceLocator.getInstanceArticuloDAO().existsByNombreExcludingId(nombre, excludeId);
+    }
 }

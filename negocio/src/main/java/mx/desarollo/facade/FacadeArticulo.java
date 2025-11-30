@@ -5,6 +5,7 @@ import mx.desarollo.entity.Articulo;
 import mx.desarollo.entity.Imagen;
 
 import java.util.List;
+import java.util.Locale;
 
 public class FacadeArticulo {
 
@@ -43,6 +44,18 @@ public class FacadeArticulo {
      * @Params Objetos de tipo Articulo articulo, Imagen imagen
      */
     public void crearArticuloConImagen(Articulo articulo, Imagen imagen) {
+        if (articulo == null) {
+            throw new IllegalArgumentException("El articulo no puede ser nulo");
+        }
+        String nombre = articulo.getNombre();
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del articulo no puede estar vacio");
+        }
+        // Validación de duplicados por nombre (trim + lower)
+        if (delegateArticulo.existsArticuloByNombre(nombre)) {
+            throw new IllegalArgumentException("Ya existe un articulo con ese nombre");
+        }
+        articulo.setNombre(nombre.trim());
         delegateArticulo.saveArticuloWithImage(articulo, imagen);
     }
 
@@ -73,6 +86,17 @@ public class FacadeArticulo {
     }
 
     public void actualizarArticulo(Articulo articulo) {
+        if (articulo == null || articulo.getId() == null) {
+            throw new IllegalArgumentException("El ID del articulo es requerido para actualizar");
+        }
+        String nombre = articulo.getNombre();
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del articulo no puede estar vacio");
+        }
+        if (delegateArticulo.existsArticuloByNombreExcludingId(nombre, articulo.getId())) {
+            throw new IllegalArgumentException("Ya existe un articulo con ese nombre");
+        }
+        articulo.setNombre(nombre.trim());
         delegateArticulo.updateArticulo(articulo);
     }
 }
