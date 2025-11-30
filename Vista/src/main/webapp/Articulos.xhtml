@@ -32,7 +32,7 @@
             font-family: "FreightText Pro", serif;
         }
 
-        /* TOPBAR */
+        /* ---------- TOPBAR ---------- */
         .topbar {
             background-color: #3D4435;
             color: #C2C8CC;
@@ -461,6 +461,7 @@
             var toast = document.getElementById('toastSimple');
             var message = document.getElementById('toastSimpleMessage');
             if (toast && message) {
+                // Resetear clases base
                 toast.className = 'toast-simple toast-base';
 
                 // Si es error agregar clase roja
@@ -715,7 +716,7 @@
               style="max-width:700px;">
 
         <h:form id="formModificar">
-            <h:inputHidden id="idSel" value="#{articuloUI.seleccionada.id}" />
+            <input type="hidden" id="formModificar:idSel" value="#{articuloUI.seleccionada.id}" />
 
             <div style="max-height: 60vh; overflow-y: auto; padding-right: 10px;">
 
@@ -723,13 +724,11 @@
                               rendered="#{articuloUI.seleccionada != null}">
                     <div class="campo-formulario">
                         <p:outputLabel for="nombreMod" value="Nombre: *" />
-                        <p:inputText id="nombreMod" value="#{articuloUI.seleccionada.nombre}" required="true"
-                                     requiredMessage="El nombre es obligatorio." />
+                        <p:inputText id="nombreMod" value="#{articuloUI.seleccionada.nombre}" />
                     </div>
                     <div class="campo-formulario">
                         <p:outputLabel for="catMod" value="Categoría: *" />
-                        <p:selectOneMenu id="catMod" value="#{articuloUI.seleccionada.categoria}" required="true"
-                                         requiredMessage="La categoria es obligatoria.">
+                        <p:selectOneMenu id="catMod" value="#{articuloUI.seleccionada.categoria}">
                             <f:selectItem itemLabel="Seleccione..." itemValue="#{null}" />
                             <f:selectItem itemLabel="MESA" itemValue="MESA" />
                             <f:selectItem itemLabel="TEXTIL" itemValue="TEXTIL" />
@@ -741,13 +740,11 @@
                     </div>
                     <div class="campo-formulario">
                         <p:outputLabel for="precioMod" value="Precio: *" />
-                        <p:inputNumber id="precioMod" value="#{articuloUI.seleccionada.precio}" decimalPlaces="2" required="true"
-                                       requiredMessage="El precio es obligatorio." minValue="0" />
+                        <p:inputNumber id="precioMod" value="#{articuloUI.seleccionada.precio}" decimalPlaces="2" minValue="0" />
                     </div>
                     <div class="campo-formulario">
                         <p:outputLabel for="unidadesMod" value="Unidades: *" />
-                        <p:inputNumber id="unidadesMod" value="#{articuloUI.seleccionada.unidades}" decimalPlaces="0" required="true"
-                                       requiredMessage="Las unidades son obligatorias." minValue="0" />
+                        <p:inputNumber id="unidadesMod" value="#{articuloUI.seleccionada.unidades}" decimalPlaces="0" minValue="0" />
                     </div>
                     <div class="campo-formulario">
                         <p:outputLabel for="formaMod" value="Forma:" />
