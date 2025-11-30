@@ -1,5 +1,6 @@
 package ui;
 
+import helper.ArticuloHelper;
 import helper.RentaHelper;
 import helper.EmpleadoHelper;
 import jakarta.annotation.PostConstruct;
@@ -7,11 +8,14 @@ import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
+import mx.desarollo.entity.Articulo;
+import mx.desarollo.entity.Detallerenta;
 import mx.desarollo.entity.Renta;
 import org.primefaces.PrimeFaces;
 import mx.desarollo.entity.Empleado;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +35,9 @@ public class RentaBeanUI implements Serializable {
     private List<Empleado> listaEmpleados;
     private Integer idEmpleadoSeleccionado;
 
+    private List<Articulo> listaArticulosDisponibles;
+    private ArticuloHelper articuloHelper;
+
     private static final List<String> ESTADOS_ORDENADOS = new ArrayList<>();
     static {
         ESTADOS_ORDENADOS.add("Aprobada");
@@ -41,11 +48,13 @@ public class RentaBeanUI implements Serializable {
         ESTADOS_ORDENADOS.add("Pendiente a recoleccion");
         ESTADOS_ORDENADOS.add("En recoleccion");
         ESTADOS_ORDENADOS.add("Finalizada");
+        ESTADOS_ORDENADOS.add("Cancelada");
     }
 
     public RentaBeanUI() {
         rentaHelper = new RentaHelper();
         empleadoHelper = new EmpleadoHelper();
+        articuloHelper = new ArticuloHelper();
     }
 
     @PostConstruct
@@ -139,10 +148,10 @@ public class RentaBeanUI implements Serializable {
             this.estadoSiguiente = nuevoEstado;
             this.idEmpleadoSeleccionado = null;
 
-            this.listaEmpleados = empleadoHelper.getAllEmpleadosDisponibles();
+            this.listaEmpleados = empleadoHelper.getAllEmpleados();
 
             if (listaEmpleados == null || listaEmpleados.isEmpty()) {
-                mostrarMensaje(FacesMessage.SEVERITY_WARN, "Aviso", "No hay empleados disponibles en este momento.");
+                mostrarMensaje(FacesMessage.SEVERITY_WARN, "Aviso", "No hay empleados en este momento.");
                 cargarRentaSeleccionada();
                 return;
             }
@@ -187,7 +196,26 @@ public class RentaBeanUI implements Serializable {
 
     public void cancelarAsignacion() {
         this.idEmpleadoSeleccionado = null;
+        cargarRentaSeleccionada();
+    }
 
+    public void guardarModificacion() {
+        try {
+            if (rentaSeleccionada != null) {
+                rentaHelper.actualizarRenta(rentaSeleccionada);
+
+
+                mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Datos de la renta actualizados.");
+                cargarRentaSeleccionada();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron guardar los cambios: " + e.getMessage());
+            FacesContext.getCurrentInstance().validationFailed();
+        }
+    }
+
+    public void cancelarModificacion() {
         cargarRentaSeleccionada();
     }
 
@@ -197,6 +225,83 @@ public class RentaBeanUI implements Serializable {
 
     public void obtenerTodasLasRentas() {
         rentas = rentaHelper.obtenerTodasRentas();
+    }
+
+    public void cargarArticulosDisponibles() {
+        this.listaArticulosDisponibles = articuloHelper.obtenerTodas();
+    }
+
+    public void recalcularTotal() {
+        if (rentaSeleccionada == null || rentaSeleccionada.getDetallesRenta() == null) return;
+
+        BigDecimal total = BigDecimal.ZERO;
+        for (Detallerenta det : rentaSeleccionada.getDetallesRenta()) {
+            BigDecimal precio = det.getIdarticulo().getPrecio();
+            BigDecimal cantidad = new BigDecimal(det.getCantidad());
+            BigDecimal subtotal = precio.multiply(cantidad);
+
+            det.setPrecioTotal(subtotal);
+            det.setPrecioUnitario(precio);
+
+            total = total.add(subtotal);
+        }
+        rentaSeleccionada.setTotal(total);
+    }
+
+    public void agregarArticulo(Articulo articulo) {
+        if (rentaSeleccionada == null) return;
+
+        boolean existe = false;
+        for (Detallerenta det : rentaSeleccionada.getDetallesRenta()) {
+            if (det.getIdarticulo().getId().equals(articulo.getId())) {
+                det.setCantidad(det.getCantidad() + 1);
+                existe = true;
+                break;
+            }
+        }
+
+        if (!existe) {
+            Detallerenta nuevoDetalle = new Detallerenta();
+            nuevoDetalle.setIdrenta(rentaSeleccionada);
+            nuevoDetalle.setIdarticulo(articulo);
+            nuevoDetalle.setCantidad(1);
+            nuevoDetalle.setPrecioUnitario(articulo.getPrecio());
+            nuevoDetalle.setPrecioTotal(articulo.getPrecio());
+
+            rentaSeleccionada.getDetallesRenta().add(nuevoDetalle);
+        }
+
+        recalcularTotal();
+        mostrarMensaje(FacesMessage.SEVERITY_INFO, "Agregado", articulo.getNombre() + " agregado a la lista temporal.");
+    }
+
+    public void quitarDetalle(Detallerenta detalle) {
+        rentaSeleccionada.getDetallesRenta().remove(detalle);
+        recalcularTotal();
+    }
+
+    public void guardarCambiosArticulos() {
+        try {
+            rentaHelper.actualizarRenta(rentaSeleccionada);
+
+            cargarRentaSeleccionada();
+            mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Lista de artículos actualizada correctamente.");
+
+            PrimeFaces.current().executeScript("PF('dlgModificarArticulos').hide();");
+            PrimeFaces.current().ajax().update("formDetalle");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo guardar: " + e.getMessage());
+        }
+    }
+
+    public List<Articulo> getListaArticulosDisponibles() {
+        return listaArticulosDisponibles;
+    }
+
+    public void setListaArticulosDisponibles(List<Articulo> listaArticulosDisponibles) {
+        this.listaArticulosDisponibles = listaArticulosDisponibles;
     }
 
     public String seleccionarRenta(Renta renta) {
