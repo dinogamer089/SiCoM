@@ -1,11 +1,11 @@
 ﻿<?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html>
-<html  xmlns="http://www.w3.org/1999/xhtml"
-       xmlns:h="http://xmlns.jcp.org/jsf/html"
-       xmlns:f="http://xmlns.jcp.org/jsf/core"
-       xmlns:ui="http://java.sun.com/jsf/facelets"
-       xmlns:p="http://primefaces.org/ui"
-       xml:lang="es" lang="es">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xml:lang="es" lang="es">
 
 <f:metadata>
     <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
@@ -272,19 +272,27 @@
             background: #f9f1e7 !important;
             color: #333 !important;
             border: 1px solid #ccc !important;
-            border-left: 4px solid #5cb85c !important;
+            border-left: 4px solid #5cb85c !important; /* Verde por defecto */
             z-index: 9999 !important;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
             font-family: "FreightText Pro", serif !important;
             border-radius: 4px !important;
         }
+
+        /* CLASE NUEVA PARA EL ERROR ROJO */
+        .toast-error {
+            border-left: 4px solid #d9534f !important; /* Rojo */
+        }
+
         .toast-simple {
             padding: 15px 20px !important;
             font-size: 1.1em !important;
             min-width: 300px !important;
             max-width: 400px !important;
+            font-weight: bold !important; /* NEGRITA */
         }
 
+        /* CONFIRM DIALOGS */
         .ui-confirm-dialog.ui-widget-content,
         .ui-confirm-dialog .ui-dialog-titlebar {
             background-color: #3D4435 !important;
@@ -420,6 +428,24 @@
             </h:panelGroup>
         </h:form>
 
+        <script type="text/javascript">
+            //<![CDATA[
+            if (!window.articulosData) { window.articulosData = []; } else { window.articulosData.length = 0; }
+            (function(){
+                window.articulosData = [];
+            })();
+            //]]>
+        </script>
+        <ui:repeat value="#{articuloUI.articulos}" var="artJs">
+            <script type="text/javascript">
+                //<![CDATA[
+                if (window.articulosData) {
+                    window.articulosData.push({ id: #{artJs.id}, nombre: "#{artJs.nombre}".toLowerCase() });
+                }
+                //]]>
+            </script>
+        </ui:repeat>
+
         <div id="toastSimple" class="toast-simple toast-base">
             <span id="toastSimpleMessage"></span>
         </div>
@@ -428,16 +454,61 @@
     <script type="text/javascript">
         //<![CDATA[
         var simpleToastTimer;
-        function mostrarToastSimple(mensaje) {
+
+        // Mostrar Toast con soporte para Error (Rojo)
+        function mostrarToastSimple(mensaje, esError) {
             clearTimeout(simpleToastTimer);
             var toast = document.getElementById('toastSimple');
             var message = document.getElementById('toastSimpleMessage');
             if (toast && message) {
+                // Resetear clases base
+                toast.className = 'toast-simple toast-base';
+
+                // Si es error agregar clase roja
+                if (esError) {
+                    toast.classList.add('toast-error');
+                }
+
                 message.innerText = mensaje;
                 toast.style.display = 'block';
                 simpleToastTimer = setTimeout(function () {
                     toast.style.display = 'none';
                 }, 3000);
+            }
+        }
+
+        // Limpiar visualmente el input file y el span de nombre
+        function limpiarInputFileAlta() {
+            var el = document.getElementById('imagenUpload');
+            var span = document.getElementById('nombreArchivoAlta');
+            if (el) el.value = '';
+            if (span) span.innerText = '';
+        }
+
+        // Manejador Genérico de Respuesta (Alta, Modificar, Eliminar)
+        function handleRequest(xhr, status, args, dialogVar) {
+            // Si falló validación estándar de JSF (aunque quitamos required, por si acaso)
+            if (args.validationFailed) {
+                var msg = args.mensajeRespuesta || "Faltan datos obligatorios o inválidos";
+                mostrarToastSimple(msg, true);
+                return;
+            }
+
+            // Procesar respuesta enviada por el Bean
+            if (args.tipoRespuesta) {
+                if (args.tipoRespuesta === 'exito') {
+                    mostrarToastSimple(args.mensajeRespuesta, false);
+
+                    // Si hay un diálogo asociado cerrarlo
+                    if(dialogVar) {
+                        PF(dialogVar).hide();
+                        if(dialogVar === 'dlgAlta') {
+                            limpiarInputFileAlta();
+                        }
+                    }
+                } else {
+                    mostrarToastSimple(args.mensajeRespuesta, true);
+                }
             }
         }
         //]]>
@@ -453,24 +524,18 @@
               contentStyle="max-height:85vh; overflow-y:auto;">
 
         <h:form id="formAlta">
-            <p:messages id="messages" showDetail="true" closable="true" />
-
             <div class="ui-fluid form-compacto dialog-form">
 
                 <div class="campo-formulario">
                     <p:outputLabel for="nombre" value="Nombre: *" />
                     <p:inputText id="nombre"
-                                 value="#{articuloUI.nuevoArticulo.nombre}"
-                                 required="true"
-                                 requiredMessage="El nombre es obligatorio." />
+                                 value="#{articuloUI.nuevoArticulo.nombre}" />
                 </div>
 
                 <div class="campo-formulario">
                     <p:outputLabel for="categoria" value="Categoría: *" />
                     <p:selectOneMenu id="categoria"
-                                     value="#{articuloUI.nuevoArticulo.categoria}"
-                                     required="true"
-                                     requiredMessage="La categoria es obligatoria.">
+                                     value="#{articuloUI.nuevoArticulo.categoria}">
                         <f:selectItem itemLabel="Seleccione..." itemValue="#{null}" />
                         <f:selectItem itemLabel="MESA" itemValue="MESA" />
                         <f:selectItem itemLabel="TEXTIL" itemValue="TEXTIL" />
@@ -486,8 +551,6 @@
                     <p:inputNumber id="precio"
                                    value="#{articuloUI.nuevoPrecio}"
                                    decimalPlaces="2"
-                                   required="true"
-                                   requiredMessage="El precio es obligatorio."
                                    minValue="0" />
                 </div>
 
@@ -496,8 +559,6 @@
                     <p:inputNumber id="unidades"
                                    value="#{articuloUI.nuevoArticulo.unidades}"
                                    decimalPlaces="0"
-                                   required="true"
-                                   requiredMessage="Las unidades son obligatorias."
                                    minValue="0" />
                 </div>
 
@@ -547,7 +608,6 @@
                                         if(span) span.innerText = "";
                                         return;
                                     }
-                                    // Actualizar nombre en pantalla
                                     if(span) span.innerText = el.files[0].name;
 
                                     var fd = new FormData();
@@ -569,26 +629,41 @@
                 </div>
 
             </div> <div class="botones-dialogo">
+
             <p:commandButton value="Guardar"
                              action="#{articuloUI.guardarNuevo}"
                              process="@form"
-                             update=":articulosForm formAlta:messages"
+                             update=":articulosForm formAlta"
                              ajax="true"
                              styleClass="btn"
-                             oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('dlgAlta').hide(); mostrarToastSimple('¡Artículo guardado exitosamente!'); }" />
+                             onclick="return (function(){
+                                     var el = document.getElementById('formAlta:nombre');
+                                     if (!el) return true;
+                                     var val = (el.value || '').trim().toLowerCase();
+                                     var dup = (window.articulosData||[]).some(function(a){ return a &amp;&amp; a.nombre === val; });
+                                     if (dup) {
+                                         mostrarToastSimple('Ya existe un articulo con ese nombre', true);
+                                         return false;
+                                     }
+                                     return true;
+                                 })();"
+                             oncomplete="handleRequest(xhr, status, args, 'dlgAlta');" />
 
             <p:commandButton value="Limpiar"
                              process="@this"
                              update="formAlta"
                              actionListener="#{articuloUI.cancelarAlta}"
                              styleClass="btn"
-                             style="margin-left: 10px;" />
+                             style="margin-left: 10px;"
+                             oncomplete="limpiarInputFileAlta();" />
 
             <p:commandButton value="Cancelar"
-                             type="button"
+                             actionListener="#{articuloUI.cancelarAlta}"
+                             process="@this"
+                             update="formAlta"
                              styleClass="btn"
                              style="margin-left: 10px;"
-                             onclick="PF('dlgAlta').hide();" />
+                             oncomplete="PF('dlgAlta').hide(); limpiarInputFileAlta();" />
         </div>
         </h:form>
     </p:dialog>
@@ -601,10 +676,6 @@
               resizable="false">
 
         <h:form id="formEliminar">
-            <p:messages id="messagesEliminar"
-                        showDetail="true"
-                        closable="true" />
-
             <div style="padding: 10px; font-family:'FreightText Pro', serif;">
                 <p style="margin:0 0 10px 0; color:#a94442;">
                     <strong>Advertencia:</strong>
@@ -620,11 +691,11 @@
             <p:commandButton value="Eliminar"
                              action="#{articuloUI.eliminarSeleccionada}"
                              process="@form"
-                             update=":articulosForm :accionesForm formEliminar:messagesEliminar"
+                             update=":articulosForm :accionesForm"
                              ajax="true"
                              styleClass="btn"
                              style="margin-top: 20px;"
-                             oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('dlgEliminar').hide(); mostrarToastSimple('Artículo eliminado'); }" />
+                             oncomplete="handleRequest(xhr, status, args, 'dlgEliminar');" />
 
             <p:commandButton value="Cancelar"
                              type="button"
@@ -645,7 +716,7 @@
               style="max-width:700px;">
 
         <h:form id="formModificar">
-            <p:messages id="msgsMod" showDetail="true" closable="true" />
+            <input type="hidden" id="formModificar:idSel" value="#{articuloUI.seleccionada.id}" />
 
             <div style="max-height: 60vh; overflow-y: auto; padding-right: 10px;">
 
@@ -653,13 +724,11 @@
                               rendered="#{articuloUI.seleccionada != null}">
                     <div class="campo-formulario">
                         <p:outputLabel for="nombreMod" value="Nombre: *" />
-                        <p:inputText id="nombreMod" value="#{articuloUI.seleccionada.nombre}" required="true"
-                                     requiredMessage="El nombre es obligatorio." />
+                        <p:inputText id="nombreMod" value="#{articuloUI.seleccionada.nombre}" />
                     </div>
                     <div class="campo-formulario">
                         <p:outputLabel for="catMod" value="Categoría: *" />
-                        <p:selectOneMenu id="catMod" value="#{articuloUI.seleccionada.categoria}" required="true"
-                                         requiredMessage="La categoria es obligatoria.">
+                        <p:selectOneMenu id="catMod" value="#{articuloUI.seleccionada.categoria}">
                             <f:selectItem itemLabel="Seleccione..." itemValue="#{null}" />
                             <f:selectItem itemLabel="MESA" itemValue="MESA" />
                             <f:selectItem itemLabel="TEXTIL" itemValue="TEXTIL" />
@@ -671,13 +740,11 @@
                     </div>
                     <div class="campo-formulario">
                         <p:outputLabel for="precioMod" value="Precio: *" />
-                        <p:inputNumber id="precioMod" value="#{articuloUI.seleccionada.precio}" decimalPlaces="2" required="true"
-                                       requiredMessage="El precio es obligatorio." minValue="0" />
+                        <p:inputNumber id="precioMod" value="#{articuloUI.seleccionada.precio}" decimalPlaces="2" minValue="0" />
                     </div>
                     <div class="campo-formulario">
                         <p:outputLabel for="unidadesMod" value="Unidades: *" />
-                        <p:inputNumber id="unidadesMod" value="#{articuloUI.seleccionada.unidades}" decimalPlaces="0" required="true"
-                                       requiredMessage="Las unidades son obligatorias." minValue="0" />
+                        <p:inputNumber id="unidadesMod" value="#{articuloUI.seleccionada.unidades}" decimalPlaces="0" minValue="0" />
                     </div>
                     <div class="campo-formulario">
                         <p:outputLabel for="formaMod" value="Forma:" />
@@ -719,8 +786,21 @@
                     <p:commandButton value="Guardar Cambios"
                                      action="#{articuloUI.guardarModificacion}"
                                      process=":formModificar"
-                                     update=":articulosForm :formModificar:msgsMod"
-                                     oncomplete="if (args &amp;&amp; !args.validationFailed) { PF('dlgModificar').hide(); mostrarToastSimple('Artículo actualizado'); }"
+                                     update=":articulosForm"
+                                     onclick="return (function(){
+                                             var el = document.getElementById('formModificar:nombreMod');
+                                             var idEl = document.getElementById('formModificar:idSel');
+                                             if (!el) return true;
+                                             var val = (el.value || '').trim().toLowerCase();
+                                             var excludeId = idEl ? idEl.value : null;
+                                             var dup = (window.articulosData||[]).some(function(a){ return a &amp;&amp; a.nombre === val &amp;&amp; (excludeId==null || String(a.id) !== String(excludeId)); });
+                                             if (dup) {
+                                                 mostrarToastSimple('Ya existe un articulo con ese nombre', true);
+                                                 return false;
+                                             }
+                                             return true;
+                                         })();"
+                                     oncomplete="handleRequest(xhr, status, args, 'dlgModificar');"
                                      styleClass="btn">
                         <p:confirm header="Confirmación"
                                    message="¿Está seguro de que desea guardar los cambios en este artículo?"
@@ -750,7 +830,6 @@
                                 if(spanMod) spanMod.innerText = '';
                                 return;
                             }
-                            // Actualizar nombre
                             if(spanMod) spanMod.innerText = elMod.files[0].name;
 
                             var fd = new FormData();

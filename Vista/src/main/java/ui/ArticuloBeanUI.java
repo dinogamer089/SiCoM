@@ -9,12 +9,12 @@ import jakarta.inject.Named;
 import mx.desarollo.entity.Articulo;
 import mx.desarollo.entity.Imagen;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.PrimeFaces;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Base64;
 import java.util.List;
-import java.io.Serializable; import java.util.List;
 
 @Named("articuloUI")
 @SessionScoped
@@ -136,8 +136,7 @@ public class ArticuloBeanUI implements Serializable {
         try {
             var file = event.getFile();
             if (file == null || file.getContent() == null || file.getContent().length == 0) {
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "El archivo está vacío"));
+                enviarRespuestaJS("error", "El archivo está vacío");
                 return;
             }
 
@@ -154,22 +153,18 @@ public class ArticuloBeanUI implements Serializable {
             boolean extOk = ext.equals("jpg") || ext.equals("jpeg") || ext.equals("png");
 
             if (!mimeOk || !extOk) {
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Formato no permitido",
-                                "Solo se acepta JPG o PNG."));
+                enviarRespuestaJS("error", "Solo se acepta JPG o PNG.");
                 return;
             }
 
             this.imagenBytes = file.getContent();
             this.imagenMime = (ct.startsWith("image/jp")) ? "image/jpeg" : "image/png";
 
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "OK", "Imagen cargada: " + name));
+            enviarRespuestaJS("exito", "Imagen cargada: " + name);
 
         } catch (Exception ex) {
             ex.printStackTrace();
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo procesar la imagen"));
+            enviarRespuestaJS("error", "No se pudo procesar la imagen");
         }
     }
 
@@ -180,13 +175,31 @@ public class ArticuloBeanUI implements Serializable {
      */
     public void guardarNuevo() {
         try {
-            if (nuevoPrecio == null) {
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "El precio es requerido"));
-                FacesContext.getCurrentInstance().validationFailed();
+            // 1 Validar Nombre
+            if (nuevoArticulo.getNombre() == null || nuevoArticulo.getNombre().trim().isEmpty()) {
+                enviarRespuestaJS("error", "El nombre es obligatorio.");
                 return;
             }
-            // Si no hubo evento, leer desde sesión (cargado por UploadImageServlet)
+
+            // 2 Validar Categoría
+            if (nuevoArticulo.getCategoria() == null) {
+                enviarRespuestaJS("error", "La categoría es obligatoria.");
+                return;
+            }
+
+            // 3 Validar Precio
+            if (nuevoPrecio == null) {
+                enviarRespuestaJS("error", "El precio es obligatorio.");
+                return;
+            }
+
+            // 4 Validar Unidades
+            if (nuevoArticulo.getUnidades() == null) {
+                enviarRespuestaJS("error", "Las unidades son obligatorias.");
+                return;
+            }
+
+            // 5 Validar Imagen
             if (imagenBytes == null || imagenBytes.length == 0 || imagenMime == null) {
                 var map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
                 byte[] content = (byte[]) map.get("uploadBytes");
@@ -197,12 +210,13 @@ public class ArticuloBeanUI implements Serializable {
                     this.imagenMime = (ct != null && !ct.isBlank()) ? ct.toLowerCase() : (looksJpeg ? "image/jpeg" : "image/png");
                 }
             }
+
             if (imagenBytes == null || imagenBytes.length == 0 || imagenMime == null) {
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Debe cargar una imagen JPG/PNG"));
-                FacesContext.getCurrentInstance().validationFailed();
+                enviarRespuestaJS("error", "Es obligatorio subir una imagen (JPG/PNG).");
                 return;
             }
+
+            // --- Guardado ---
 
             nuevoArticulo.setPrecio(nuevoPrecio);
 
@@ -210,27 +224,22 @@ public class ArticuloBeanUI implements Serializable {
             imagen.setDatos(imagenBytes);
             imagen.setMime(imagenMime);
 
-            // Persistimos en una sola transacción (helper->DAO.saveWithImage)
             articuloHelper.guardarConImagen(nuevoArticulo, imagen);
 
             // refrescar tabla
             articulos = articuloHelper.obtenerTodas();
 
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Artículo creado correctamente"));
-
-            // limpiar buffers/form
             cancelarAlta();
-            // limpiar archivo simple
+
             var map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
             map.remove("uploadBytes");
             map.remove("uploadMime");
 
+            enviarRespuestaJS("exito", "¡Artículo creado correctamente!");
+
         } catch (Exception e) {
             e.printStackTrace();
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo guardar el artículo"));
-            FacesContext.getCurrentInstance().validationFailed();
+            enviarRespuestaJS("error", "Ocurrió un error interno al guardar.");
         }
     }
 
@@ -244,6 +253,10 @@ public class ArticuloBeanUI implements Serializable {
         this.nuevoPrecio = null;
         this.imagenBytes = null;
         this.imagenMime = null;
+
+        var map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+        map.remove("uploadBytes");
+        map.remove("uploadMime");
     }
 
     /**
@@ -253,12 +266,10 @@ public class ArticuloBeanUI implements Serializable {
      *         o el articulo esta siendo referenciado por rentas/cotizaciones.
      */
     public void eliminarSeleccionada() {
-        FacesContext context = FacesContext.getCurrentInstance();
         try {
             if (seleccionada == null || seleccionada.getId() == null) {
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
-                        "Seleccione un artículo", "Debe seleccionar un artículo para eliminar"));
-                context.validationFailed();
+                enviarRespuestaJS("error", "Debe seleccionar un artículo para eliminar");
+                FacesContext.getCurrentInstance().validationFailed();
                 return;
             }
 
@@ -268,13 +279,12 @@ public class ArticuloBeanUI implements Serializable {
             articulos = articuloHelper.obtenerTodas();
             seleccionada = null;
 
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-                    "Eliminado", "Artículo eliminado correctamente"));
+            enviarRespuestaJS("exito", "Artículo eliminado correctamente");
+
         } catch (Exception e) {
             e.printStackTrace();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "No se pudo eliminar", "Puede estar referenciado por rentas o cotizaciones"));
-            context.validationFailed();
+            enviarRespuestaJS("error", "No se pudo eliminar. Puede estar referenciado por rentas o cotizaciones");
+            FacesContext.getCurrentInstance().validationFailed();
         }
     }
 
@@ -282,6 +292,37 @@ public class ArticuloBeanUI implements Serializable {
         try {
             if (seleccionada == null) return;
 
+            // --- VALIDACIONES MANUALES PARA MODIFICACION ---
+
+            // 1 Validar Nombre
+            if (seleccionada.getNombre() == null || seleccionada.getNombre().trim().isEmpty()) {
+                articulos = articuloHelper.obtenerTodas();
+                enviarRespuestaJS("error", "El nombre es obligatorio.");
+                return;
+            }
+
+            // 2 Validar Categoría
+            if (seleccionada.getCategoria() == null) {
+                articulos = articuloHelper.obtenerTodas();
+                enviarRespuestaJS("error", "La categoría es obligatoria.");
+                return;
+            }
+
+            // 3 Validar Precio
+            if (seleccionada.getPrecio() == null) {
+                articulos = articuloHelper.obtenerTodas();
+                enviarRespuestaJS("error", "El precio es obligatorio.");
+                return;
+            }
+
+            // 4 Validar Unidades
+            if (seleccionada.getUnidades() == null) {
+                articulos = articuloHelper.obtenerTodas();
+                enviarRespuestaJS("error", "Las unidades son obligatorias.");
+                return;
+            }
+
+            // 5 Imagen (Opcional en modificación)
             if (imagenBytes == null || imagenBytes.length == 0) {
                 var map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
                 byte[] content = (byte[]) map.get("uploadBytes");
@@ -309,20 +350,39 @@ public class ArticuloBeanUI implements Serializable {
             articuloHelper.actualizar(seleccionada);
             articulos = articuloHelper.obtenerTodas();
 
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Artículo modificado correctamente"));
-
             this.imagenBytes = null;
             this.imagenMime = null;
             var map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
             map.remove("uploadBytes");
             map.remove("uploadMime");
 
+            enviarRespuestaJS("exito", "Artículo modificado correctamente");
+
         } catch (Exception e) {
             e.printStackTrace();
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo modificar el artículo: " + e.getMessage()));
-            FacesContext.getCurrentInstance().validationFailed();
+            articulos = articuloHelper.obtenerTodas();
+            enviarRespuestaJS("error", "No se pudo modificar el artículo: " + e.getMessage());
         }
+    }
+
+    /**
+     * Metodo actualizado para revertir cambios en memoria si el usuario
+     * modificó campos pero luego decidió cancelar.
+     */
+    public void cancelarModificacion() {
+        // Limpia buffers
+        this.imagenBytes = null;
+        this.imagenMime = null;
+        var map = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+        map.remove("uploadBytes");
+        map.remove("uploadMime");
+
+        // Esto arregla que la tabla se quede con datos editados si se da clic en Cancelar
+        articulos = articuloHelper.obtenerTodas();
+    }
+
+    private void enviarRespuestaJS(String tipo, String mensaje) {
+        PrimeFaces.current().ajax().addCallbackParam("tipoRespuesta", tipo);
+        PrimeFaces.current().ajax().addCallbackParam("mensajeRespuesta", mensaje);
     }
 }
