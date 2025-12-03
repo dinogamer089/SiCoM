@@ -380,13 +380,6 @@ public class RentaBeanUI implements Serializable {
         PrimeFaces.current().executeScript("PF('dlgComentarioEstado').hide();");
     }
 
-    public void confirmarCambioSinComentario() {
-        rentaSeleccionada.setEstado(this.estadoPendienteDeGuardar);
-        actualizarEstadoRenta();
-
-        PrimeFaces.current().executeScript("PF('dlgComentarioEstado').hide();");
-    }
-
     public List<Articulo> getListaArticulosDisponibles() {
         return listaArticulosDisponibles;
     }
