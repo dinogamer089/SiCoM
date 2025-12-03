@@ -41,4 +41,8 @@ public class ServiceLocator {
     public static MovimientoAlmacenDAO getInstanceMovimientoAlmacenDAO() {
         return new MovimientoAlmacenDAO(getEntityManager());
     }
+
+    public static ComentarioDAO getInstanceComentarioDAO() {
+        return new ComentarioDAO(getEntityManager());
+    }
 }

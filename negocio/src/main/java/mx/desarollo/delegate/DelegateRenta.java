@@ -137,10 +137,10 @@ public class DelegateRenta {
     }
 
     public List<Comentario> obtenerComentarios(Integer idRenta) {
-        return ServiceLocator.getInstanceRentaDAO().obtenerComentarios(idRenta);
+        return ServiceLocator.getInstanceComentarioDAO().obtenerComentarios(idRenta);
     }
 
     public void guardarComentario(Comentario comentario) {
-        ServiceLocator.getInstanceRentaDAO().guardarComentario(comentario);
+        ServiceLocator.getInstanceComentarioDAO().guardarComentario(comentario);
     }
 }
