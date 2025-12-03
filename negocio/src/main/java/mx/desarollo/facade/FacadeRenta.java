@@ -64,4 +64,8 @@ public class FacadeRenta {
     public void guardarComentario(Comentario comentario) {
         delegateRenta.guardarComentario(comentario);
     }
+
+    public void actualizarRentaConStock(Renta renta, LocalDate fechaAnterior) throws Exception {
+        delegateRenta.actualizarRentaConStock(renta, fechaAnterior);
+    }
 }

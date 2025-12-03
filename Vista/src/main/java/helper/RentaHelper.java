@@ -4,6 +4,7 @@ import mx.desarollo.entity.Comentario;
 import mx.desarollo.entity.Renta;
 import mx.desarollo.integration.ServiceFacadeLocator;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -145,5 +146,12 @@ public class RentaHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void actualizarRentaConStock(Renta renta, LocalDate fechaAnterior) throws Exception {
+        System.out.println("=== RentaHelper.actualizarRenta() ===");
+        if (renta == null) throw new Exception("La renta es nula");
+
+        ServiceFacadeLocator.getInstanceFacadeRenta().actualizarRentaConStock(renta, fechaAnterior);
     }
 }

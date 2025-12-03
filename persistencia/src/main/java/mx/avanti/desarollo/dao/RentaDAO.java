@@ -199,5 +199,87 @@ public class RentaDAO extends AbstractDAO<Renta> {
             throw e;
         }
     }
+
+    public void actualizarRentaConStock(Renta renta, LocalDate fechaAnterior) throws Exception {
+        try {
+            entityManager.getTransaction().begin();
+
+            boolean cambioFecha = !renta.getFecha().equals(fechaAnterior);
+
+            List<Detallerenta> detallesEnBD = entityManager.createQuery(
+                            "SELECT d FROM Detallerenta d WHERE d.idrenta.id = :idRenta", Detallerenta.class)
+                    .setParameter("idRenta", renta.getId())
+                    .getResultList();
+
+            List<Integer> idsEnVista = new ArrayList<>();
+            for (Detallerenta d : renta.getDetallesRenta()) {
+                if (d.getId() != null) {
+                    idsEnVista.add(d.getId());
+                }
+            }
+
+            for (Detallerenta dbDet : detallesEnBD) {
+                if (!idsEnVista.contains(dbDet.getId())) {
+                    if (dbDet.getIdarticulo() != null) {
+                        actualizarStockDiario(
+                                dbDet.getIdarticulo().getId(),
+                                fechaAnterior,
+                                -dbDet.getCantidad()
+                        );
+                    }
+
+                    entityManager.remove(dbDet);
+                }
+            }
+
+            for (Detallerenta det : renta.getDetallesRenta()) {
+                if (det.getIdarticulo() == null) continue;
+
+                Integer idArticulo = det.getIdarticulo().getId();
+                int nuevaCantidad = det.getCantidad();
+                int viejaCantidad = 0;
+
+                if (det.getId() != null) {
+                    for (Detallerenta bdItem : detallesEnBD) {
+                        if (bdItem.getId().equals(det.getId())) {
+                            viejaCantidad = bdItem.getCantidad();
+                            break;
+                        }
+                    }
+                }
+
+                if (cambioFecha) {
+                    if (viejaCantidad > 0) {
+                        actualizarStockDiario(idArticulo, fechaAnterior, -viejaCantidad);
+                    }
+                    validarDisponibilidad(idArticulo, renta.getFecha(), det.getIdarticulo().getUnidades(), nuevaCantidad, det.getIdarticulo().getNombre());
+                    actualizarStockDiario(idArticulo, renta.getFecha(), nuevaCantidad);
+                }
+                else {
+                    int diferencia = nuevaCantidad - viejaCantidad;
+                    if (diferencia != 0) {
+                        if (diferencia > 0) {
+                            validarDisponibilidad(idArticulo, renta.getFecha(), det.getIdarticulo().getUnidades(), diferencia, det.getIdarticulo().getNombre());
+                        }
+                        actualizarStockDiario(idArticulo, renta.getFecha(), diferencia);
+                    }
+                }
+            }
+
+            entityManager.merge(renta);
+
+            if (renta.getIdCliente() != null) {
+                entityManager.merge(renta.getIdCliente());
+            }
+
+            entityManager.getTransaction().commit();
+
+        } catch (Exception e) {
+            if (entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+            }
+            throw e;
+        }
+    }
 }
 
