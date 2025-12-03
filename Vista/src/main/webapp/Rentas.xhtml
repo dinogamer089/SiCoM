@@ -16,8 +16,6 @@
         <f:event type="preRenderView" listener="#{rentaUI.obtenerTodasLasRentas}" />
     </f:metadata>
 
-    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style type="text/css">
         @font-face {
             font-family: "Minerva Modern";
@@ -33,7 +31,6 @@
             background: #E7D9CB;
         }
 
-        /* TOPBAR */
         .topbar {
             background-color: #3D4435;
             color: #C2C8CC;
@@ -68,52 +65,10 @@
             text-decoration: underline;
         }
 
-        /* Estilos para imágenes */
-        .topbar img, .topbar-icon {
+        .topbar img {
             width: 20px;
             height: 20px;
         }
-
-        /* DROPDOWN MENU */
-        .dropdown {
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background-color: #f9f9f9;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1000;
-            border-radius: 4px;
-        }
-
-        .dropdown-content a {
-            color: #333 !important;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-            text-align: left;
-            font-style: normal;
-            font-size: 14px;
-        }
-
-        .dropdown-content a:hover {
-            background-color: #ddd;
-            text-decoration: none;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
 
         .content {
             padding: 20px 60px;
@@ -122,7 +77,6 @@
 
         .title {
             font-size: 26px;
-            margin-bottom: 20px;
             color: #000000;
         }
 
@@ -185,29 +139,74 @@
             margin-right: 15px;
         }
 
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .filters-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* DROPDOWN MENU */
+        .dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border-radius: 4px;
+        }
+
+        .dropdown-content a {
+            color: #333 !important;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            font-style: normal;
+            font-size: 14px;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+            text-decoration: none;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
     </style>
 </h:head>
 <h:body>
-    <f:metadata>
-        <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
-    </f:metadata>
-
     <div class="topbar">
         <div class="topbar-left">
-            <img src="#{request.contextPath}/resources/edicion.png" alt="Empleados" class="topbar-icon" />
-            <a href="#{request.contextPath}/AdminEmpleados.xhtml">Empleados</a>
+            <img src="resources/edicion.png" alt="Empleados" class="topbar-icon" />
+            <a href="AdminEmpleados.xhtml">Empleados</a>
         </div>
-
         <div class="topbar-center">
-            <a href="principalAdministrador.xhtml"> EVENTOS CAMPESTRE</a><br />
+            <a href="principalAdministrador.xhtml">EVENTOS CAMPESTRE</a><br />
+            <a href="#">Inventario</a>
             <a href="Articulos.xhtml">Artículos</a>
-            <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
             <a href="Cotizaciones.xhtml">Cotizaciones</a>
             <a href="Rentas.xhtml">Rentas</a>
-            <a href="Dashboard.xhtml">Informes</a>
-            <a href="TarjetaAlmacen.xhtml">Inventario</a>
+            <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
         </div>
-
         <div class="topbar-right">
             <h:form style="margin:0; padding:0;">
                 <div class="dropdown">
@@ -227,44 +226,55 @@
     </div>
 
     <div class="content">
-        <h1 class="title">Rentas</h1>
-
         <h:form id="rentasForm">
             <p:growl id="messages" showDetail="true" life="3000"/>
 
-            <div class="rentas-list">
+            <div class="header-container">
+                <h1 class="title">Rentas</h1>
 
-                <h:panelGroup rendered="#{not empty rentaUI.rentas}">
-                    <ui:repeat value="#{rentaUI.rentas}" var="rent">
+                <div class="filters-container">
+                    <p:inputText value="#{rentaUI.filtroNombre}" placeholder="Buscar cliente..." style="width: 200px;">
+                        <p:ajax event="keyup" listener="#{rentaUI.filtrarRentas}" update="panelResultados" delay="300" />
+                    </p:inputText>
 
-                        <h:commandLink action="#{rentaUI.seleccionarRenta(rent)}" style="text-decoration: none; color: inherit;">
-                            <div class="renta-card">
-                                <div class="renta-details">
-                                    <img src="resources/cotizacion.png" alt="Renta" />
-
-                                    <div class="renta-info">
-                                        <h:outputText value="#{rent.idCliente.nombre}" style="font-size: 16px;"/>
-                                        <h:outputText value="#{rent.idCliente.telefono}" style="font-size: 14px;"/>
-
-                                        <h:outputText value="#{rent.estado}"
-                                                      styleClass="renta-status"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </h:commandLink>
-                    </ui:repeat>
-                </h:panelGroup>
-
-                <h:panelGroup rendered="#{empty rentaUI.rentas}">
-                    <div class="rent-card" style="background-color: #000000; cursor: default; justify-content: center; width: 300px;">
-                        <div class="rent-info" style="text-align: center; color: white">
-                            <h:outputText value="No existen rentas por el momento." />
-                        </div>
-                    </div>
-                </h:panelGroup>
-
+                    <p:selectOneMenu value="#{rentaUI.filtroEstado}" style="width: 200px;">
+                        <f:selectItem itemLabel="Todos los estados" itemValue="" />
+                        <f:selectItems value="#{rentaUI.estadosParaFiltro}" var="estado" itemLabel="#{estado}" itemValue="#{estado}"/>
+                        <p:ajax event="change" listener="#{rentaUI.filtrarRentas}" update="panelResultados" />
+                    </p:selectOneMenu>
+                </div>
             </div>
 
+            <h:panelGroup id="panelResultados">
+                <div class="rentas-list">
+                    <h:panelGroup rendered="#{not empty rentaUI.rentas}">
+                        <ui:repeat value="#{rentaUI.rentas}" var="rent">
+                            <h:commandLink action="#{rentaUI.seleccionarRenta(rent)}" style="text-decoration: none; color: inherit;">
+                                <div class="renta-card">
+                                    <div class="renta-details">
+                                        <img src="resources/cotizacion.png" alt="Renta" />
+
+                                        <div class="renta-info">
+                                            <h:outputText value="#{rent.idCliente.nombre}" style="font-size: 16px;"/>
+                                            <h:outputText value="#{rent.idCliente.telefono}" style="font-size: 14px;"/>
+
+                                            <h:outputText value="#{rent.estado}" styleClass="renta-status"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </h:commandLink>
+                        </ui:repeat>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{empty rentaUI.rentas}">
+                        <div class="rent-card" style="background-color: #000000; cursor: default; display:flex; justify-content: center; align-items:center; width: 300px; height: 120px; padding: 15px;">
+                            <div class="rent-info" style="text-align: center; color: white">
+                                <h:outputText value="No se encontraron rentas." />
+                            </div>
+                        </div>
+                    </h:panelGroup>
+                </div>
+            </h:panelGroup>
         </h:form>
     </div>
 </h:body>

@@ -136,6 +136,14 @@ public class DelegateRenta {
         ServiceLocator.getInstanceRentaDAO().registrarRenta(cliente, detalles, fecha, hora, estado);
     }
 
+    public List<Comentario> obtenerComentarios(Integer idRenta) {
+        return ServiceLocator.getInstanceComentarioDAO().obtenerComentarios(idRenta);
+    }
+
+    public void guardarComentario(Comentario comentario) {
+        ServiceLocator.getInstanceComentarioDAO().guardarComentario(comentario);
+    }
+
     public void actualizarRentaConStock(Renta renta, LocalDate fechaAnterior) throws Exception {
         ServiceLocator.getInstanceRentaDAO().actualizarRentaConStock(renta, fechaAnterior);
     }
