@@ -143,4 +143,8 @@ public class DelegateRenta {
     public void guardarComentario(Comentario comentario) {
         ServiceLocator.getInstanceComentarioDAO().guardarComentario(comentario);
     }
+
+    public void actualizarRentaConStock(Renta renta, LocalDate fechaAnterior) throws Exception {
+        ServiceLocator.getInstanceRentaDAO().actualizarRentaConStock(renta, fechaAnterior);
+    }
 }
