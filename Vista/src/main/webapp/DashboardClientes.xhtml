@@ -25,6 +25,7 @@
             color: var(--text-dark);
         }
 
+        /* TOPBAR */
         .topbar {
             background-color: #3D4435;
             color: #C2C8CC;
@@ -45,19 +46,65 @@
             flex-grow: 1;
             font-style: italic;
             font-size: 22px;
-            font-family: var(--font-serif);
-            letter-spacing: 1px;
         }
 
         .topbar a {
             text-decoration: none;
             color: #C2C8CC;
-            font-size: 14px;
+            font-size: 16px;
             margin: 0 5px;
+            font-style: italic;
         }
 
-        .topbar a:hover { text-decoration: underline; }
-        .topbar-icon { width: 24px; height: 24px; filter: brightness(0.9); }
+        .topbar a:hover {
+            text-decoration: underline;
+        }
+
+        /* Estilos para imágenes */
+        .topbar img, .topbar-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* DROPDOWN MENU */
+        .dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border-radius: 4px;
+        }
+
+        .dropdown-content a {
+            color: #333 !important;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            font-style: normal;
+            font-size: 14px;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+            text-decoration: none;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
 
         /* --- NAV STRIP --- */
         .nav-strip {
@@ -188,26 +235,41 @@
     </style>
 </h:head>
 <h:body>
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
+    </f:metadata>
 
     <div class="topbar">
         <div class="topbar-left">
-            <h:graphicImage name="edicion.png" alt="Empleados" styleClass="topbar-icon"/>
-            <h:outputLink value="AdminEmpleados.xhtml"> Empleados </h:outputLink>
+            <img src="#{request.contextPath}/resources/edicion.png" alt="Empleados" class="topbar-icon" />
+            <a href="#{request.contextPath}/AdminEmpleados.xhtml">Empleados</a>
         </div>
+
         <div class="topbar-center">
-            <div>
-                <a href="principalAdministrador.xhtml">EVENTOS CAMPESTRE</a><br />
-                <a href="#">Inventario</a>
-                <a href="Articulos.xhtml">Artículos</a>
-                <a href="Cotizaciones.xhtml">Cotizaciones</a>
-                <a href="Rentas.xhtml">Rentas</a>
-                <a href="Dashboard.xhtml">Informes</a>
-                <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
-            </div>
+            <a href="principalAdministrador.xhtml"> EVENTOS CAMPESTRE</a><br />
+            <a href="Articulos.xhtml">Artículos</a>
+            <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
+            <a href="Cotizaciones.xhtml">Cotizaciones</a>
+            <a href="Rentas.xhtml">Rentas</a>
+            <a href="Dashboard.xhtml">Informes</a>
+            <a href="TarjetaAlmacen.xhtml">Inventario</a>
         </div>
+
         <div class="topbar-right">
-            <span>Administrador</span>
-            <h:graphicImage name="administrador.png" alt="admin" styleClass="topbar-icon"/>
+            <h:form style="margin:0; padding:0;">
+                <div class="dropdown">
+                    <span>Administrador</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="topbar-icon">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+
+                    <div class="dropdown-content">
+                        <h:commandLink action="#{loginUI.logout}" value="Cerrar Sesión" />
+                    </div>
+                </div>
+            </h:form>
         </div>
     </div>
 
