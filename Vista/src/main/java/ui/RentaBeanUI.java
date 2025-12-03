@@ -157,6 +157,7 @@ public class RentaBeanUI implements Serializable {
 
     public void onEstadoChange() {
         String nuevoEstado = rentaSeleccionada.getEstado();
+        this.estadoPendienteDeGuardar = nuevoEstado;
 
         if ("En reparto".equals(nuevoEstado) || "En recoleccion".equals(nuevoEstado)) {
             this.estadoSiguiente = nuevoEstado;
@@ -171,6 +172,19 @@ public class RentaBeanUI implements Serializable {
             }
 
             PrimeFaces.current().executeScript("PF('dialogAsignarEmpleado').show();");
+        } else if ("Entregado".equals(nuevoEstado) || "Finalizada".equals(nuevoEstado)) {
+
+            this.nuevoComentarioTexto = ""; // Limpiar texto anterior
+
+            if ("Entregado".equals(nuevoEstado)) {
+                this.tituloDialogoComentario = "Detalles en la entrega";
+            } else {
+                this.tituloDialogoComentario = "Detalles en la recoleccion";
+            }
+
+            PrimeFaces.current().ajax().update("dlgComentarioEstado"); // Actualizar titulo y textarea vacio
+            PrimeFaces.current().executeScript("PF('dlgComentarioEstado').show();");
+
         } else {
             actualizarEstadoRenta();
         }
@@ -243,11 +257,13 @@ public class RentaBeanUI implements Serializable {
     }
 
     public void obtenerTodasLasCotizaciones() {
-        rentas = rentaHelper.obtenerTodasCotizaciones();
+        this.listaMaestraRentas = rentaHelper.obtenerTodasCotizaciones();
+        filtrarRentas();
     }
 
     public void obtenerTodasLasRentas() {
-        rentas = rentaHelper.obtenerTodasRentas();
+        this.listaMaestraRentas = rentaHelper.obtenerTodasRentas();
+        filtrarRentas();
     }
 
     public void cargarArticulosDisponibles() {
@@ -454,6 +470,25 @@ public class RentaBeanUI implements Serializable {
 
     public LocalDate getMinDate() {
         return minDate;
+    }
+
+    public String getFiltroNombre() {
+        return filtroNombre;
+    }
+
+    public void setFiltroNombre(String filtroNombre) {
+        this.filtroNombre = filtroNombre;
+    }
+
+    public String getFiltroEstado() {
+        return filtroEstado;
+    }
+    public void setFiltroEstado(String filtroEstado) {
+        this.filtroEstado = filtroEstado;
+    }
+
+    public List<String> getEstadosParaFiltro() {
+        return ESTADOS_ORDENADOS;
     }
 
     public String getComentarioEntrega() {

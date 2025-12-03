@@ -151,6 +151,46 @@
             gap: 10px;
             align-items: center;
         }
+
+        /* DROPDOWN MENU */
+        .dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border-radius: 4px;
+        }
+
+        .dropdown-content a {
+            color: #333 !important;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            font-style: normal;
+            font-size: 14px;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+            text-decoration: none;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
     </style>
 </h:head>
 <h:body>
@@ -168,8 +208,20 @@
             <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
         </div>
         <div class="topbar-right">
-            <span>Administrador</span>
-            <img src="resources/administrador.png" alt="admin" class="topbar-icon" />
+            <h:form style="margin:0; padding:0;">
+                <div class="dropdown">
+                    <span>Administrador</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="topbar-icon">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+
+                    <div class="dropdown-content">
+                        <h:commandLink action="#{loginUI.logout}" value="Cerrar Sesión" />
+                    </div>
+                </div>
+            </h:form>
         </div>
     </div>
 
