@@ -148,7 +148,7 @@ public class RentaHelper {
         }
     }
 
-    public void actualizarRentaConStock(Renta renta, LocalDate fechaAnterior) throws Exception {
+    public void actualizarRenta(Renta renta, LocalDate fechaAnterior) throws Exception {
         System.out.println("=== RentaHelper.actualizarRenta() ===");
         if (renta == null) throw new Exception("La renta es nula");
 
