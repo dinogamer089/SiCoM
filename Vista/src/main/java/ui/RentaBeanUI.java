@@ -8,14 +8,17 @@ import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
-import mx.desarollo.entity.*;
+import mx.desarollo.entity.Articulo;
+import mx.desarollo.entity.Detallerenta;
+import mx.desarollo.entity.Renta;
 import org.primefaces.PrimeFaces;
+import mx.desarollo.entity.Empleado;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Named("rentaUI")
 @ViewScoped
@@ -29,17 +32,11 @@ public class RentaBeanUI implements Serializable {
     private Integer idRentaSeleccionada;
     private List<String> listaEstadosRenta;
     private String estadoSiguiente;
-    private List<Renta> listaMaestraRentas;
+    private LocalDate minDate;
+    private LocalDate fechaOriginal;
 
     private List<Empleado> listaEmpleados;
     private Integer idEmpleadoSeleccionado;
-    private String filtroNombre;
-    private String filtroEstado;
-    private String comentarioEntrega;
-    private String comentarioRecoleccion;
-    private String tituloDialogoComentario;
-    private String nuevoComentarioTexto;
-    private String estadoPendienteDeGuardar;
 
     private List<Articulo> listaArticulosDisponibles;
     private ArticuloHelper articuloHelper;
@@ -61,6 +58,7 @@ public class RentaBeanUI implements Serializable {
         rentaHelper = new RentaHelper();
         empleadoHelper = new EmpleadoHelper();
         articuloHelper = new ArticuloHelper();
+        minDate = LocalDate.now();
     }
 
     @PostConstruct
@@ -72,6 +70,10 @@ public class RentaBeanUI implements Serializable {
     public void cargarRentaSeleccionada() {
         if (idRentaSeleccionada != null) {
             this.rentaSeleccionada = rentaHelper.findById(idRentaSeleccionada);
+
+            if (this.rentaSeleccionada != null) {
+                this.fechaOriginal = this.rentaSeleccionada.getFecha();
+            }
             actualizarListaEstadosPosibles();
         }
     }
@@ -149,34 +151,21 @@ public class RentaBeanUI implements Serializable {
 
     public void onEstadoChange() {
         String nuevoEstado = rentaSeleccionada.getEstado();
-        this.estadoPendienteDeGuardar = nuevoEstado;
 
         if ("En reparto".equals(nuevoEstado) || "En recoleccion".equals(nuevoEstado)) {
             this.estadoSiguiente = nuevoEstado;
             this.idEmpleadoSeleccionado = null;
+
             this.listaEmpleados = empleadoHelper.getAllEmpleados();
+
             if (listaEmpleados == null || listaEmpleados.isEmpty()) {
                 mostrarMensaje(FacesMessage.SEVERITY_WARN, "Aviso", "No hay empleados en este momento.");
                 cargarRentaSeleccionada();
                 return;
             }
+
             PrimeFaces.current().executeScript("PF('dialogAsignarEmpleado').show();");
-        }
-        else if ("Entregado".equals(nuevoEstado) || "Finalizada".equals(nuevoEstado)) {
-
-            this.nuevoComentarioTexto = "";
-
-            if ("Entregado".equals(nuevoEstado)) {
-                this.tituloDialogoComentario = "Detalles en la entrega";
-            } else {
-                this.tituloDialogoComentario = "Detalles en la recoleccion";
-            }
-
-            PrimeFaces.current().ajax().update("dlgComentarioEstado");
-            PrimeFaces.current().executeScript("PF('dlgComentarioEstado').show();");
-
-        }
-        else {
+        } else {
             actualizarEstadoRenta();
         }
     }
@@ -221,15 +210,24 @@ public class RentaBeanUI implements Serializable {
     public void guardarModificacion() {
         try {
             if (rentaSeleccionada != null) {
-                rentaHelper.actualizarRenta(rentaSeleccionada);
+                rentaHelper.actualizarRenta(rentaSeleccionada, fechaOriginal);
 
+                mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Datos actualizados y stock ajustado correctamente.");
 
-                mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Datos de la renta actualizados.");
+                this.fechaOriginal = rentaSeleccionada.getFecha();
+
                 cargarRentaSeleccionada();
+                PrimeFaces.current().executeScript("PF('dlgModificar').hide();");
             }
+        } catch (RuntimeException re) {
+            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error de Stock", re.getMessage());
+
+            rentaSeleccionada.setFecha(fechaOriginal);
+            FacesContext.getCurrentInstance().validationFailed();
+
         } catch (Exception e) {
             e.printStackTrace();
-            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron guardar los cambios: " + e.getMessage());
+            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error Crítico", "No se pudieron guardar los cambios: " + e.getMessage());
             FacesContext.getCurrentInstance().validationFailed();
         }
     }
@@ -239,38 +237,11 @@ public class RentaBeanUI implements Serializable {
     }
 
     public void obtenerTodasLasCotizaciones() {
-        this.listaMaestraRentas = rentaHelper.obtenerTodasCotizaciones();
-        filtrarRentas();
+        rentas = rentaHelper.obtenerTodasCotizaciones();
     }
 
     public void obtenerTodasLasRentas() {
-        this.listaMaestraRentas = rentaHelper.obtenerTodasRentas();
-        filtrarRentas();
-    }
-
-    public void filtrarRentas() {
-        if (listaMaestraRentas == null) return;
-
-        this.rentas = listaMaestraRentas.stream()
-                .filter(r -> {
-                    boolean coincideNombre = true;
-                    if (filtroNombre != null && !filtroNombre.trim().isEmpty()) {
-                        if (r.getIdCliente() != null && r.getIdCliente().getNombre() != null) {
-                            coincideNombre = r.getIdCliente().getNombre().toLowerCase()
-                                    .contains(filtroNombre.toLowerCase());
-                        } else {
-                            coincideNombre = false;
-                        }
-                    }
-
-                    boolean coincideEstado = true;
-                    if (filtroEstado != null && !filtroEstado.isEmpty() && !"Todos".equals(filtroEstado)) {
-                        coincideEstado = filtroEstado.equals(r.getEstado());
-                    }
-
-                    return coincideNombre && coincideEstado;
-                })
-                .collect(Collectors.toList());
+        rentas = rentaHelper.obtenerTodasRentas();
     }
 
     public void cargarArticulosDisponibles() {
@@ -328,56 +299,19 @@ public class RentaBeanUI implements Serializable {
 
     public void guardarCambiosArticulos() {
         try {
-            rentaHelper.actualizarRenta(rentaSeleccionada);
+            rentaHelper.actualizarRenta(rentaSeleccionada, fechaOriginal);
 
             cargarRentaSeleccionada();
-            mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Lista de artículos actualizada correctamente.");
+            mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Artículos actualizados y stock reservado.");
 
             PrimeFaces.current().executeScript("PF('dlgModificarArticulos').hide();");
             PrimeFaces.current().ajax().update("formDetalle");
 
         } catch (Exception e) {
             e.printStackTrace();
-            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo guardar: " + e.getMessage());
+            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Stock Insuficiente", e.getMessage());
+            FacesContext.getCurrentInstance().validationFailed();
         }
-    }
-
-    public void cargarComentariosRenta() {
-        this.comentarioEntrega = "Sin comentarios de entrega.";
-        this.comentarioRecoleccion = "Sin comentarios de recolección.";
-
-        if (rentaSeleccionada != null) {
-            List<Comentario> comentarios = rentaHelper.obtenerComentariosPorRenta(rentaSeleccionada.getId());
-
-            for (Comentario c : comentarios) {
-                if ("Entrega".equalsIgnoreCase(c.getTipo())) {
-                    this.comentarioEntrega = c.getComentario();
-                } else if ("Recoleccion".equalsIgnoreCase(c.getTipo())) {
-                    this.comentarioRecoleccion = c.getComentario();
-                }
-            }
-        }
-    }
-
-    public void confirmarCambioConComentario() {
-        if (nuevoComentarioTexto != null && !nuevoComentarioTexto.trim().isEmpty()) {
-            Comentario c = new Comentario();
-            c.setComentario(nuevoComentarioTexto);
-            c.setIdRenta(rentaSeleccionada);
-
-            if ("Entregado".equals(this.estadoPendienteDeGuardar)) {
-                c.setTipo("Entrega");
-            } else {
-                c.setTipo("Recoleccion");
-            }
-
-            rentaHelper.guardarComentario(c);
-        }
-
-        rentaSeleccionada.setEstado(this.estadoPendienteDeGuardar);
-        actualizarEstadoRenta();
-
-        PrimeFaces.current().executeScript("PF('dlgComentarioEstado').hide();");
     }
 
     public List<Articulo> getListaArticulosDisponibles() {
@@ -449,50 +383,7 @@ public class RentaBeanUI implements Serializable {
         this.idEmpleadoSeleccionado = idEmpleadoSeleccionado;
     }
 
-    public String getFiltroNombre() {
-        return filtroNombre;
-    }
-
-    public void setFiltroNombre(String filtroNombre) {
-        this.filtroNombre = filtroNombre;
-    }
-
-    public String getFiltroEstado() {
-        return filtroEstado;
-    }
-    public void setFiltroEstado(String filtroEstado) {
-        this.filtroEstado = filtroEstado;
-    }
-
-    public List<String> getEstadosParaFiltro() {
-        return ESTADOS_ORDENADOS;
-    }
-
-    public String getComentarioEntrega() {
-        return comentarioEntrega;
-    }
-
-    public void setComentarioEntrega(String comentarioEntrega) {
-        this.comentarioEntrega = comentarioEntrega;
-    }
-
-    public String getComentarioRecoleccion() {
-        return comentarioRecoleccion;
-    }
-
-    public void setComentarioRecoleccion(String comentarioRecoleccion) {
-        this.comentarioRecoleccion = comentarioRecoleccion;
-    }
-
-    public String getTituloDialogoComentario() {
-        return tituloDialogoComentario;
-    }
-
-    public String getNuevoComentarioTexto() {
-        return nuevoComentarioTexto;
-    }
-
-    public void setNuevoComentarioTexto(String nuevoComentarioTexto) {
-        this.nuevoComentarioTexto = nuevoComentarioTexto;
+    public LocalDate getMinDate() {
+        return minDate;
     }
 }

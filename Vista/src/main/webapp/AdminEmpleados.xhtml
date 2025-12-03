@@ -24,6 +24,7 @@
         /* --- FIN: Estilos Generales (Body) --- */
 
         /* --- INICIO: Estilos de la Barra de Navegacion Superior (Topbar) --- */
+        /* TOPBAR */
         .topbar {
             background-color: #3D4435;
             color: #C2C8CC;
@@ -58,11 +59,51 @@
             text-decoration: underline;
         }
 
-        .topbar .topbar-icon {
+        /* Estilos para imágenes */
+        .topbar img, .topbar-icon {
             width: 20px;
             height: 20px;
         }
-        /* --- FIN: Estilos de la Barra de Navegacion Superior (Topbar) --- */
+
+        /* DROPDOWN MENU */
+        .dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border-radius: 4px;
+        }
+
+        .dropdown-content a {
+            color: #333 !important;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            font-style: normal;
+            font-size: 14px;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+            text-decoration: none;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
 
         /* --- INICIO: Estilos del Contenido Principal de la Pagina --- */
         .contenido {
@@ -551,23 +592,35 @@
     </f:metadata>
     <div class="topbar">
         <div class="topbar-left">
-            <h:graphicImage name="edicion.png" alt="Empleados" styleClass="topbar-icon"/>
-            <h:outputLink value="AdminEmpleados.xhtml"> Empleados </h:outputLink>
+            <img src="#{request.contextPath}/resources/edicion.png" alt="Empleados" class="topbar-icon" />
+            <a href="#{request.contextPath}/AdminEmpleados.xhtml">Empleados</a>
         </div>
+
         <div class="topbar-center">
-            <div>
-                <a href="principalAdministrador.xhtml">EVENTOS CAMPESTRE</a><br />
-                <a href="#">Inventario</a>
-                <a href="Articulos.xhtml">Articulos</a>
-                <a href="Cotizaciones.xhtml">Cotizaciones</a>
-                <a href="Rentas.xhtml">Rentas</a>
-                <a href="Dashboard.xhtml">Informes</a>
-                <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
-            </div>
+            <a href="principalAdministrador.xhtml"> EVENTOS CAMPESTRE</a><br />
+            <a href="Articulos.xhtml">Artículos</a>
+            <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
+            <a href="Cotizaciones.xhtml">Cotizaciones</a>
+            <a href="Rentas.xhtml">Rentas</a>
+            <a href="Dashboard.xhtml">Informes</a>
+            <a href="TarjetaAlmacen.xhtml">Inventario</a>
         </div>
+
         <div class="topbar-right">
-            <span>Administrador</span>
-            <h:graphicImage name="administrador.png" alt="admin" styleClass="topbar-icon"/>
+            <h:form style="margin:0; padding:0;">
+                <div class="dropdown">
+                    <span>Administrador</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="topbar-icon">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+
+                    <div class="dropdown-content">
+                        <h:commandLink action="#{loginUI.logout}" value="Cerrar Sesión" />
+                    </div>
+                </div>
+            </h:form>
         </div>
     </div>
     <h:form id="mainForm">

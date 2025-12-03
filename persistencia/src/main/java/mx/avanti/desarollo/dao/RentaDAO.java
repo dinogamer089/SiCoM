@@ -2,13 +2,16 @@ package mx.avanti.desarollo.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.TypedQuery;
 import mx.avanti.desarollo.persistence.AbstractDAO;
 import mx.desarollo.entity.Cliente;
 import mx.desarollo.entity.Detallerenta;
 import mx.desarollo.entity.Renta;
+import mx.desarollo.entity.StockReservadoDiario;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RentaDAO extends AbstractDAO<Renta> {
@@ -279,6 +282,55 @@ public class RentaDAO extends AbstractDAO<Renta> {
                 entityManager.getTransaction().rollback();
             }
             throw e;
+        }
+    }
+
+    private void validarDisponibilidad(Integer idArticulo, LocalDate fecha, int stockTotalFisico, int cantidadRequerida, String nombreArticulo) {
+        TypedQuery<Long> queryStock = entityManager.createQuery(
+                "SELECT COALESCE(SUM(s.cantidadReservada), 0) FROM StockReservadoDiario s " +
+                        "WHERE s.idarticulo.id = :idArt AND s.fecha = :fecha", Long.class);
+        queryStock.setParameter("idArt", idArticulo);
+        queryStock.setParameter("fecha", fecha);
+
+        int stockReservado = queryStock.getSingleResult().intValue();
+        int disponible = stockTotalFisico - stockReservado;
+
+        if (disponible < cantidadRequerida) {
+            throw new RuntimeException("Stock insuficiente para: " + nombreArticulo +
+                    ". Disponible: " + disponible + ", Solicitado Extra: " + cantidadRequerida);
+        }
+    }
+
+    private void actualizarStockDiario(Integer idArticulo, LocalDate fecha, int cantidadAjuste) {
+        try {
+            TypedQuery<StockReservadoDiario> q = entityManager.createQuery(
+                    "SELECT s FROM StockReservadoDiario s WHERE s.idarticulo.id = :idArt AND s.fecha = :fecha",
+                    StockReservadoDiario.class);
+            q.setParameter("idArt", idArticulo);
+            q.setParameter("fecha", fecha);
+
+            StockReservadoDiario stockRegistro = q.getSingleResult();
+
+            int nuevaCantidad = stockRegistro.getCantidadReservada() + cantidadAjuste;
+
+            if (nuevaCantidad <= 0) {
+                entityManager.remove(stockRegistro);
+            } else {
+                stockRegistro.setCantidadReservada(nuevaCantidad);
+                entityManager.merge(stockRegistro);
+            }
+
+        } catch (NoResultException e) {
+            if (cantidadAjuste > 0) {
+                mx.desarollo.entity.Articulo artRef = entityManager.getReference(mx.desarollo.entity.Articulo.class, idArticulo);
+
+                StockReservadoDiario nuevoRegistro = new StockReservadoDiario();
+                nuevoRegistro.setIdarticulo(artRef);
+                nuevoRegistro.setFecha(fecha);
+                nuevoRegistro.setCantidadReservada(cantidadAjuste);
+
+                entityManager.persist(nuevoRegistro);
+            }
         }
     }
 }
