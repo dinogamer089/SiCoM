@@ -164,7 +164,7 @@ public class RentaBeanUI implements Serializable {
         }
         else if ("Entregado".equals(nuevoEstado) || "Finalizada".equals(nuevoEstado)) {
 
-            this.nuevoComentarioTexto = ""; // Limpiar texto anterior
+            this.nuevoComentarioTexto = "";
 
             if ("Entregado".equals(nuevoEstado)) {
                 this.tituloDialogoComentario = "Detalles en la entrega";
@@ -172,7 +172,7 @@ public class RentaBeanUI implements Serializable {
                 this.tituloDialogoComentario = "Detalles en la recoleccion";
             }
 
-            PrimeFaces.current().ajax().update("dlgComentarioEstado"); // Actualizar titulo y textarea vacio
+            PrimeFaces.current().ajax().update("dlgComentarioEstado");
             PrimeFaces.current().executeScript("PF('dlgComentarioEstado').show();");
 
         }
