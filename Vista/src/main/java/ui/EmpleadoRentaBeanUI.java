@@ -39,15 +39,15 @@ public class EmpleadoRentaBeanUI implements Serializable {
     private String estadoPendienteDeGuardar;
 
     /**
-     * Metodo de inicializacion PostConstruct.
-     * Instancia el helper y valida la seguridad de la sesion verificando si existe un empleado logueado.
-     * @Throws No lanza excepciones, pero advierte en consola si no hay sesion valida.
+     * Método de inicialización PostConstruct.
+     * Instancia el helper y valida la seguridad de la sesión verificando si existe un empleado logueado.
+     * @Throws No lanza excepciones, pero advierte en consola si no hay sesión válida.
      */
     @PostConstruct
     public void init() {
         rentaHelper = new RentaHelper();
 
-        // Validación de Seguridad y Sesiin
+        // Validación de Seguridad y Sesión
         if (loginBean != null && loginBean.getUsuario() instanceof Empleado) {
             this.empleadoLogueado = (Empleado) loginBean.getUsuario();
             cargarRentas();
@@ -58,7 +58,7 @@ public class EmpleadoRentaBeanUI implements Serializable {
     }
 
     /**
-     * Metodo para cargar la lista de rentas filtrada para la vista del empleado.
+     * Método para cargar la lista de rentas filtrada para la vista del empleado.
      * Invoca al helper para obtener rentas disponibles y las ya asignadas al empleado actual.
      */
     public void cargarRentas() {
@@ -81,7 +81,7 @@ public class EmpleadoRentaBeanUI implements Serializable {
     }
 
     /**
-     * Metodo que verifica si el siguiente estado requiere un comentario.
+     * Método que verifica si el siguiente estado requiere un comentario.
      * Si es "Entregado" o "Finalizada", muestra el diálogo de comentarios.
      */
     public void verificarSiRequiereComentario() {
@@ -134,9 +134,9 @@ public class EmpleadoRentaBeanUI implements Serializable {
     /**
      * Método transaccional para avanzar el estado de la renta y gestionar la autoasignación.
      * Actualiza el registro del empleado, nombres de entrega/recolección y ejecuta el cambio de estado.
-     * @Throws Captura Exception general para manejar errores de lógica o base de datos y notificar al usuario vía FacesMessage.
+     * @return true si la operación fue exitosa, false en caso contrario
      */
-    public void avanzarEstado() {
+    public boolean avanzarEstado() {
         if (rentaSeleccionada != null && siguienteEstado != null) {
             try {
                 // Autoasignación del empleado
@@ -159,19 +159,18 @@ public class EmpleadoRentaBeanUI implements Serializable {
                 rentaHelper.actualizarRenta(rentaSeleccionada);
                 rentaHelper.cambiarEstado(rentaSeleccionada.getId(), siguienteEstado);
 
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Estado actualizado a: " + siguienteEstado));
-
                 // Recargar la renta para actualizar la vista
                 cargarRentaSeleccionada();
 
+                return true;
+
             } catch (Exception e) {
                 e.printStackTrace();
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo procesar la solicitud."));
                 FacesContext.getCurrentInstance().validationFailed();
+                return false;
             }
         }
+        return false;
     }
 
     /**
