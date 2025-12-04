@@ -15,7 +15,7 @@
 </f:metadata>
 
 <h:head>
-    <title>Detalle de Tarea</title>
+    <title>Detalle de Tarea ##{empleadoRentaUI.rentaSeleccionada.id}</title>
     <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style type="text/css">
@@ -26,9 +26,30 @@
             font-style: normal;
         }
 
-        body, html { margin: 0; padding: 0; height: 100%; background: #E7D9CB; }
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: #E8DCC8;
+            font-family: 'Minerva Modern', serif;
+        }
 
-        /* TOPBAR */
+        #toastSimple {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #F9F1E7;
+            color: #1a1a1a;
+            padding: 20px 25px;
+            border-left: 6px solid #3D4435;
+            z-index: 9999;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            font-family: 'Minerva Modern', serif;
+            font-size: 1.1rem;
+            min-width: 250px;
+        }
+
         .topbar {
             background-color: #3D4435;
             color: #C2C8CC;
@@ -63,107 +84,70 @@
             text-decoration: underline;
         }
 
-        /* Estilos para imágenes */
-        .topbar img, .topbar-icon {
+        .topbar img {
             width: 20px;
             height: 20px;
         }
 
-        /* DROPDOWN MENU */
-        .dropdown {
-            position: relative;
+        .main-container {
+            padding: 20px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header-title {
+            font-size: 2em;
+            font-weight: bold;
             display: flex;
             align-items: center;
-            gap: 10px;
-            cursor: pointer;
+            gap: 15px;
         }
 
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background-color: #f9f9f9;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1000;
-            border-radius: 4px;
-        }
-
-        .dropdown-content a {
-            color: #333 !important;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-            text-align: left;
-            font-style: normal;
-            font-size: 14px;
-        }
-
-        .dropdown-content a:hover {
-            background-color: #ddd;
-            text-decoration: none;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-
-        .content {
-            padding: 20px 60px;
-            font-family: 'Minerva Modern', serif;
-        }
-
-        .detalle-container {
+        .info-cards-container {
             display: flex;
-            gap: 40px;
-            padding-top: 20px;
+            justify-content: space-between;
+            gap: 30px;
+            margin-bottom: 30px;
         }
 
-        .cliente-info-box {
-            flex: 0 0 350px;
-            font-size: 18px;
+        .info-card {
+            background-color: white;
+            padding: 25px;
+            flex: 1;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 2px;
+            font-size: 1.2em;
         }
 
-        .cliente-info {
-            background-color: #3D4435;
-            padding: 15px;
-            color: white;
-        }
-
-        .cliente-row {
-            display: flex;
+        .info-row {
             margin-bottom: 15px;
-            font-family: 'Minerva Modern', serif;
-            align-items: center;
-            gap: 20px;
+            display: flex;
+            align-items: baseline;
         }
 
-        .cliente-label {
+        .info-label {
             font-weight: bold;
-            flex: 0 0 100px;
-            color: white;
+            margin-right: 10px;
+            min-width: 100px;
         }
 
-        .cliente-value {
-            font-weight: normal;
+        .info-value {
+            color: #333;
         }
 
-        .articulos-section {
-            flex-grow: 1;
-        }
-
-        .articulos-title {
-            font-size: 24px;
+        .articulos-section-title {
+            text-align: center;
+            font-size: 1.5em;
             font-weight: bold;
             margin-bottom: 15px;
-            color: #000000;
-            font-family: 'Minerva Modern', serif;
-        }
-
-        .custom-datatable table {
-            background: #E7D9CB;
+            color: #000;
         }
 
         .articulos-card{
@@ -171,45 +155,51 @@
             padding: 15px;
         }
 
-        .ui-datatable thead th,
+        .custom-datatable .ui-datatable-tablewrapper table {
+            border-collapse: separate !important;
+            border-spacing: 0 20px !important;
+            background-color: transparent !important;
+        }
+
         .custom-datatable thead th {
             background-color: #3D4435 !important;
             color: white !important;
             text-align: center !important;
             font-weight: bold !important;
             font-family: "FreightTextCmp Pro Semibold" !important;
-        }
-
-        .custom-datatable .ui-datatable-data tr,
-        .custom-datatable .ui-datatable-data td {
-            border-color: #000000 !important;
-            color: #000000 !important;
-            font-family: "FreightTextCmp Pro Semibold" !important;
-            text-align: center !important;
-        }
-
-        .custom-datatable .ui-datatable-data tr {
-            background: white !important;
-        }
-
-        .custom-datatable .ui-datatable-data tr:nth-child(even) {
-            background: white !important;
-        }
-
-        .custom-datatable .ui-datatable-data td {
             border: none !important;
-            padding: 8px 10px;
+            padding: 10px !important;
+        }
+
+        .custom-datatable tbody tr {
+            background-color: transparent !important;
+            border: none !important;
+        }
+
+        .custom-datatable tbody td {
+            background-color: #D9D9D9 !important;
+            color: #000000 !important;
+            border: none !important;
+            padding: 5px 10px !important;
+            text-align: center !important;
+            font-family: "FreightTextCmp Pro Semibold" !important;
         }
 
         .custom-datatable .ui-widget-content {
             border: none !important;
+            background: transparent !important;
         }
 
-        .boton-centrado {
-            display: flex;
-            justify-content: center;
-            padding-top: 20px;
-            width: 100%;
+        .custom-datatable .ui-datatable-data tr.ui-datatable-even,
+        .custom-datatable .ui-datatable-data tr.ui-datatable-odd {
+            background: transparent !important;
+        }
+
+        .total-section {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #000;
         }
 
         .ui-button.btn {
@@ -250,153 +240,394 @@
             align-items: center;
             padding: 10px 15px !important;
         }
+
+        .estado-actual {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #3D4435;
+            font-family: 'Minerva Modern', serif;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .dialog-comentarios .ui-dialog-titlebar {
+            background-color: #3D4435 !important;
+            border: none !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            position: relative !important;
+        }
+
+        .dialog-comentarios .ui-dialog-title {
+            color: white !important;
+            float: none !important;
+        }
+
+        .dialog-comentarios .ui-dialog-titlebar-close {
+            position: absolute !important;
+            right: 15px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            margin: 0 !important;
+            float: none !important;
+        }
+
+        .dialog-comentarios .ui-dialog-content {
+            background-color: #3D4435 !important;
+            padding: 30px !important;
+        }
+
+        .contenedor-comentarios {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .columna-comentario {
+            display: flex;
+            flex-direction: column;
+            width: 48%;
+        }
+
+        .caja-comentario {
+            background-color: #D9D9D9;
+            color: black;
+            padding: 20px;
+            width: 100%;
+            min-height: 150px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            box-sizing: border-box;
+        }
+
+        .titulo-caja {
+            font-family: "FreightTextCmp Pro Semibold";
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            display: block;
+            text-transform: capitalize;
+            color: white;
+            text-align: left;
+        }
+
+        .texto-caja {
+            font-family: 'Minerva Modern', serif;
+            font-size: 1em;
+            line-height: 1.4;
+        }
+
+        .dialog-input-custom .ui-dialog-content {
+            padding: 0 !important;
+            background-color: #3D4435 !important;
+            border: none !important;
+        }
+
+        .dialog-input-custom.ui-dialog {
+            border: none !important;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
+        }
+
+        .custom-dialog-header {
+            background-color: #3D4435;
+            color: white;
+            padding: 25px 30px 10px 30px;
+            font-family: "FreightTextCmp Pro Semibold";
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+
+        .custom-dialog-body {
+            background-color: #3D4435;
+            padding: 10px 30px 30px 30px;
+        }
+
+        .custom-textarea {
+            width: 100%;
+            background-color: #D9D9D9 !important;
+            color: black !important;
+            border: none !important;
+            border-radius: 0 !important;
+            padding: 15px !important;
+            font-family: 'Minerva Modern', serif !important;
+            box-sizing: border-box !important;
+            box-shadow: none !important;
+            font-size: 1rem;
+        }
+
+        .dialog-btn-container {
+            margin-top: 25px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-black {
+            background-color: black !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 0 !important;
+            font-weight: normal !important;
+            font-family: 'Minerva Modern', serif !important;
+            padding: 8px 25px !important;
+            text-transform: capitalize;
+            box-shadow: none !important;
+        }
+
+        .mensaje-finalizado {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            margin-top: 10px;
+            font-size: 1.1em;
+        }
     </style>
 </h:head>
 <h:body>
+    <div id="toastSimple">
+        <span id="toastSimpleMessage"></span>
+    </div>
+
+    <script>
+        function mostrarToastSimple(msg) {
+            var t = document.getElementById('toastSimple');
+            var msgSpan = document.getElementById('toastSimpleMessage');
+
+            msgSpan.innerHTML = msg;
+
+            t.style.display = 'block';
+
+            setTimeout(function(){
+                t.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+
     <div class="topbar">
         <div class="topbar-left">
             <span style="font-size:14px;">Módulo Operativo</span>
         </div>
         <div class="topbar-center">
-            DETALLE DE TAREA
+            <a href="RentasEmpleado.xhtml">EVENTOS CAMPESTRE</a>
         </div>
         <div class="topbar-right">
             <span>Empleado</span>
-            <img src="resources/administrador.png" alt="user" style="width:20px; height:20px; margin-left:10px;" />
+            <img src="resources/administrador.png" alt="user" class="topbar-icon" />
         </div>
     </div>
 
-
-    <div class="content">
+    <div class="main-container">
         <h:form id="formDetalle">
             <p:growl id="growl" showDetail="true" life="5000" />
-            <div class="detalle-container">
-                <div class="cliente-info-box">
-                    <div class="cliente-row">
-                        <div style="margin-bottom: 20px;">
-                            <h:link outcome="RentasEmpleado" title="Regresar">
-                                <h:graphicImage value="resources/retornar.png"
-                                                alt="Regresar"
-                                                width="40"
-                                                height="40"
-                                                style="cursor: pointer;" />
-                            </h:link>
-                        </div>
-                    </div>
-                    <div class="cliente-info">
-                        <div class="cliente-row">
-                            <span class="cliente-label">Nombre:</span>
-                            <span class="cliente-value">#{empleadoRentaUI.rentaSeleccionada.idCliente.nombre}</span>
-                        </div>
 
-                        <div class="cliente-row">
-                            <span class="cliente-label">Dirección:</span>
-                            <span class="cliente-value">#{empleadoRentaUI.rentaSeleccionada.idCliente.direccion}</span>
-                        </div>
-
-                        <div class="cliente-row">
-                            <span class="cliente-label">Telefono:</span>
-                            <span class="cliente-value">#{empleadoRentaUI.rentaSeleccionada.idCliente.telefono}</span>
-                        </div>
-
-                        <div class="cliente-row">
-                            <span class="cliente-label">Estado:</span>
-                            <span class="cliente-value">#{empleadoRentaUI.rentaSeleccionada.estado}</span>
-                        </div>
-
-                        <div class="cliente-row">
-                            <span class="cliente-label">Fecha:</span>
-                            <span class="cliente-value">
-                                <h:outputText value="#{empleadoRentaUI.rentaSeleccionada.fecha}">
-                                    <f:convertDateTime pattern="dd/MM/yyyy" type="localDate" />
-                                </h:outputText>
-                            </span>
-                        </div>
-
-                        <div class="cliente-row">
-                            <span class="cliente-label">Hora:</span>
-                            <span class="cliente-value">
-                                <h:outputText value="#{empleadoRentaUI.rentaSeleccionada.hora}">
-                                    <f:convertDateTime pattern="HH:mm" type="localTime" />
-                                </h:outputText>
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="boton-centrado">
-                        <h:panelGroup rendered="#{not empty empleadoRentaUI.siguienteEstado}">
-                            <p:commandButton value="Avanzar a: #{empleadoRentaUI.siguienteEstado}"
-                                             styleClass="btn"
-                                             action="#{empleadoRentaUI.avanzarEstado}"
-                                             update="@form :growl">
-
-                                <p:confirm header="Confirmar Acción"
-                                           message="¿Confirmas cambiar el estado a '#{empleadoRentaUI.siguienteEstado}'? #{empleadoRentaUI.rentaSeleccionada.idEmpleado == null ? '(Se te asignará esta tarea)' : ''}"
-                                           icon="pi pi-exclamation-triangle" />
-                            </p:commandButton>
-                        </h:panelGroup>
-
-                        <h:panelGroup rendered="#{empty empleadoRentaUI.siguienteEstado}">
-                            <div style="text-align: center; color: #000; font-style: italic; margin-top: 10px;">
-                                Tarea Finalizada o en espera.
-                            </div>
-                        </h:panelGroup>
-                    </div>
+            <div class="page-header">
+                <div class="header-title">
+                    <h:commandLink action="RentasEmpleado.xhtml" title="Regresar">
+                        <h:graphicImage value="resources/retornar.png" alt="Regresar" width="40" height="40" style="cursor: pointer;" />
+                    </h:commandLink>
+                    <h:outputText value="Tarea ID##{empleadoRentaUI.rentaSeleccionada.id}" style="margin-left: 10px;"/>
                 </div>
 
-                <div class="articulos-section">
-                    <div class="articulos-title">Artículos</div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <!-- Botón Ver Detalles -->
+                    <p:commandButton value="Ver detalles"
+                                     icon="pi pi-truck"
+                                     actionListener="#{empleadoRentaUI.cargarComentariosRenta}"
+                                     update=":dlgDetallesComentarios"
+                                     oncomplete="PF('dlgDetallesComentarios').show()"
+                                     styleClass="btn"
+                                     style="background-color: black !important; color: white !important; border:none;">
+                    </p:commandButton>
 
-                    <div class="articulos-card">
-                        <p:dataTable var="detalle"
-                                     value="#{empleadoRentaUI.rentaSeleccionada.detallesRenta}"
-                                     styleClass="custom-datatable"
-                                     emptyMessage="No hay artículos en esta renta."
-                                     style="border-spacing: 0 10px; border-collapse: separate;">
+                    <!-- Botón Avanzar Estado -->
+                    <h:panelGroup rendered="#{not empty empleadoRentaUI.siguienteEstado}">
+                        <p:commandButton value="Avanzar a: #{empleadoRentaUI.siguienteEstado}"
+                                         styleClass="btn"
+                                         process="@this"
+                                         update="@form"
+                                         oncomplete="if (!args.validationFailed) { mostrarToastSimple('Estado actualizado correctamente.'); }">
+                            <p:ajax listener="#{empleadoRentaUI.verificarSiRequiereComentario}"
+                                    event="click" />
+                            <p:confirm header="Confirmar Acción"
+                                       message="¿Confirmas cambiar el estado a '#{empleadoRentaUI.siguienteEstado}'? #{empleadoRentaUI.rentaSeleccionada.idEmpleado == null ? '(Se te asignará esta tarea)' : ''}"
+                                       icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </h:panelGroup>
+                </div>
+            </div>
 
-                            <p:column headerText="Nombre del Artículo">
-                                <h:outputText value="#{detalle.idarticulo.nombre}" />
-                            </p:column>
+            <!-- Estado Actual en el centro -->
+            <div class="estado-actual">
+                Estado: #{empleadoRentaUI.rentaSeleccionada.estado}
+            </div>
 
-                            <p:column headerText="Categoria">
-                                <h:outputText value="#{detalle.idarticulo.categoria}" />
-                            </p:column>
+            <div class="info-cards-container">
+                <div class="info-card">
+                    <div class="info-row">
+                        <span class="info-label">Nombre:</span>
+                        <span class="info-value">#{empleadoRentaUI.rentaSeleccionada.idCliente.nombre}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Teléfono:</span>
+                        <span class="info-value">#{empleadoRentaUI.rentaSeleccionada.idCliente.telefono}</span>
+                    </div>
+                    <h:panelGroup class="info-row" layout="block" rendered="#{empleadoRentaUI.rentaSeleccionada.estado eq 'En reparto' and empleadoRentaUI.rentaSeleccionada.idEmpleado != null}">
+                        <span class="info-label">Pendiente a entregar por:</span>
+                        <span class="info-value">#{empleadoRentaUI.rentaSeleccionada.idEmpleado.nombre}</span>
+                    </h:panelGroup>
 
-                            <p:column headerText="Imagen">
-                                <h:panelGroup>
-                                    <h:graphicImage value="#{articuloUI.getImagenBase64(detalle.idarticulo)}"
-                                                    width="40"
-                                                    height="40"
-                                                    style="object-fit: cover;"/>
-                                </h:panelGroup>
-                            </p:column>
+                    <h:panelGroup class="info-row" layout="block" rendered="#{empleadoRentaUI.rentaSeleccionada.entregado != null}">
+                        <span class="info-label">Entregado por:</span>
+                        <span class="info-value" style="vertical-align: bottom">#{empleadoRentaUI.rentaSeleccionada.entregado}</span>
+                    </h:panelGroup>
+                </div>
 
-                            <p:column headerText="Precio Unitario">
-                                <h:outputText value="#{detalle.idarticulo.precio}">
-                                    <f:convertNumber type="currency" currencySymbol="$" />
-                                </h:outputText>
-                            </p:column>
+                <div class="info-card">
+                    <div class="info-row">
+                        <span class="info-label">Dirección:</span>
+                        <span class="info-value">#{empleadoRentaUI.rentaSeleccionada.idCliente.direccion}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Fecha:</span>
+                        <span class="info-value">#{empleadoRentaUI.rentaSeleccionada.fecha}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Hora:</span>
+                        <span class="info-value">
+                            <h:outputText value="#{empleadoRentaUI.rentaSeleccionada.hora}">
+                                <f:convertDateTime pattern="HH:mm" type="localTime"/>
+                            </h:outputText>
+                        </span>
+                    </div>
+                    <h:panelGroup class="info-row" layout="block" rendered="#{empleadoRentaUI.rentaSeleccionada.estado eq 'En recoleccion' and empleadoRentaUI.rentaSeleccionada.idEmpleado != null}">
+                        <span class="info-label">Pendiente a recoger por:</span>
+                        <span class="info-value" style="vertical-align: bottom">#{empleadoRentaUI.rentaSeleccionada.idEmpleado.nombre}</span>
+                    </h:panelGroup>
 
-                            <p:column headerText="Cantidad Rentada">
-                                <h:outputText value="#{detalle.cantidad}" />
-                            </p:column>
+                    <h:panelGroup class="info-row" layout="block" rendered="#{empleadoRentaUI.rentaSeleccionada.recogido != null}">
+                        <span class="info-label">Recogido por:</span>
+                        <span class="info-value" style="vertical-align: bottom">#{empleadoRentaUI.rentaSeleccionada.recogido}</span>
+                    </h:panelGroup>
+                </div>
+            </div>
 
-                            <p:column headerText="Subtotal">
-                                <h:outputText value="#{detalle.cantidad * detalle.idarticulo.precio}">
-                                    <f:convertNumber type="currency" currencySymbol="$" />
-                                </h:outputText>
-                            </p:column>
+            <div class="articulos-section-title">Artículos solicitados</div>
 
-                        </p:dataTable>
+            <p:dataTable var="detalle"
+                         value="#{empleadoRentaUI.rentaSeleccionada.detallesRenta}"
+                         styleClass="custom-datatable"
+                         emptyMessage="No hay artículos en esta renta."
+                         style="border-spacing: 0 10px; border-collapse: separate;">
+
+                <p:column headerText="ID">
+                    <h:outputText value="#{detalle.idarticulo.id}" />
+                </p:column>
+                <p:column headerText="Nombre">
+                    <h:outputText value="#{detalle.idarticulo.nombre}" />
+                </p:column>
+                <p:column headerText="Cantidad">
+                    <h:outputText value="#{detalle.cantidad}" />
+                </p:column>
+                <p:column headerText="Precio">
+                    <h:outputText value="#{detalle.idarticulo.precio}">
+                        <f:convertNumber type="currency" currencySymbol="$" />
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="Tipo">
+                    <h:outputText value="#{detalle.idarticulo.categoria}" />
+                </p:column>
+                <p:column headerText="Imagen">
+                    <h:graphicImage value="#{articuloUI.getImagenBase64(detalle.idarticulo)}" width="40" height="40" style="object-fit: cover;"/>
+                </p:column>
+            </p:dataTable>
+
+            <div class="total-section">
+                Total: <h:outputText value="#{empleadoRentaUI.rentaSeleccionada.total}">
+                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
+            </h:outputText>
+            </div>
+
+            <!-- Mensaje cuando la tarea está finalizada -->
+            <h:panelGroup rendered="#{empty empleadoRentaUI.siguienteEstado}">
+                <div class="mensaje-finalizado">
+                    Tarea finalizada o en espera de acción del administrador.
+                </div>
+            </h:panelGroup>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+            </p:confirmDialog>
+        </h:form>
+    </div>
+
+    <!-- Diálogo para Ver Comentarios -->
+    <p:dialog id="dlgDetallesComentarios"
+              header="Detalles Entrega / Recolección"
+              widgetVar="dlgDetallesComentarios"
+              modal="true"
+              width="700"
+              resizable="false"
+              styleClass="dialog-comentarios"
+              appendTo="@(body)">
+
+        <div class="contenedor-comentarios">
+            <div class="columna-comentario">
+                <h:outputText value="Entrega" styleClass="titulo-caja" />
+                <div class="caja-comentario">
+                    <div class="texto-caja">
+                        <h:outputText value="#{empleadoRentaUI.comentarioEntrega}" />
                     </div>
                 </div>
             </div>
 
-            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
-                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
-                <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" />
-            </p:confirmDialog>
+            <div class="columna-comentario">
+                <h:outputText value="Recolección" styleClass="titulo-caja" />
+                <div class="caja-comentario">
+                    <div class="texto-caja">
+                        <h:outputText value="#{empleadoRentaUI.comentarioRecoleccion}" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </p:dialog>
+
+    <!-- Diálogo para Agregar Comentarios -->
+    <p:dialog id="dlgComentarioEstado"
+              widgetVar="dlgComentarioEstado"
+              modal="true"
+              width="600"
+              resizable="false"
+              closable="false"
+              showHeader="false"
+              styleClass="dialog-input-custom"
+              appendTo="@(body)">
+        <div class="custom-dialog-header">
+            <h:outputText value="#{empleadoRentaUI.tituloDialogoComentario}" />
+        </div>
+        <h:form id="formComentario">
+            <div class="custom-dialog-body">
+
+                <p:inputTextarea value="#{empleadoRentaUI.nuevoComentarioTexto}"
+                                 rows="6"
+                                 styleClass="custom-textarea"
+                                 placeholder="Escribe los detalles aquí..." />
+
+                <div class="dialog-btn-container">
+                    <p:commandButton value="Agregar"
+                                     actionListener="#{empleadoRentaUI.confirmarCambioConComentario}"
+                                     update=":formDetalle"
+                                     oncomplete="if (!args.validationFailed) { PF('dlgComentarioEstado').hide(); mostrarToastSimple('Estado actualizado correctamente.'); }"
+                                     styleClass="btn-black" />
+
+                    <p:commandButton value="Sin detalles"
+                                     actionListener="#{empleadoRentaUI.confirmarCambioConComentario}"
+                                     update=":formDetalle"
+                                     oncomplete="if (!args.validationFailed) { PF('dlgComentarioEstado').hide(); mostrarToastSimple('Estado actualizado correctamente.'); }"
+                                     styleClass="btn-black" />
+                </div>
+            </div>
         </h:form>
-    </div>
+    </p:dialog>
 </h:body>
 </html>

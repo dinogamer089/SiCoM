@@ -8,17 +8,15 @@ import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
-import mx.desarollo.entity.Articulo;
-import mx.desarollo.entity.Detallerenta;
-import mx.desarollo.entity.Renta;
+import mx.desarollo.entity.*;
 import org.primefaces.PrimeFaces;
-import mx.desarollo.entity.Empleado;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Named("rentaUI")
 @ViewScoped
@@ -27,6 +25,7 @@ public class RentaBeanUI implements Serializable {
     private RentaHelper rentaHelper;
     private EmpleadoHelper empleadoHelper;
     private List<Renta> rentas;
+    private List<Renta> listaMaestraRentas;
     private Renta nuevaRenta;
     private Renta rentaSeleccionada;
     private Integer idRentaSeleccionada;
@@ -34,6 +33,13 @@ public class RentaBeanUI implements Serializable {
     private String estadoSiguiente;
     private LocalDate minDate;
     private LocalDate fechaOriginal;
+    private String filtroNombre;
+    private String filtroEstado;
+    private String comentarioEntrega;
+    private String comentarioRecoleccion;
+    private String tituloDialogoComentario;
+    private String nuevoComentarioTexto;
+    private String estadoPendienteDeGuardar;
 
     private List<Empleado> listaEmpleados;
     private Integer idEmpleadoSeleccionado;
@@ -151,6 +157,7 @@ public class RentaBeanUI implements Serializable {
 
     public void onEstadoChange() {
         String nuevoEstado = rentaSeleccionada.getEstado();
+        this.estadoPendienteDeGuardar = nuevoEstado;
 
         if ("En reparto".equals(nuevoEstado) || "En recoleccion".equals(nuevoEstado)) {
             this.estadoSiguiente = nuevoEstado;
@@ -165,6 +172,19 @@ public class RentaBeanUI implements Serializable {
             }
 
             PrimeFaces.current().executeScript("PF('dialogAsignarEmpleado').show();");
+        } else if ("Entregado".equals(nuevoEstado) || "Finalizada".equals(nuevoEstado)) {
+
+            this.nuevoComentarioTexto = ""; // Limpiar texto anterior
+
+            if ("Entregado".equals(nuevoEstado)) {
+                this.tituloDialogoComentario = "Detalles en la entrega";
+            } else {
+                this.tituloDialogoComentario = "Detalles en la recoleccion";
+            }
+
+            PrimeFaces.current().ajax().update("dlgComentarioEstado"); // Actualizar titulo y textarea vacio
+            PrimeFaces.current().executeScript("PF('dlgComentarioEstado').show();");
+
         } else {
             actualizarEstadoRenta();
         }
@@ -237,11 +257,13 @@ public class RentaBeanUI implements Serializable {
     }
 
     public void obtenerTodasLasCotizaciones() {
-        rentas = rentaHelper.obtenerTodasCotizaciones();
+        this.listaMaestraRentas = rentaHelper.obtenerTodasCotizaciones();
+        filtrarRentas();
     }
 
     public void obtenerTodasLasRentas() {
-        rentas = rentaHelper.obtenerTodasRentas();
+        this.listaMaestraRentas = rentaHelper.obtenerTodasRentas();
+        filtrarRentas();
     }
 
     public void cargarArticulosDisponibles() {
@@ -312,6 +334,69 @@ public class RentaBeanUI implements Serializable {
             mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Stock Insuficiente", e.getMessage());
             FacesContext.getCurrentInstance().validationFailed();
         }
+    }
+
+    public void cargarComentariosRenta() {
+        this.comentarioEntrega = "Sin comentarios de entrega.";
+        this.comentarioRecoleccion = "Sin comentarios de recolección.";
+
+        if (rentaSeleccionada != null) {
+            List<Comentario> comentarios = rentaHelper.obtenerComentariosPorRenta(rentaSeleccionada.getId());
+
+            for (Comentario c : comentarios) {
+                if ("Entrega".equalsIgnoreCase(c.getTipo())) {
+                    this.comentarioEntrega = c.getComentario();
+                } else if ("Recoleccion".equalsIgnoreCase(c.getTipo())) {
+                    this.comentarioRecoleccion = c.getComentario();
+                }
+            }
+        }
+    }
+
+    public void confirmarCambioConComentario() {
+        if (nuevoComentarioTexto != null && !nuevoComentarioTexto.trim().isEmpty()) {
+            Comentario c = new Comentario();
+            c.setComentario(nuevoComentarioTexto);
+            c.setIdRenta(rentaSeleccionada);
+
+            if ("Entregado".equals(this.estadoPendienteDeGuardar)) {
+                c.setTipo("Entrega");
+            } else {
+                c.setTipo("Recoleccion");
+            }
+
+            rentaHelper.guardarComentario(c);
+        }
+
+        rentaSeleccionada.setEstado(this.estadoPendienteDeGuardar);
+        actualizarEstadoRenta();
+
+        PrimeFaces.current().executeScript("PF('dlgComentarioEstado').hide();");
+    }
+
+    public void filtrarRentas() {
+        if (listaMaestraRentas == null) return;
+
+        this.rentas = listaMaestraRentas.stream()
+                .filter(r -> {
+                    boolean coincideNombre = true;
+                    if (filtroNombre != null && !filtroNombre.trim().isEmpty()) {
+                        if (r.getIdCliente() != null && r.getIdCliente().getNombre() != null) {
+                            coincideNombre = r.getIdCliente().getNombre().toLowerCase()
+                                    .contains(filtroNombre.toLowerCase());
+                        } else {
+                            coincideNombre = false;
+                        }
+                    }
+
+                    boolean coincideEstado = true;
+                    if (filtroEstado != null && !filtroEstado.isEmpty() && !"Todos".equals(filtroEstado)) {
+                        coincideEstado = filtroEstado.equals(r.getEstado());
+                    }
+
+                    return coincideNombre && coincideEstado;
+                })
+                .collect(Collectors.toList());
     }
 
     public List<Articulo> getListaArticulosDisponibles() {
@@ -385,5 +470,52 @@ public class RentaBeanUI implements Serializable {
 
     public LocalDate getMinDate() {
         return minDate;
+    }
+
+    public String getFiltroNombre() {
+        return filtroNombre;
+    }
+
+    public void setFiltroNombre(String filtroNombre) {
+        this.filtroNombre = filtroNombre;
+    }
+
+    public String getFiltroEstado() {
+        return filtroEstado;
+    }
+    public void setFiltroEstado(String filtroEstado) {
+        this.filtroEstado = filtroEstado;
+    }
+
+    public List<String> getEstadosParaFiltro() {
+        return ESTADOS_ORDENADOS;
+    }
+
+    public String getComentarioEntrega() {
+        return comentarioEntrega;
+    }
+
+    public void setComentarioEntrega(String comentarioEntrega) {
+        this.comentarioEntrega = comentarioEntrega;
+    }
+
+    public String getComentarioRecoleccion() {
+        return comentarioRecoleccion;
+    }
+
+    public void setComentarioRecoleccion(String comentarioRecoleccion) {
+        this.comentarioRecoleccion = comentarioRecoleccion;
+    }
+
+    public String getTituloDialogoComentario() {
+        return tituloDialogoComentario;
+    }
+
+    public String getNuevoComentarioTexto() {
+        return nuevoComentarioTexto;
+    }
+
+    public void setNuevoComentarioTexto(String nuevoComentarioTexto) {
+        this.nuevoComentarioTexto = nuevoComentarioTexto;
     }
 }
