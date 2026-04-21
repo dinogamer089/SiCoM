@@ -6,6 +6,7 @@ import mx.desarollo.entity.Imagen;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class FacadeArticulo {
 
@@ -35,7 +36,9 @@ public class FacadeArticulo {
      * @return Una lista con todos los articulos encontrados.
      */
     public List<Articulo> obtenerArticulos() {
-        return delegateArticulo.findAllArticulos();
+        return delegateArticulo.findAllArticulos().stream()
+                .filter(Articulo::isActivo)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -65,7 +68,15 @@ public class FacadeArticulo {
      * @Params Objeto de tipo Integer id
      */
     public void eliminarArticuloPorId(Integer id) {
-        delegateArticulo.deleteArticuloById(id);
+        try {
+            delegateArticulo.deleteArticuloById(id);
+        } catch (Exception e) {
+            // El artículo tiene rentas asociadas: soft delete en lugar de eliminación física
+            delegateArticulo.findByIdWithImage(id).ifPresent(articulo -> {
+                articulo.setActivo(false);
+                delegateArticulo.updateArticulo(articulo);
+            });
+        }
     }
 
     /**

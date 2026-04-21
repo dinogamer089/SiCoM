@@ -1,5 +1,6 @@
 package mx.desarollo.delegate;
 
+import mx.avanti.desarollo.dao.StockReservadoDAO;
 import mx.avanti.desarollo.integration.ServiceLocator;
 import mx.desarollo.entity.*;
 
@@ -30,7 +31,9 @@ public class DelegateRenta {
      */
     private void registrarMovimientosAutomaticos(Integer idRenta, String nuevoEstado) {
 
-        if (!"Confirmado".equalsIgnoreCase(nuevoEstado) && !"Finalizada".equalsIgnoreCase(nuevoEstado)) {
+        if (!"Confirmado".equalsIgnoreCase(nuevoEstado)
+                && !"Finalizada".equalsIgnoreCase(nuevoEstado)
+                && !"Cancelada".equalsIgnoreCase(nuevoEstado)) {
             return;
         }
 
@@ -49,33 +52,52 @@ public class DelegateRenta {
             if ("Confirmado".equalsIgnoreCase(nuevoEstado)) {
                 tipoMovimiento = TipoMovimiento.SALIDA;
                 conceptoBase = "Salida por Renta #" + idRenta + " (Confirmado)";
-            } else { // Finalizada
+            } else if ("Finalizada".equalsIgnoreCase(nuevoEstado)) {
                 tipoMovimiento = TipoMovimiento.ENTRADA;
                 conceptoBase = "Devolución Renta #" + idRenta + " (Finalizada)";
+            } else { // Cancelada
+                tipoMovimiento = TipoMovimiento.ENTRADA;
+                conceptoBase = "Devolución Renta #" + idRenta + " (Cancelada)";
             }
 
             // Registrar un movimiento por cada artículo en la renta
             for (Detallerenta detalle : renta.getDetallesRenta()) {
-                MovimientoAlmacen movimiento = new MovimientoAlmacen();
-                movimiento.setArticulo(detalle.getIdarticulo());
-                movimiento.setRenta(renta);
-                movimiento.setFecha(fechaMovimiento);
-                movimiento.setFechaHoraRegistro(LocalDateTime.now());
-                movimiento.setTipoMovimiento(tipoMovimiento);
-                movimiento.setCantidad(detalle.getCantidad());
-                movimiento.setPrecioUnitario(detalle.getPrecioUnitario());
-                movimiento.setConcepto(conceptoBase + " - " + detalle.getIdarticulo().getNombre());
 
-                // Guardar el movimiento
-                ServiceLocator.getInstanceMovimientoAlmacenDAO().save(movimiento);
+                // GESTIÓN DE STOCK RESERVADO
+                // NOTA: El stored procedure 'cambiar_estado_renta' ya maneja la RESERVA de stock
+                // cuando el estado cambia de SOLICITADA → Aprobada, por lo tanto NO reservamos
+                // aquí en "Confirmado" para evitar duplicación.
+                // Solo manejamos la LIBERACIÓN de stock al finalizar o cancelar.
+                if ("Finalizada".equalsIgnoreCase(nuevoEstado) || "Cancelada".equalsIgnoreCase(nuevoEstado)) {
+                    // Liberar stock al finalizar o cancelar
+                    liberarStock(detalle.getIdarticulo().getId(), renta.getFecha(), detalle.getCantidad());
+                }
 
-                System.out.println("Movimiento registrado: " + tipoMovimiento + " de " +
-                        detalle.getCantidad() + " unidades de " +
-                        detalle.getIdarticulo().getNombre() + " para Renta #" + idRenta);
+                // REGISTRO DE MOVIMIENTO DE ALMACÉN (solo para Confirmado y Finalizada, no Cancelada sin confirmar)
+                if (!"Cancelada".equalsIgnoreCase(nuevoEstado) || tipoMovimiento == TipoMovimiento.ENTRADA) {
+                    MovimientoAlmacen movimiento = new MovimientoAlmacen();
+                    movimiento.setArticulo(detalle.getIdarticulo());
+                    movimiento.setRenta(renta);
+                    movimiento.setFecha(fechaMovimiento);
+                    movimiento.setFechaHoraRegistro(LocalDateTime.now());
+                    movimiento.setTipoMovimiento(tipoMovimiento);
+                    movimiento.setCantidad(detalle.getCantidad());
+                    movimiento.setPrecioUnitario(detalle.getPrecioUnitario());
+                    movimiento.setConcepto(conceptoBase + " - " + detalle.getIdarticulo().getNombre());
+
+                    // Guardar el movimiento
+                    ServiceLocator.getInstanceMovimientoAlmacenDAO().save(movimiento);
+
+                    System.out.println("Movimiento registrado: " + tipoMovimiento + " de " +
+                            detalle.getCantidad() + " unidades de " +
+                            detalle.getIdarticulo().getNombre() + " para Renta #" + idRenta);
+                }
             }
 
-            // Actualizar o crear el stock diario para cada artículo
-            actualizarStockDiario(renta.getDetallesRenta(), fechaMovimiento);
+            // Actualizar o crear el stock diario para cada artículo (solo para Confirmado y Finalizada)
+            if (!"Cancelada".equalsIgnoreCase(nuevoEstado)) {
+                actualizarStockDiario(renta.getDetallesRenta(), fechaMovimiento);
+            }
 
         } catch (Exception e) {
             System.err.println("Error al registrar movimientos automáticos para renta " + idRenta + ": " + e.getMessage());
@@ -146,5 +168,34 @@ public class DelegateRenta {
 
     public void actualizarRentaConStock(Renta renta, LocalDate fechaAnterior) throws Exception {
         ServiceLocator.getInstanceRentaDAO().actualizarRentaConStock(renta, fechaAnterior);
+    }
+
+    /**
+     * Libera stock reservado de un artículo en una fecha específica.
+     * Elimina o reduce registro en StockReservadoDiario.
+     * <p>
+     * NOTA: Este método se usa porque el stored procedure 'cambiar_estado_renta'
+     * solo libera stock cuando el cambio es directamente Aprobada→Finalizada,
+     * pero en el flujo real de estados, la renta pasa por varios estados intermedios
+     * (Confirmado → ... → En recoleccion → Finalizada), por lo que el SP no se activa.
+     *
+     * @param idArticulo ID del artículo
+     * @param fecha Fecha de la reserva
+     * @param cantidad Cantidad a liberar
+     */
+    private void liberarStock(Integer idArticulo, LocalDate fecha, Integer cantidad) {
+        if (idArticulo == null || fecha == null || cantidad == null || cantidad <= 0) {
+            return;
+        }
+
+        try {
+            StockReservadoDAO stockReservadoDAO = ServiceLocator.getInstanceStockReservadoDAO();
+            stockReservadoDAO.ajustarStockReservado(idArticulo, fecha, -cantidad); // Negativo para liberar
+            System.out.println("Stock liberado: " + cantidad + " unidades del artículo #" +
+                    idArticulo + " para fecha " + fecha);
+        } catch (Exception e) {
+            System.err.println("Error al liberar stock: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

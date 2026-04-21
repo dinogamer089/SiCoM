@@ -188,6 +188,10 @@
         }
 
         .total-section {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
             font-size: 1.5em;
             font-weight: bold;
             margin-top: 20px;
@@ -464,20 +468,30 @@
 
     <div class="topbar">
         <div class="topbar-left">
-            <img src="resources/edicion.png" alt="Empleados" class="topbar-icon" />
-            <a href="AdminEmpleados.xhtml">Empleados</a>
+            <img src="#{request.contextPath}/resources/edicion.png" alt="Empleados" class="topbar-icon" />
+            <a href="#{request.contextPath}/AdminEmpleados.xhtml">Empleados</a>
         </div>
+
         <div class="topbar-center">
-            <a href="principalAdministrador.xhtml">EVENTOS CAMPESTRE</a><br />
-            <a href="#">Inventario</a>
+            <a href="principalAdministrador.xhtml"> EVENTOS CAMPESTRE</a><br />
             <a href="Articulos.xhtml">Artículos</a>
+            <a href="CombinacionMesa.xhtml">Combinación de mesas</a>
             <a href="Cotizaciones.xhtml">Cotizaciones</a>
             <a href="Rentas.xhtml">Rentas</a>
-            <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
+            <a href="Dashboard.xhtml">Informes</a>
+            <a href="TarjetaAlmacen.xhtml">Inventario</a>
         </div>
+
         <div class="topbar-right">
-            <span>Administrador</span>
-            <img src="resources/administrador.png" alt="admin" class="topbar-icon" />
+            <h:form style="margin:0; padding:0;">
+                <div class="dropdown">
+                    <span>Administrador</span>
+
+                    <div class="dropdown-content">
+                        <h:commandLink action="#{loginUI.logout}" value="Cerrar Sesión" />
+                    </div>
+                </div>
+            </h:form>
         </div>
     </div>
 
@@ -542,7 +556,7 @@
                         <span class="info-value">#{rentaUI.rentaSeleccionada.idCliente.nombre}</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">Telefono:</span>
+                        <span class="info-label">Teléfono:</span>
                         <span class="info-value">#{rentaUI.rentaSeleccionada.idCliente.telefono}</span>
                     </div>
                     <h:panelGroup class="info-row" layout="block" rendered="#{rentaUI.rentaSeleccionada.estado eq 'En reparto' and rentaUI.rentaSeleccionada.idEmpleado != null}">
@@ -615,9 +629,12 @@
             </p:dataTable>
 
             <div class="total-section">
-                Total : <h:outputText value="#{rentaUI.rentaSeleccionada.total}">
-                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
-            </h:outputText>
+                <span>Total:</span>
+                <span>
+        <h:outputText value="#{rentaUI.rentaSeleccionada.total}">
+            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
+        </h:outputText>
+    </span>
             </div>
 
             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">

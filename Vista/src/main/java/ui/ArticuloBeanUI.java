@@ -22,6 +22,7 @@ public class ArticuloBeanUI implements Serializable {
 
     private Articulo articulo;
     private List<Articulo> articulos;
+    private List<Articulo> articulosOriginales; // Lista sin filtrar
     private ArticuloHelper articuloHelper;
     private Articulo seleccionada;
 
@@ -34,6 +35,14 @@ public class ArticuloBeanUI implements Serializable {
     // buffer manejado por servlet de subida
 
     private Articulo articuloEditar;
+
+    // Filtros para búsqueda
+    private String filtroNombre = "";
+    private String filtroTipo = "";
+
+    // Paginación
+    private int paginaActual = 1;
+    private int registrosPorPagina = 5;
 
     /**
      * Constructor por defecto del bean de articulo en la capa UI.
@@ -51,7 +60,8 @@ public class ArticuloBeanUI implements Serializable {
     @PostConstruct
     public void init() {
         articulo = new Articulo();
-        articulos = articuloHelper.obtenerTodas();
+        articulosOriginales = articuloHelper.obtenerTodas();
+        articulos = articulosOriginales; // Inicialmente muestra todos
         nuevoArticulo = new Articulo();
         nuevoArticulo.setActivo(true);
         imagenBytes = null;
@@ -192,10 +202,18 @@ public class ArticuloBeanUI implements Serializable {
                 enviarRespuestaJS("error", "El precio es obligatorio.");
                 return;
             }
+            if (nuevoPrecio.compareTo(BigDecimal.ZERO) <= 0) {
+                enviarRespuestaJS("error", "El precio debe ser mayor a 0.");
+                return;
+            }
 
             // 4 Validar Unidades
             if (nuevoArticulo.getUnidades() == null) {
                 enviarRespuestaJS("error", "Las unidades son obligatorias.");
+                return;
+            }
+            if (nuevoArticulo.getUnidades() <= 0) {
+                enviarRespuestaJS("error", "Las unidades deben ser mayor a 0.");
                 return;
             }
 
@@ -227,7 +245,8 @@ public class ArticuloBeanUI implements Serializable {
             articuloHelper.guardarConImagen(nuevoArticulo, imagen);
 
             // refrescar tabla
-            articulos = articuloHelper.obtenerTodas();
+            articulosOriginales = articuloHelper.obtenerTodas();
+            filtrarArticulos(); // Aplicar filtros actuales
 
             cancelarAlta();
 
@@ -276,7 +295,8 @@ public class ArticuloBeanUI implements Serializable {
             articuloHelper.eliminarPorId(seleccionada.getId());
 
             // refrescar lista y limpiar selección
-            articulos = articuloHelper.obtenerTodas();
+            articulosOriginales = articuloHelper.obtenerTodas();
+            filtrarArticulos(); // Aplicar filtros actuales
             seleccionada = null;
 
             enviarRespuestaJS("exito", "Artículo eliminado correctamente");
@@ -314,11 +334,21 @@ public class ArticuloBeanUI implements Serializable {
                 enviarRespuestaJS("error", "El precio es obligatorio.");
                 return;
             }
+            if (seleccionada.getPrecio().compareTo(BigDecimal.ZERO) <= 0) {
+                articulos = articuloHelper.obtenerTodas();
+                enviarRespuestaJS("error", "El precio debe ser mayor a 0.");
+                return;
+            }
 
             // 4 Validar Unidades
             if (seleccionada.getUnidades() == null) {
                 articulos = articuloHelper.obtenerTodas();
                 enviarRespuestaJS("error", "Las unidades son obligatorias.");
+                return;
+            }
+            if (seleccionada.getUnidades() <= 0) {
+                articulos = articuloHelper.obtenerTodas();
+                enviarRespuestaJS("error", "Las unidades deben ser mayor a 0.");
                 return;
             }
 
@@ -348,7 +378,8 @@ public class ArticuloBeanUI implements Serializable {
             }
 
             articuloHelper.actualizar(seleccionada);
-            articulos = articuloHelper.obtenerTodas();
+            articulosOriginales = articuloHelper.obtenerTodas();
+            filtrarArticulos(); // Aplicar filtros actuales
 
             this.imagenBytes = null;
             this.imagenMime = null;
@@ -360,7 +391,8 @@ public class ArticuloBeanUI implements Serializable {
 
         } catch (Exception e) {
             e.printStackTrace();
-            articulos = articuloHelper.obtenerTodas();
+            articulosOriginales = articuloHelper.obtenerTodas();
+            filtrarArticulos(); // Aplicar filtros actuales
             enviarRespuestaJS("error", "No se pudo modificar el artículo: " + e.getMessage());
         }
     }
@@ -378,11 +410,217 @@ public class ArticuloBeanUI implements Serializable {
         map.remove("uploadMime");
 
         // Esto arregla que la tabla se quede con datos editados si se da clic en Cancelar
-        articulos = articuloHelper.obtenerTodas();
+        articulosOriginales = articuloHelper.obtenerTodas();
+        filtrarArticulos(); // Aplicar filtros actuales
     }
 
     private void enviarRespuestaJS(String tipo, String mensaje) {
         PrimeFaces.current().ajax().addCallbackParam("tipoRespuesta", tipo);
         PrimeFaces.current().ajax().addCallbackParam("mensajeRespuesta", mensaje);
+    }
+
+    /**
+     * Metodo getter para obtener el filtro de nombre.
+     * @return El texto del filtro de nombre.
+     */
+    public String getFiltroNombre() {
+        return filtroNombre;
+    }
+
+    /**
+     * Metodo setter para establecer el filtro de nombre.
+     * @param filtroNombre El texto para filtrar por nombre.
+     */
+    public void setFiltroNombre(String filtroNombre) {
+        this.filtroNombre = filtroNombre;
+    }
+
+    /**
+     * Metodo getter para obtener el filtro de tipo.
+     * @return El texto del filtro de tipo.
+     */
+    public String getFiltroTipo() {
+        return filtroTipo;
+    }
+
+    /**
+     * Metodo setter para establecer el filtro de tipo.
+     * @param filtroTipo El tipo para filtrar articulos.
+     */
+    public void setFiltroTipo(String filtroTipo) {
+        this.filtroTipo = filtroTipo;
+    }
+
+    /**
+     * Metodo para filtrar la lista de articulos por nombre y/o tipo.
+     * Se ejecuta cuando el usuario modifica los filtros en la vista.
+     */
+    public void filtrarArticulos() {
+        // Refrescar la lista original desde la base de datos
+        articulosOriginales = articuloHelper.obtenerTodas();
+
+        // Aplicar filtros
+        articulos = articulosOriginales.stream()
+                .filter(art -> {
+                    boolean cumpleNombre = true;
+                    boolean cumpleTipo = true;
+
+                    // Filtro por nombre
+                    if (filtroNombre != null && !filtroNombre.trim().isEmpty()) {
+                        cumpleNombre = art.getNombre() != null &&
+                                art.getNombre().toLowerCase().contains(filtroNombre.toLowerCase().trim());
+                    }
+
+                    // Filtro por tipo (usando categoria del articulo)
+                    if (filtroTipo != null && !filtroTipo.trim().isEmpty()) {
+                        cumpleTipo = matchTipo(art.getCategoria(), filtroTipo);
+                    }
+
+                    return cumpleNombre && cumpleTipo;
+                })
+                .toList();
+
+        // Resetear a la primera página al filtrar
+        paginaActual = 1;
+    }
+
+    /**
+     * Metodo auxiliar para mapear el filtro de tipo a la categoria del articulo.
+     * @param categoria La categoria enum del articulo (MESA, TEXTIL, SILLA, etc.)
+     * @param filtro El filtro seleccionado (Silla, Mesa, Mantel, etc.)
+     * @return true si la categoria coincide con el filtro
+     */
+    private boolean matchTipo(mx.desarollo.entity.Categoria categoria, String filtro) {
+        if (categoria == null || filtro == null) return false;
+
+        String filt = filtro.toUpperCase().trim();
+
+        // Mapeo directo para categorias simples
+        if (categoria == mx.desarollo.entity.Categoria.SILLA && filt.equals("SILLA")) return true;
+        if (categoria == mx.desarollo.entity.Categoria.MESA && filt.equals("MESA")) return true;
+        if (categoria == mx.desarollo.entity.Categoria.CARPA && filt.equals("CARPA")) return true;
+        if (categoria == mx.desarollo.entity.Categoria.COOLER && filt.equals("COOLER")) return true;
+        if (categoria == mx.desarollo.entity.Categoria.CALENTON && filt.equals("CALENTON")) return true;
+
+        // Para TEXTIL, necesitamos revisar el textilTipo
+        // Como no tenemos acceso directo al textilTipo aquí, usaremos el nombre
+        // o podemos asumir que TEXTIL cubre Mantel, Camino y Cubremantel
+        if (categoria == mx.desarollo.entity.Categoria.TEXTIL) {
+            if (filt.equals("MANTEL") || filt.equals("CAMINO") || filt.equals("CUBREMANTEL")) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Metodo para obtener la lista de articulos paginados segun la pagina actual.
+     * @return Lista de articulos de la pagina actual
+     */
+    public List<Articulo> getArticulosPaginados() {
+        if (articulos == null || articulos.isEmpty()) {
+            return List.of();
+        }
+
+        int inicio = (paginaActual - 1) * registrosPorPagina;
+        int fin = Math.min(inicio + registrosPorPagina, articulos.size());
+
+        if (inicio >= articulos.size()) {
+            paginaActual = 1;
+            inicio = 0;
+            fin = Math.min(registrosPorPagina, articulos.size());
+        }
+
+        return articulos.subList(inicio, fin);
+    }
+
+    /**
+     * Metodo para obtener el numero de pagina actual.
+     * @return Numero de pagina actual
+     */
+    public int getPaginaActual() {
+        return paginaActual;
+    }
+
+    /**
+     * Metodo para establecer el numero de pagina actual.
+     * @param paginaActual Numero de pagina
+     */
+    public void setPaginaActual(int paginaActual) {
+        this.paginaActual = paginaActual;
+    }
+
+    /**
+     * Metodo para obtener el total de paginas disponibles.
+     * @return Total de paginas
+     */
+    public int getTotalPaginas() {
+        if (articulos == null || articulos.isEmpty()) {
+            return 1;
+        }
+        return (int) Math.ceil((double) articulos.size() / registrosPorPagina);
+    }
+
+    /**
+     * Metodo para obtener el total de articulos filtrados.
+     * @return Total de articulos
+     */
+    public int getTotalArticulos() {
+        return articulos != null ? articulos.size() : 0;
+    }
+
+    /**
+     * Metodo para obtener el numero de registro inicial de la pagina actual.
+     * @return Numero de registro inicial
+     */
+    public int getRegistroInicio() {
+        if (articulos == null || articulos.isEmpty()) {
+            return 0;
+        }
+        return (paginaActual - 1) * registrosPorPagina + 1;
+    }
+
+    /**
+     * Metodo para obtener el numero de registro final de la pagina actual.
+     * @return Numero de registro final
+     */
+    public int getRegistroFin() {
+        if (articulos == null || articulos.isEmpty()) {
+            return 0;
+        }
+        return Math.min(paginaActual * registrosPorPagina, articulos.size());
+    }
+
+    /**
+     * Metodo para ir a la primera pagina.
+     */
+    public void irPrimeraPagina() {
+        paginaActual = 1;
+    }
+
+    /**
+     * Metodo para ir a la pagina anterior.
+     */
+    public void irPaginaAnterior() {
+        if (paginaActual > 1) {
+            paginaActual--;
+        }
+    }
+
+    /**
+     * Metodo para ir a la pagina siguiente.
+     */
+    public void irPaginaSiguiente() {
+        if (paginaActual < getTotalPaginas()) {
+            paginaActual++;
+        }
+    }
+
+    /**
+     * Metodo para ir a la ultima pagina.
+     */
+    public void irUltimaPagina() {
+        paginaActual = getTotalPaginas();
     }
 }

@@ -9,7 +9,7 @@
       xml:lang="es" lang="es">
 
 <h:head>
-    <title>Gestion de Rentas</title>
+    <title>Gestión de Rentas</title>
     <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <f:metadata>
@@ -65,7 +65,8 @@
             text-decoration: underline;
         }
 
-        .topbar img {
+        /* Estilos para imágenes */
+        .topbar img, .topbar-icon {
             width: 20px;
             height: 20px;
         }
@@ -194,19 +195,26 @@
     </style>
 </h:head>
 <h:body>
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
+    </f:metadata>
+
     <div class="topbar">
         <div class="topbar-left">
-            <img src="resources/edicion.png" alt="Empleados" class="topbar-icon" />
-            <a href="AdminEmpleados.xhtml">Empleados</a>
+            <img src="#{request.contextPath}/resources/edicion.png" alt="Empleados" class="topbar-icon" />
+            <a href="#{request.contextPath}/AdminEmpleados.xhtml">Empleados</a>
         </div>
+
         <div class="topbar-center">
-            <a href="principalAdministrador.xhtml">EVENTOS CAMPESTRE</a><br />
-            <a href="#">Inventario</a>
+            <a href="principalAdministrador.xhtml"> EVENTOS CAMPESTRE</a><br />
             <a href="Articulos.xhtml">Artículos</a>
+            <a href="CombinacionMesa.xhtml">Combinación de mesas</a>
             <a href="Cotizaciones.xhtml">Cotizaciones</a>
             <a href="Rentas.xhtml">Rentas</a>
-            <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
+            <a href="Dashboard.xhtml">Informes</a>
+            <a href="TarjetaAlmacen.xhtml">Inventario</a>
         </div>
+
         <div class="topbar-right">
             <h:form style="margin:0; padding:0;">
                 <div class="dropdown">

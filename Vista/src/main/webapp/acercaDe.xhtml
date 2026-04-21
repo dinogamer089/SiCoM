@@ -198,7 +198,7 @@
             <p:dialog header="Mi carrito" widgetVar="carritoModal" draggable="false" resizable="false" showEffect="fade" hideEffect="fade" styleClass="custom-cart-modal" closeOnEscape="true" responsive="true" width="350">
                 <p:ajax event="close" update=":formAcerca:tb-count-group" />
                 <h:panelGroup id="modalCarritoContent" layout="block" styleClass="modal-cart-content">
-                    <p:outputPanel rendered="#{carritoBean.carrito.vacio}" style="display:block; text-align:center; padding: 20px 0; font-style: italic;">Tu carrito esta vacio.</p:outputPanel>
+                    <p:outputPanel rendered="#{carritoBean.carrito.vacio}" style="display:block; text-align:center; padding: 20px 0; font-style: italic;">Tu carrito está vacío.</p:outputPanel>
                     <p:dataList value="#{carritoBean.carrito.items}" var="item" type="none" styleClass="dl-reset" rendered="#{not carritoBean.carrito.vacio}">
                         <div class="modal-item-row">
                             <p:commandLink actionListener="#{carritoBean.eliminarItem(item)}" update=":formAcerca:modalCarritoContent :formAcerca:tb-count-group" styleClass="modal-btn-remove"><i class="pi pi-minus-circle"/></p:commandLink>
@@ -227,7 +227,7 @@
                 </div>
                 <div class="footer__center"></div>
                 <div class="footer__right">
-                    <div class="foot-title">UBICACION</div>
+                    <div class="foot-title">UBICACIÓN</div>
                     <div>Mexicali Baja California<br/>Mexico.</div>
                 </div>
             </footer>

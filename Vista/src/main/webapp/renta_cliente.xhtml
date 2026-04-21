@@ -347,6 +347,20 @@
             align-items: center;
             gap: 8px;
         }
+        #barraFecha { margin-bottom: 12px; }
+        .date-info-bar { display:flex; align-items:center; justify-content:center; gap:8px; font-size:0.95rem; border-radius:4px; padding:8px 12px; }
+        .date-info-bar .pi { font-size:1.1rem; }
+
+        /* Forzar alineación derecha para precios y total */
+        .pkg-price, .preview-row .p-price, .modal-item-price { text-align: right !important; }
+        .preview-row .p-price { margin-left: auto; }
+        .pkg-price { display:block; width:100%; }
+        .modal-cart-content .total-row { display:flex; justify-content:flex-end; gap:12px; font-weight:700; font-size:1.1rem; margin-top:12px; }
+
+        /* mantener consistencia en previews y botones */
+        .preview-row { display:flex; align-items:center; gap:8px; }
+        .preview-row .item-label { flex: 1 1 auto; }
+        .preview-row .p-price { flex: 0 0 auto; }
         /*]]>*/
     </style>
 
@@ -370,6 +384,7 @@
 </h:head>
 
 <h:body>
+
     <h:form id="formRenta">
 
         <div class="layout">
@@ -488,15 +503,27 @@
 
                     <p:messages id="msgs" showDetail="true" closable="true" />
 
-                    <h:panelGroup id="barraFecha" rendered="#{not empty articuloCatalogoUI.fechaSeleccionada}">
-                        <div class="date-info-bar">
-                            <i class="pi pi-calendar" style="margin-right:6px;"></i>
-                            Reservando para el: <strong>
-                            <h:outputText value="#{articuloCatalogoUI.fechaSeleccionada}">
-                                <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
-                            </h:outputText>
-                        </strong>
-                        </div>
+                    <!-- language: xml -->
+                    <!-- 2) Reemplazar el `h:panelGroup id="barraFecha"` existente por este (colocarlo justo después de <p:messages id="msgs" ...>) -->
+                    <h:panelGroup id="barraFecha" layout="block">
+                        <h:panelGroup rendered="#{not empty articuloCatalogoUI.fechaSeleccionada}">
+                            <div class="date-info-bar">
+                                <i class="pi pi-calendar" style="margin-right:6px;"></i>
+                                Reservando para el:
+                                <strong style="margin-left:6px;">
+                                    <h:outputText value="#{articuloCatalogoUI.fechaSeleccionada}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                                    </h:outputText>
+                                </strong>
+                            </div>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{empty articuloCatalogoUI.fechaSeleccionada}">
+                            <div class="date-info-bar" style="background:#f9f9f9; border:1px dashed #e0e0e0; color:#666;">
+                                <i class="pi pi-exclamation-circle" style="color:var(--muted)"></i>
+                                <span>No has seleccionado fecha — pulsa <strong style="margin:0 6px;">"Seleccionar Fecha"</strong> para ver disponibilidad.</span>
+                                <p:commandButton value="Seleccionar Fecha" onclick="PF('dlgFecha').show()" type="button" styleClass="cta-btn" style="margin-left:12px;"/>
+                            </div>
+                        </h:panelGroup>
                     </h:panelGroup>
 
                     <p:remoteCommand name="rcMesaCombinacion"
@@ -870,7 +897,7 @@
 
                     <p:outputPanel rendered="#{carritoBean.carrito.vacio}"
                                    style="display:block; text-align:center; padding: 20px 0; font-style: italic;">
-                        Tu carrito esta vacio.
+                        Tu carrito está vacío.
                     </p:outputPanel>
 
                     <p:dataList value="#{carritoBean.carrito.items}" var="item" type="none"
@@ -973,7 +1000,7 @@
                 <div>
                 </div>
                 <div class="footer__right">
-                    <div style="font-weight:700; margin-bottom:6px;">UBICACION</div>
+                    <div style="font-weight:700; margin-bottom:6px;">UBICACIÓN</div>
                     <div>Mexicali Baja California<br/>Mexico.</div>
                 </div>
             </footer>

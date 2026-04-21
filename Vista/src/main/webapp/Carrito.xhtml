@@ -624,7 +624,7 @@
 
                 <div class="left-panel">
                     <div class="articulos-box">
-                        <div class="art-title">Articulos</div>
+                        <div class="art-title">Artículos</div>
                         <div class="art-icon-row">
                             <i class="pi pi-shopping-bag" />
                             <h:panelGroup id="lp-count-group">
@@ -747,7 +747,7 @@
 
                 <p:outputPanel rendered="#{carritoBean.carrito.vacio}"
                                style="display:block; text-align:center; padding: 20px 0; font-style: italic; font-family: 'Lato', serif;">
-                    Tu carrito esta vacio.
+                    Tu carrito está vacío.
                 </p:outputPanel>
 
                 <p:dataList value="#{carritoBean.carrito.items}" var="item" type="none" styleClass="dl-reset"
@@ -831,11 +831,11 @@
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div class="form-field">
-                        <p:outputLabel for="tel1" value="Numero de Telefono 1"/>
+                        <p:outputLabel for="tel1" value="Número de Teléfono 1"/>
                         <p:inputText id="tel1"
                                      value="#{carritoBean.telefono1}"
                                      required="true"
-                                     requiredMessage="Telefono es obligatorio"
+                                     requiredMessage="Teléfono es obligatorio"
                                      validatorMessage="Debe tener 10 digitos numericos"
                                      maxlength="10"
                                      placeholder="10 digitos"
@@ -848,12 +848,12 @@
                 </div>
 
                 <div class="form-field">
-                    <p:outputLabel for="direccion" value="Direccion de Entrega"/>
+                    <p:outputLabel for="direccion" value="Dirección de Entrega"/>
                     <p:inputTextarea id="direccion"
                                      value="#{carritoBean.direccionEntrega}"
                                      rows="3" required="true"
-                                     requiredMessage="La direccion es obligatoria"
-                                     validatorMessage="La direccion es muy corta"
+                                     requiredMessage="La dirección es obligatoria"
+                                     validatorMessage="La dirección es muy corta"
                                      style="width: 100%; resize: none;">
                         <f:validateLength minimum="10"/>
                     </p:inputTextarea>
@@ -883,7 +883,7 @@
               header="¡Cotización Enviada!">
         <div style="text-align: center; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; gap: 15px;">
             <i class="pi pi-check-circle" style="font-size: 4rem; color: var(--olive);"></i>
-            <h:outputText value="COTIZACION EXITOSA"
+            <h:outputText value="COTIZACIÓN EXITOSA"
                           style="font-family: 'Cinzel', serif; font-weight: 600; font-size: 1.4rem; color: var(--black);"/>
             <h:outputText value="NOS PONDREMOS EN CONTACTO PRONTO"
                           style="font-family: 'Lato', serif; font-size: 1.1rem; color: #555;"/>

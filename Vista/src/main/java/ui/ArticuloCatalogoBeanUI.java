@@ -9,6 +9,7 @@ import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
@@ -54,11 +55,18 @@ public class ArticuloCatalogoBeanUI implements Serializable {
     /**
      * Metodo de inicializacion del bean de catalogo.
      * Inicializa las listas vacias. La carga real ocurre cuando el usuario selecciona fecha.
+     * Si ya existe una fecha seleccionada (por ejemplo, después de F5), recarga el catálogo automáticamente.
      */
     @PostConstruct
     public void init() {
         this.articulos = new ArrayList<>();
         buildGroups();
+
+        // Si ya hay una fecha seleccionada (por ejemplo, después de recargar con F5),
+        // recalcular el stock para reflejar cambios recientes
+        if (fechaSeleccionada != null) {
+            recargarCatalogo();
+        }
     }
 
     /**
@@ -107,6 +115,31 @@ public class ArticuloCatalogoBeanUI implements Serializable {
 
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_INFO, "Fecha Establecida", "Catálogo actualizado para: " + fechaSeleccionada));
+    }
+
+    /**
+     * Recarga el catálogo con el stock actualizado para la fecha seleccionada.
+     * Similar a onFechaCambio() pero sin validaciones ni mensajes.
+     * Se usa internamente después de F5 para refrescar el stock.
+     */
+    private void recargarCatalogo() {
+        if (fechaSeleccionada == null) {
+            return;
+        }
+
+        // Cargar catalogo calculando stock RESTANDO reservas para la fecha seleccionada
+        FacadeArticulo facade = ServiceFacadeLocator.getInstanceFacadeArticulo();
+        var entidades = facade.listarCatalogoCliente();
+
+        // Usamos el Helper modificado que recibe la fecha
+        this.articulos = ArticuloHelper.toCardDTOs(entidades, fechaSeleccionada);
+
+        // Reconstruir los grupos visuales
+        buildGroups();
+
+        // Resetear seleccion
+        this.seleccionado = null;
+        this.cantidad = 1;
     }
 
     /**

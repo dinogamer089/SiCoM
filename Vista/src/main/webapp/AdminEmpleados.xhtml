@@ -599,7 +599,7 @@
         <div class="topbar-center">
             <a href="principalAdministrador.xhtml"> EVENTOS CAMPESTRE</a><br />
             <a href="Articulos.xhtml">Artículos</a>
-            <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
+            <a href="CombinacionMesa.xhtml">Combinación de mesas</a>
             <a href="Cotizaciones.xhtml">Cotizaciones</a>
             <a href="Rentas.xhtml">Rentas</a>
             <a href="Dashboard.xhtml">Informes</a>
@@ -643,7 +643,7 @@
 
                 <p:commandButton
                         styleClass="btn-reset"
-                        value="Restablecer Contrasena"
+                        value="Restablecer Contraseña"
                         icon="fa-solid fa-key"
                         rendered="#{empleadoUI.empleadoSeleccionado != null}"
                         action="#{empleadoUI.prepararModalReset}"
@@ -653,7 +653,7 @@
 
                 <p:commandButton
                         styleClass="btn-reset"
-                        value="Restablecer Contrasena"
+                        value="Restablecer Contraseña"
                         icon="fa-solid fa-key"
                         rendered="#{empleadoUI.empleadoSeleccionado == null}"
                         disabled="true"
@@ -677,6 +677,10 @@
                         disabled="true"
                         style="opacity: 0.6; cursor: not-allowed;" />
             </h:panelGroup>
+            <p:inputText id="buscarNombre" value="#{empleadoUI.buscarNombre}" placeholder="Buscar por nombre o correo..."
+                         style="width:100%; max-width:360px; margin-bottom:12px;">
+                <p:ajax event="keyup" process="@this" update="mainForm:listaEmpleadosPanel" delay="300" />
+            </p:inputText>
             <div id="toastContainer"></div>
             <div id="toastSimple" class="toast-simple toast-base">
                 <span id="toastSimpleMessage"></span>
@@ -734,11 +738,11 @@
 
                 <div class="modal-renglon modal-correo-contrasena">
                     <p:inputText id="correo" value="#{empleadoUI.nuevoEmpleado.correo}"
-                                 placeholder="Correo Electronico" required="true"
+                                 placeholder="Correo Electrónico" required="true"
                                  requiredMessage="Correo es obligatorio." />
                     <p:password id="pass" value="#{empleadoUI.nuevoEmpleado.contrasena}"
-                                placeholder="Contrasena" required="true"
-                                requiredMessage="Contrasena es obligatoria." />
+                                placeholder="Contraseña" required="true"
+                                requiredMessage="Contraseña es obligatoria." />
                 </div>
 
                 <div class="modal-renglon modal-botones">
@@ -800,11 +804,11 @@
                       style="max-width: 700px; width: 90%;">
                 <f:facet name="header">
                     <i class="fa-solid fa-key"></i>
-                    <span>Restablecer Contrasena</span>
+                    <span>Restablecer Contraseña</span>
                 </f:facet>
 
                 <div class="modal-renglon modal-cuerpo-texto">
-                    <span>Establecer nueva contrasena para el empleado:</span>
+                    <span>Establecer nueva contraseña para el empleado:</span>
                     <span class="nombre-empleado-bold">
                         #{empleadoUI.empleadoSeleccionado.nombre} #{empleadoUI.empleadoSeleccionado.apellidoPaterno}
                     </span>
@@ -812,9 +816,9 @@
 
                 <div class="modal-renglon modal-correo-contrasena" style="justify-content: center; flex-direction: column;">
                     <p:password id="newPass" value="#{empleadoUI.nuevaContrasena}"
-                                placeholder="Escribir nueva contrasena"
+                                placeholder="Escribir nueva contraseña"
                                 required="true"
-                                requiredMessage="La contrasena no puede estar vacia."
+                                requiredMessage="La contraseña no puede estar vacía."
                                 style="width: 50%; min-width: 200px;"/>
                     <p:message for="newPass" styleClass="error-message"/>
                 </div>
@@ -830,7 +834,7 @@
                                      action="#{empleadoUI.restablecerContrasena}"
                                      process="modalResetForm"
                                      update="mainForm"
-                                     oncomplete="if (!args.validationFailed) { PF('dialogReset').hide(); mostrarToastSimple('Contrasena actualizada!'); }"/>
+                                     oncomplete="if (!args.validationFailed) { PF('dialogReset').hide(); mostrarToastSimple('Contraseña actualizada!'); }"/>
                 </div>
             </p:dialog>
             <h:commandButton id="btnResetModal" style="display:none;"
@@ -964,7 +968,7 @@
             }
             delete pendingDeletes[empleadoId];
             rcRecargarLista();
-            mostrarToastSimple('Eliminacion cancelada');
+            mostrarToastSimple('Eliminación cancelada');
         }
 
         // --- INICIO: DOMContentLoaded ---
