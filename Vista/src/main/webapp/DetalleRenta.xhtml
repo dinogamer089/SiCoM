@@ -697,7 +697,14 @@
                     </p:inputText>
                 </div>
                 <div class="campo-formulario">
-                    <p:outputLabel value="Fecha:"/>
+                    <p:outputLabel value="Fecha de inicio (entrega):"/>
+                    <p:datePicker value="#{rentaUI.rentaSeleccionada.fechaInicio}"
+                                  pattern="dd/MM/yyyy"
+                                  mindate="#{rentaUI.minDate}"
+                                  readonlyInput="true"/>
+                </div>
+                <div class="campo-formulario">
+                    <p:outputLabel value="Fecha de fin (recolección):"/>
                     <p:datePicker value="#{rentaUI.rentaSeleccionada.fecha}"
                                   pattern="dd/MM/yyyy"
                                   mindate="#{rentaUI.minDate}"

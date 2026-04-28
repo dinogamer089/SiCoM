@@ -23,4 +23,12 @@ public class FacadeCarrito {
         return delegate.obtenerDisponibleEnFecha(articulo, fecha);
     }
 
+    public boolean verificarStockEnRango(Articulo articulo, int cantidadSolicitada, LocalDate fechaInicio, LocalDate fechaFin) {
+        return delegate.hayStockEnRango(articulo, cantidadSolicitada, fechaInicio, fechaFin);
+    }
+
+    public int obtenerDisponibleEnRango(Articulo articulo, LocalDate fechaInicio, LocalDate fechaFin) {
+        return delegate.obtenerDisponibleEnRango(articulo, fechaInicio, fechaFin);
+    }
+
 }

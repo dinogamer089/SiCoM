@@ -125,7 +125,7 @@ public class RentaDAO extends AbstractDAO<Renta> {
                             "OR " +
                             // CASO 3: Mis tareas activas (Lo que ya estoy haciendo)
                             "(r.idEmpleado.id = :empId AND r.estado IN ('En reparto', 'En recoleccion')) " +
-                            "ORDER BY r.fecha ASC, r.hora ASC", Renta.class)
+                            "ORDER BY r.fechaInicio ASC, r.hora ASC", Renta.class)
                     .setParameter("empId", idEmpleadoLogueado)
                     .getResultList();
         } catch (NoResultException e) {
@@ -136,6 +136,7 @@ public class RentaDAO extends AbstractDAO<Renta> {
     // Registro de renta/cotización con detalles y cliente asociado
     public void registrarRenta(Cliente cliente,
                                List<Detallerenta> detalles,
+                               LocalDate fechaInicio,
                                LocalDate fecha,
                                LocalTime hora,
                                String estado) {
@@ -156,6 +157,7 @@ public class RentaDAO extends AbstractDAO<Renta> {
             Renta renta = new Renta();
             renta.setEstado(estado != null ? estado : "SOLICITADA");
             renta.setIdCliente(cliente);
+            renta.setFechaInicio(fechaInicio != null ? fechaInicio : fecha);
             renta.setFecha(fecha);
             renta.setHora(hora);
 
@@ -203,11 +205,17 @@ public class RentaDAO extends AbstractDAO<Renta> {
         }
     }
 
-    public void actualizarRentaConStock(Renta renta, LocalDate fechaAnterior) throws Exception {
+    public void actualizarRentaConStock(Renta renta, LocalDate fechaInicioAnterior, LocalDate fechaAnterior) throws Exception {
         try {
             entityManager.getTransaction().begin();
 
-            boolean cambioFecha = !renta.getFecha().equals(fechaAnterior);
+            if (renta.getFechaInicio() == null) {
+                renta.setFechaInicio(renta.getFecha());
+            }
+            LocalDate fiAnt = (fechaInicioAnterior != null) ? fechaInicioAnterior : fechaAnterior;
+
+            boolean cambioFecha = !renta.getFecha().equals(fechaAnterior)
+                    || !renta.getFechaInicio().equals(fiAnt);
 
             List<Detallerenta> detallesEnBD = entityManager.createQuery(
                             "SELECT d FROM Detallerenta d WHERE d.idrenta.id = :idRenta", Detallerenta.class)
@@ -221,11 +229,13 @@ public class RentaDAO extends AbstractDAO<Renta> {
                 }
             }
 
+            // Articulos eliminados: revertir reservas de TODO el rango anterior
             for (Detallerenta dbDet : detallesEnBD) {
                 if (!idsEnVista.contains(dbDet.getId())) {
                     if (dbDet.getIdarticulo() != null) {
-                        actualizarStockDiario(
+                        actualizarStockDiarioEnRango(
                                 dbDet.getIdarticulo().getId(),
+                                fiAnt,
                                 fechaAnterior,
                                 -dbDet.getCantidad()
                         );
@@ -252,19 +262,24 @@ public class RentaDAO extends AbstractDAO<Renta> {
                 }
 
                 if (cambioFecha) {
+                    // Revertir reservas de TODO el rango anterior
                     if (viejaCantidad > 0) {
-                        actualizarStockDiario(idArticulo, fechaAnterior, -viejaCantidad);
+                        actualizarStockDiarioEnRango(idArticulo, fiAnt, fechaAnterior, -viejaCantidad);
                     }
-                    validarDisponibilidad(idArticulo, renta.getFecha(), det.getIdarticulo().getUnidades(), nuevaCantidad, det.getIdarticulo().getNombre());
-                    actualizarStockDiario(idArticulo, renta.getFecha(), nuevaCantidad);
+                    // Validar disponibilidad para el rango nuevo (toma el dia mas saturado)
+                    validarDisponibilidadEnRango(idArticulo, renta.getFechaInicio(), renta.getFecha(),
+                            det.getIdarticulo().getUnidades(), nuevaCantidad, det.getIdarticulo().getNombre());
+                    // Crear reservas en TODO el rango nuevo
+                    actualizarStockDiarioEnRango(idArticulo, renta.getFechaInicio(), renta.getFecha(), nuevaCantidad);
                 }
                 else {
                     int diferencia = nuevaCantidad - viejaCantidad;
                     if (diferencia != 0) {
                         if (diferencia > 0) {
-                            validarDisponibilidad(idArticulo, renta.getFecha(), det.getIdarticulo().getUnidades(), diferencia, det.getIdarticulo().getNombre());
+                            validarDisponibilidadEnRango(idArticulo, renta.getFechaInicio(), renta.getFecha(),
+                                    det.getIdarticulo().getUnidades(), diferencia, det.getIdarticulo().getNombre());
                         }
-                        actualizarStockDiario(idArticulo, renta.getFecha(), diferencia);
+                        actualizarStockDiarioEnRango(idArticulo, renta.getFechaInicio(), renta.getFecha(), diferencia);
                     }
                 }
             }
@@ -285,19 +300,43 @@ public class RentaDAO extends AbstractDAO<Renta> {
         }
     }
 
-    private void validarDisponibilidad(Integer idArticulo, LocalDate fecha, int stockTotalFisico, int cantidadRequerida, String nombreArticulo) {
-        TypedQuery<Long> queryStock = entityManager.createQuery(
-                "SELECT COALESCE(SUM(s.cantidadReservada), 0) FROM StockReservadoDiario s " +
-                        "WHERE s.idarticulo.id = :idArt AND s.fecha = :fecha", Long.class);
-        queryStock.setParameter("idArt", idArticulo);
-        queryStock.setParameter("fecha", fecha);
+    /**
+     * Valida disponibilidad para un rango de fechas.
+     * Toma el dia con MAYOR cantidad reservada (cuello de botella) y valida contra el stock fisico.
+     */
+    private void validarDisponibilidadEnRango(Integer idArticulo, LocalDate fechaInicio, LocalDate fechaFin,
+                                              int stockTotalFisico, int cantidadRequerida, String nombreArticulo) {
+        if (fechaInicio == null) fechaInicio = fechaFin;
+        if (fechaFin == null) fechaFin = fechaInicio;
 
-        int stockReservado = queryStock.getSingleResult().intValue();
-        int disponible = stockTotalFisico - stockReservado;
+        TypedQuery<Long> queryStock = entityManager.createQuery(
+                "SELECT COALESCE(MAX(s.cantidadReservada), 0) FROM StockReservadoDiario s " +
+                        "WHERE s.idarticulo.id = :idArt AND s.fecha BETWEEN :fIni AND :fFin", Long.class);
+        queryStock.setParameter("idArt", idArticulo);
+        queryStock.setParameter("fIni", fechaInicio);
+        queryStock.setParameter("fFin", fechaFin);
+
+        int maxReservadoEnRango = queryStock.getSingleResult().intValue();
+        int disponible = stockTotalFisico - maxReservadoEnRango;
 
         if (disponible < cantidadRequerida) {
             throw new RuntimeException("Stock insuficiente para: " + nombreArticulo +
-                    ". Disponible: " + disponible + ", Solicitado Extra: " + cantidadRequerida);
+                    ". Disponible en el rango: " + disponible + ", Solicitado Extra: " + cantidadRequerida);
+        }
+    }
+
+    /**
+     * Actualiza el registro de stock_reservado_diario para CADA dia del rango [fechaInicio, fechaFin].
+     */
+    private void actualizarStockDiarioEnRango(Integer idArticulo, LocalDate fechaInicio, LocalDate fechaFin, int cantidadAjuste) {
+        if (fechaInicio == null) fechaInicio = fechaFin;
+        if (fechaFin == null) fechaFin = fechaInicio;
+        if (fechaInicio == null) return;
+
+        LocalDate dia = fechaInicio;
+        while (!dia.isAfter(fechaFin)) {
+            actualizarStockDiario(idArticulo, dia, cantidadAjuste);
+            dia = dia.plusDays(1);
         }
     }
 

@@ -24,8 +24,11 @@ public class Carrito implements Serializable {
     // Fachada para consultar disponibilidad en base de datos
     private final FacadeCarrito facadeCarrito = new FacadeCarrito();
 
-    // Fecha clave para verificar si hay stock disponible en ese día específico
+    // Fecha de fin (recoleccion) - se mantiene como "fechaSeleccionada" por compatibilidad
     private LocalDate fechaSeleccionada;
+
+    // Fecha de inicio (entrega) - puede ser igual a fechaSeleccionada para rentas de un solo dia
+    private LocalDate fechaInicio;
 
     public List<CarritoItem> getItems() { return items; }
 
@@ -55,21 +58,25 @@ public class Carrito implements Serializable {
                 .findFirst();
 
         if (existente.isPresent()) {
-            // Si existe, validamos si hay stock para incrementar
+            // Si existe, validamos si hay stock para incrementar (en el rango)
             CarritoItem it = existente.get();
             int nuevaCantidad = it.getCantidad() + 1;
-            if (!facadeCarrito.verificarStock(articulo, nuevaCantidad, fechaSeleccionada)) {
+            if (!facadeCarrito.verificarStockEnRango(articulo, nuevaCantidad, getRangoInicio(), fechaSeleccionada)) {
                 return false; // No hay suficiente stock
             }
             it.setCantidad(nuevaCantidad);
         } else {
-            // Si es nuevo, validamos stock para 1 unidad
-            if (!facadeCarrito.verificarStock(articulo, 1, fechaSeleccionada)) {
+            // Si es nuevo, validamos stock para 1 unidad en el rango
+            if (!facadeCarrito.verificarStockEnRango(articulo, 1, getRangoInicio(), fechaSeleccionada)) {
                 return false; // No hay stock
             }
             items.add(new CarritoItem(articulo, 1));
         }
         return true;
+    }
+
+    private LocalDate getRangoInicio() {
+        return (fechaInicio != null) ? fechaInicio : fechaSeleccionada;
     }
 
     // Elimina un ítem completamente del carrito
@@ -84,8 +91,8 @@ public class Carrito implements Serializable {
         for (CarritoItem i : items) {
             if (i.equals(item)) {
                 int nuevaCant = i.getCantidad() + 1;
-                // Validación de stock antes del cambio
-                if (facadeCarrito.verificarStock(i.getArticulo(), nuevaCant, fechaSeleccionada)) {
+                // Validación de stock antes del cambio (en el rango completo)
+                if (facadeCarrito.verificarStockEnRango(i.getArticulo(), nuevaCant, getRangoInicio(), fechaSeleccionada)) {
                     i.setCantidad(nuevaCant);
                 }
                 break;
@@ -118,13 +125,13 @@ public class Carrito implements Serializable {
                 items.remove(i);
                 break;
             }
-            // validar contra stock por fecha
-            if (facadeCarrito.verificarStock(i.getArticulo(), nuevaCantidad, fechaSeleccionada)) {
+            // validar contra stock en el rango de fechas
+            if (facadeCarrito.verificarStockEnRango(i.getArticulo(), nuevaCantidad, getRangoInicio(), fechaSeleccionada)) {
                 i.setCantidad(nuevaCantidad);
                 i.setAjustadoPorStock(false);
                 i.setAvisoAjuste(null);
             } else {
-                int disponible = checkStock(i.getArticulo(), fechaSeleccionada);
+                int disponible = facadeCarrito.obtenerDisponibleEnRango(i.getArticulo(), getRangoInicio(), fechaSeleccionada);
                 if (disponible <= 0) {
                     items.remove(i);
                 } else {
@@ -152,39 +159,55 @@ public class Carrito implements Serializable {
 
     public LocalDate getFechaSeleccionada() { return fechaSeleccionada; }
 
-    // Método auxiliar para consultar cuánto stock real hay en la fecha
+    public LocalDate getFechaInicio() { return fechaInicio; }
+
+    // Método auxiliar para consultar cuánto stock real hay en la fecha (compatibilidad)
     public int checkStock(Articulo articulo, LocalDate fecha) {
         return facadeCarrito.obtenerDisponibleEnFecha(articulo, fecha);
     }
 
+    // Consulta disponibilidad en el rango actual del carrito
+    public int checkStockEnRango(Articulo articulo) {
+        return facadeCarrito.obtenerDisponibleEnRango(articulo, getRangoInicio(), fechaSeleccionada);
+    }
+
     /**
      * Actualiza la fecha del carrito y revalida todos los ítems.
-     * Si al cambiar la fecha, un artículo ya no tiene stock suficiente:
-     * Se ajusta su cantidad a lo máximo disponible.
-     * O se elimina si la disponibilidad es 0.
-     * Retorna una lista de mensajes avisando al usuario de los cambios.
+     * Compatibilidad: usa la misma fecha como inicio y fin (renta de un solo dia).
      */
     public List<String> actualizarFechaSeleccionada(LocalDate nuevaFecha) {
-        this.fechaSeleccionada = nuevaFecha;
+        return actualizarRangoFechas(nuevaFecha, nuevaFecha);
+    }
+
+    /**
+     * Actualiza el rango de fechas del carrito y revalida todos los items.
+     * Si al cambiar el rango, un articulo ya no tiene stock suficiente, se ajusta o elimina.
+     * @return Lista de mensajes avisando al usuario de los ajustes.
+     */
+    public List<String> actualizarRangoFechas(LocalDate nuevaFechaInicio, LocalDate nuevaFechaFin) {
+        this.fechaInicio = nuevaFechaInicio;
+        this.fechaSeleccionada = nuevaFechaFin;
         List<String> mensajes = new ArrayList<>();
-        if (nuevaFecha == null) return mensajes;
+        if (nuevaFechaFin == null) return mensajes;
 
         List<CarritoItem> snapshot = new ArrayList<>(items);
         for (CarritoItem it : snapshot) {
             Articulo art = it.getArticulo();
             if (art == null || art.getId() == null) continue;
 
-            // Consultamos disponibilidad en la NUEVA fecha
-            int disponible = checkStock(art, nuevaFecha);
+            int disponible = facadeCarrito.obtenerDisponibleEnRango(
+                    art,
+                    (nuevaFechaInicio != null ? nuevaFechaInicio : nuevaFechaFin),
+                    nuevaFechaFin
+            );
 
-            // Si lo que tenemos en el carrito supera lo disponible, ajustamos
             if (it.getCantidad() > disponible) {
                 if (disponible <= 0) {
                     items.remove(it);
-                    mensajes.add("Se eliminó '" + safeNombre(art) + "' por no haber stock en la nueva fecha.");
+                    mensajes.add("Se eliminó '" + safeNombre(art) + "' por no haber stock en el rango seleccionado.");
                 } else {
                     it.setCantidad(disponible);
-                    mensajes.add("Se redujo '" + safeNombre(art) + "' a " + disponible + " por disponibilidad en la nueva fecha.");
+                    mensajes.add("Se redujo '" + safeNombre(art) + "' a " + disponible + " por disponibilidad en el rango.");
                 }
             }
         }
