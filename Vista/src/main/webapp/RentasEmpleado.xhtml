@@ -196,7 +196,8 @@
                                 <h:outputText value="#{rent.idCliente.direccion}" styleClass="renta-address"/>
 
                                 <div class="renta-date">
-                                    📅 <h:outputText value="#{rent.fecha}"><f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/></h:outputText>
+                                    📦 Entrega: <h:outputText value="#{rent.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/></h:outputText>
+                                    🔁 Recolección: <h:outputText value="#{rent.fecha}"><f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/></h:outputText>
                                     ⏰ <h:outputText value="#{rent.hora}"><f:convertDateTime pattern="HH:mm" type="localTime"/></h:outputText>
                                 </div>
                                 <h:outputText value="#{rent.estado.toUpperCase()}" styleClass="renta-status"/>

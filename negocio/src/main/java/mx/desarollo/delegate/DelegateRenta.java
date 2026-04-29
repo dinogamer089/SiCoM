@@ -42,16 +42,20 @@ public class DelegateRenta {
                 return;
             }
 
-            LocalDate fechaMovimiento = renta.getFecha() != null ? renta.getFecha() : LocalDate.now();
+            // Reglas de negocio para el rango de fechas
+            LocalDate fechaMovimiento;
             TipoMovimiento tipoMovimiento;
             String conceptoBase;
 
             if ("Confirmado".equalsIgnoreCase(nuevoEstado)) {
                 tipoMovimiento = TipoMovimiento.SALIDA;
                 conceptoBase = "Salida por Renta #" + idRenta + " (Confirmado)";
+                fechaMovimiento = renta.getFechaInicio() != null ? renta.getFechaInicio()
+                        : (renta.getFecha() != null ? renta.getFecha() : LocalDate.now());
             } else { // Finalizada
                 tipoMovimiento = TipoMovimiento.ENTRADA;
                 conceptoBase = "Devolución Renta #" + idRenta + " (Finalizada)";
+                fechaMovimiento = renta.getFecha() != null ? renta.getFecha() : LocalDate.now();
             }
 
             // Registrar un movimiento por cada artículo en la renta
@@ -130,10 +134,11 @@ public class DelegateRenta {
     // Delegación para registrar una renta/cotización desde el carrito
     public void registrarRenta(Cliente cliente,
                                List<Detallerenta> detalles,
+                               LocalDate fechaInicio,
                                LocalDate fecha,
                                LocalTime hora,
                                String estado) {
-        ServiceLocator.getInstanceRentaDAO().registrarRenta(cliente, detalles, fecha, hora, estado);
+        ServiceLocator.getInstanceRentaDAO().registrarRenta(cliente, detalles, fechaInicio, fecha, hora, estado);
     }
 
     public List<Comentario> obtenerComentarios(Integer idRenta) {
@@ -144,7 +149,7 @@ public class DelegateRenta {
         ServiceLocator.getInstanceComentarioDAO().guardarComentario(comentario);
     }
 
-    public void actualizarRentaConStock(Renta renta, LocalDate fechaAnterior) throws Exception {
-        ServiceLocator.getInstanceRentaDAO().actualizarRentaConStock(renta, fechaAnterior);
+    public void actualizarRentaConStock(Renta renta, LocalDate fechaInicioAnterior, LocalDate fechaAnterior) throws Exception {
+        ServiceLocator.getInstanceRentaDAO().actualizarRentaConStock(renta, fechaInicioAnterior, fechaAnterior);
     }
 }
