@@ -1,9 +1,9 @@
-﻿<?xml version='1.0' encoding='UTF-8' ?>
+<?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
       xml:lang="es" lang="es">
 
@@ -28,44 +28,8 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            background: #E7D9CB;
+            background-color: #E7D9CB;
             font-family: "FreightText Pro", serif;
-        }
-
-        /* ---------- TOPBAR ---------- */
-        .topbar {
-            background-color: #3D4435;
-            color: #C2C8CC;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-        }
-        .topbar-left, .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .topbar-center {
-            text-align: center;
-            flex-grow: 1;
-            font-style: italic;
-            font-size: 22px;
-        }
-        .topbar a {
-            text-decoration: none;
-            color: #C2C8CC;
-            font-size: 16px;
-            margin: 0 5px;
-            font-style: italic;
-        }
-        .topbar a:hover {
-            text-decoration: underline;
-        }
-        .topbar img,
-        .topbar .topbar-icon {
-            width: 20px;
-            height: 20px;
         }
 
         /* ---------- CONTENIDO ---------- */
@@ -326,25 +290,7 @@
 </h:head>
 
 <h:body>
-    <div class="topbar">
-        <div class="topbar-left">
-            <img src="resources/edicion.png" alt="Empleados" class="topbar-icon" />
-            <a href="AdminEmpleados.xhtml">Empleados</a>
-        </div>
-        <div class="topbar-center">
-            <a href="principalAdministrador.xhtml">EVENTOS CAMPESTRE</a><br />
-            <a href="#">Inventario</a>
-            <a href="Articulos.xhtml">Artículos</a>
-            <a href="Cotizaciones.xhtml">Cotizaciones</a>
-            <a href="Rentas.xhtml">Rentas</a>
-            <a href="Dashboard.xhtml">Informes</a>
-            <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
-        </div>
-        <div class="topbar-right">
-            <span>Administrador</span>
-            <img src="resources/administrador.png" alt="admin" class="topbar-icon" />
-        </div>
-    </div>
+    <ui:include src="componentTopbar.xhtml" />
 
     <div class="content">
         <h1 class="title">Artículos</h1>
@@ -489,7 +435,7 @@
         function handleRequest(xhr, status, args, dialogVar) {
             // Si falló validación estándar de JSF (aunque quitamos required, por si acaso)
             if (args.validationFailed) {
-                var msg = args.mensajeRespuesta || "Faltan datos obligatorios o inválidos";
+                var msg = args.mensajeRespuesta || "Faltan datos obligatorios or inválidos";
                 mostrarToastSimple(msg, true);
                 return;
             }
