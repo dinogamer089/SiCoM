@@ -5,18 +5,31 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui">
 
+    <p:growl id="adminGrowl" showDetail="true" life="4000" globalOnly="true">
+        <p:autoUpdate />
+    </p:growl>
+
     <style type="text/css">
         /*<![CDATA[*/
+        :root {
+            --olive: #3D4435;
+            --beige: #E9DFD3;
+            --black: #000000;
+            --white: #ffffff;
+            --font-titles: "Minerva Modern", serif;
+            --font-body: "FreightText Pro", "Segoe UI", sans-serif;
+        }
+        
         .topbar {
-            background-color: #3D4435;
-            color: #C2C8CC;
+            background-color: var(--olive);
+            color: var(--white);
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px 20px;
             box-sizing: border-box;
             width: 100%;
-            font-family: "FreightText Pro", serif;
+            font-family: var(--font-body);
             line-height: 1.2;
             min-height: 70px;
             z-index: 9999;
@@ -39,7 +52,8 @@
 
         .topbar a {
             text-decoration: none;
-            color: #C2C8CC;
+            color: var(--white);
+            opacity: 0.9;
             font-size: 16px;
             margin: 0 5px;
             font-style: italic;
@@ -56,12 +70,14 @@
         }
 
         .topbar a:hover {
+            opacity: 1;
             text-decoration: underline;
         }
 
-        .topbar img {
+        .topbar img, .topbar i {
             width: 20px;
             height: 20px;
+            color: inherit;
         }
 
         .dropdown {
@@ -75,16 +91,18 @@
             background-color: #f9f9f9;
             min-width: 160px;
             box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
+            z-index: 1000;
             right: 0;
+            border-radius: 4px;
         }
 
         .dropdown-content a {
-            color: black;
+            color: #333 !important;
             padding: 12px 16px;
             text-decoration: none;
             display: block;
             text-align: left;
+            font-style: normal;
         }
 
         .dropdown-content a:hover {
@@ -99,13 +117,13 @@
 
     <div class="topbar">
         <div class="topbar-left">
-            <img src="resources/edicion.png" alt="Empleados" />
+            <i class="pi pi-users" style="font-size: 1.2rem;"></i>
             <a href="AdminEmpleados.xhtml">Empleados</a>
         </div>
         <div class="topbar-center">
             <a href="principalAdministrador.xhtml">EVENTOS CAMPESTRE</a>
             <a href="Articulos.xhtml">Artículos</a>
-            <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
+            <a href="CombinacionMesa.xhtml">Combinaciones</a>
             <a href="Cotizaciones.xhtml">Cotizaciones</a>
             <a href="Rentas.xhtml">Rentas</a>
             <a href="Dashboard.xhtml">Informes</a>
@@ -115,7 +133,7 @@
             <h:form>
                 <div class="dropdown">
                     <span>Administrador</span>
-                    <img src="resources/user.png" alt="User" />
+                    <i class="pi pi-user" style="font-size: 1.2rem;"></i>
                     <div class="dropdown-content">
                         <h:commandLink action="#{loginUI.logout}" value="Cerrar Sesión" />
                     </div>

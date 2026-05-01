@@ -538,6 +538,9 @@
                          value="#{rentaUI.rentaSeleccionada.detallesRenta}"
                          styleClass="custom-datatable"
                          emptyMessage="No hay artículos en esta renta."
+                         paginator="true"
+                         rows="10"
+                         paginatorPosition="bottom"
                          style="border-spacing: 0 10px; border-collapse: separate;">
 
                 <p:column headerText="ID">
@@ -686,6 +689,9 @@
                          styleClass="custom-datatable"
                          editable="true"
                          editMode="cell"
+                         paginator="true"
+                         rows="5"
+                         paginatorPosition="bottom"
                          style="margin-bottom: 20px;">
 
                 <p:column headerText="Artículo">

@@ -475,73 +475,66 @@
                 </div>
 
                 <div class="table-container">
-                    <h:dataTable value="#{tarjetaAlmacenUI.tarjetaDelDia}"
+                    <p:dataTable value="#{tarjetaAlmacenUI.tarjetaDelDia}"
                                  var="fila"
+                                 paginator="true"
+                                 rows="10"
+                                 paginatorPosition="bottom"
                                  styleClass="tarjeta-table">
 
-                        <h:column>
-                            <f:facet name="header">Fecha</f:facet>
+                        <p:column headerText="Fecha">
                             <h:outputText value="#{fila.fechaFormateada}" />
-                        </h:column>
+                        </p:column>
 
-                        <h:column>
-                            <f:facet name="header">Movimiento</f:facet>
+                        <p:column headerText="Movimiento">
                             <h:outputText value="Renta ##{fila.idRenta}"
                                           rendered="#{fila.idRenta != null}" />
                             <h:outputText value="-"
                                           rendered="#{fila.idRenta == null}" />
-                        </h:column>
+                        </p:column>
 
-                        <h:column>
-                            <f:facet name="header">Concepto</f:facet>
+                        <p:column headerText="Concepto">
                             <h:outputText value="#{fila.concepto}" />
-                        </h:column>
+                        </p:column>
 
-                        <h:column>
-                            <f:facet name="header">Inventario Inicial</f:facet>
+                        <p:column headerText="Inventario Inicial">
                             <h:outputText value="#{fila.inventarioInicial}" />
-                        </h:column>
+                        </p:column>
 
-                        <h:column>
-                            <f:facet name="header">Entrada</f:facet>
+                        <p:column headerText="Entrada">
                             <h:outputText value="#{fila.entrada}"
                                           styleClass="#{fila.entrada > 0 ? 'amount-positive' : ''}" />
-                        </h:column>
+                        </p:column>
 
-                        <h:column>
-                            <f:facet name="header">Salida</f:facet>
+                        <p:column headerText="Salida">
                             <h:outputText value="#{fila.salida}"
                                           styleClass="#{fila.salida > 0 ? 'amount-negative' : ''}" />
-                        </h:column>
+                        </p:column>
 
-                        <h:column>
-                            <f:facet name="header">Existencia</f:facet>
+                        <p:column headerText="Existencia">
                             <h:outputText value="#{fila.existencia}" />
-                        </h:column>
+                        </p:column>
 
-                        <h:column>
-                            <f:facet name="header">Debe</f:facet>
+                        <p:column headerText="Debe">
                             <h:outputText value="#{fila.debe}"
                                           styleClass="#{fila.debePositivo ? 'amount-positive' : ''}">
                                 <f:convertNumber type="currency" currencySymbol="$" />
                             </h:outputText>
-                        </h:column>
+                        </p:column>
 
-                        <h:column>
-                            <f:facet name="header">Haber</f:facet>
+                        <p:column headerText="Haber">
                             <h:outputText value="#{fila.haber}"
                                           styleClass="#{fila.haberPositivo ? 'amount-negative' : ''}">
                                 <f:convertNumber type="currency" currencySymbol="$" />
                             </h:outputText>
-                        </h:column>
+                        </p:column>
 
-                        <h:column>
-                            <f:facet name="header">Saldo</f:facet>
+                        <p:column headerText="Saldo">
                             <h:outputText value="#{fila.saldo}">
                                 <f:convertNumber type="currency" currencySymbol="$" />
                             </h:outputText>
-                        </h:column>
-                    </h:dataTable>
+                        </p:column>
+                    </p:dataTable>
                 </div>
             </h:panelGroup>
 
