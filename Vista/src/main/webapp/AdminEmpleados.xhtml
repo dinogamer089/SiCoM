@@ -13,10 +13,6 @@
 <h:head>
     <meta charset="UTF-8"/>
     <title>EVENTOS CAMPESTRE</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"/>
-
     <style type="text/css">
         /* --- INICIO: Estilos Generales (Body) --- */
         html, body {
@@ -519,10 +515,11 @@
             </div>
 
             <p:messages id="globalMessages" autoUpdate="true" showDetail="true" closable="true" styleClass="global-messages" />
+            <p:growl id="empleadosGrowl" widgetVar="empleadosGrowl" showDetail="true" life="3000" />
 
             <h:panelGroup id="botonesPanel" layout="block" styleClass="botones">
                 <p:commandButton value="Alta"
-                                 icon="fa-solid fa-plus"
+                                 icon="pi pi-plus"
                                  styleClass="btn-alta"
                                  action="#{empleadoUI.prepararNuevoEmpleado}"
                                  process="@this"
@@ -532,7 +529,7 @@
                 <p:commandButton
                         styleClass="btn-reset"
                         value="Restablecer Contrasena"
-                        icon="fa-solid fa-key"
+                        icon="pi pi-key"
                         rendered="#{empleadoUI.empleadoSeleccionado != null}"
                         action="#{empleadoUI.prepararModalReset}"
                         oncomplete="PF('dialogReset').show()"
@@ -542,7 +539,7 @@
                 <p:commandButton
                         styleClass="btn-reset"
                         value="Restablecer Contrasena"
-                        icon="fa-solid fa-key"
+                        icon="pi pi-key"
                         rendered="#{empleadoUI.empleadoSeleccionado == null}"
                         disabled="true"
                         style="opacity: 0.6; cursor: not-allowed;" />
@@ -550,7 +547,7 @@
                 <p:commandButton
                         styleClass="btn-eliminar"
                         value="Eliminar"
-                        icon="fa-solid fa-trash"
+                        icon="pi pi-trash"
                         rendered="#{empleadoUI.empleadoSeleccionado != null}"
                         action="#{empleadoUI.prepararEliminacion}"
                         process="@this"
@@ -560,15 +557,12 @@
                 <p:commandButton
                         styleClass="btn-eliminar"
                         value="Eliminar"
-                        icon="fa-solid fa-trash"
+                        icon="pi pi-trash"
                         rendered="#{empleadoUI.empleadoSeleccionado == null}"
                         disabled="true"
                         style="opacity: 0.6; cursor: not-allowed;" />
             </h:panelGroup>
             <div id="toastContainer"></div>
-            <div id="toastSimple" class="toast-simple toast-base">
-                <span id="toastSimpleMessage"></span>
-            </div>
             <h:panelGroup id="listaEmpleadosPanel" layout="block" styleClass="lista-empleados">
                 <ui:repeat value="#{empleadoUI.empleados}" var="emp">
                     <h:commandLink
@@ -580,12 +574,12 @@
                         <f:ajax execute="@this" render="mainForm:botonesPanel" oncomplete="reaplicarPendientes();"/>
 
                         <div class="col-empleado nombre">
-                            <i class="fa-solid fa-id-card"></i>
+                            <i class="pi pi-id-card"></i>
                             <span>#{emp.apellidoPaterno} #{emp.apellidoMaterno} #{emp.nombre}</span>
                         </div>
 
                         <div class="col-empleado usuario">
-                            <i class="fa-solid fa-user"></i>
+                            <i class="pi pi-user"></i>
                             <span>#{emp.correo}</span>
                         </div>
                     </h:commandLink>
@@ -601,7 +595,7 @@
                       draggable="false"
                       style="max-width: 700px; width: 90%;">
                 <f:facet name="header">
-                    <i class="fa-solid fa-user-plus"></i>
+                    <i class="pi pi-user-plus"></i>
                     <span>Nuevo empleado</span>
                 </f:facet>
 
@@ -654,7 +648,7 @@
                       style="max-width: 700px; width: 90%;">
                 <h:panelGroup id="modalEliminarContent">
                     <div class="modal-renglon modal-titulo">
-                        <i class="fa-solid fa-trash"></i>
+                        <i class="pi pi-trash"></i>
                         <span>Eliminar empleado</span>
                     </div>
 
@@ -687,7 +681,7 @@
                       draggable="false"
                       style="max-width: 700px; width: 90%;">
                 <f:facet name="header">
-                    <i class="fa-solid fa-key"></i>
+                    <i class="pi pi-key"></i>
                     <span>Restablecer Contrasena</span>
                 </f:facet>
 
@@ -735,7 +729,6 @@
     <script type="text/javascript">
         //<![CDATA[
 
-        var simpleToastTimer;
         var pendingDeletes = {};
 
         function marcarSeleccion(row) {
@@ -758,16 +751,14 @@
          * Muestra una notificacion simple que desaparece sola.
          */
         function mostrarToastSimple(mensaje) {
-            clearTimeout(simpleToastTimer);
-            var toast = document.getElementById('toastSimple');
-            var message = document.getElementById('toastSimpleMessage');
-
-            message.innerText = mensaje;
-            toast.style.display = 'block';
-
-            simpleToastTimer = setTimeout(function() {
-                toast.style.display = 'none';
-            }, 3000);
+            var growl = PF('empleadosGrowl');
+            if (growl) {
+                growl.renderMessage({
+                    summary: 'Exito',
+                    detail: mensaje,
+                    severity: 'info'
+                });
+            }
         }
         // --- FIN: mostrarToastSimple ---
 

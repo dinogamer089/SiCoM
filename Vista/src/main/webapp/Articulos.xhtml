@@ -309,13 +309,16 @@
         <h1 class="title">Artículos</h1>
 
         <h:form id="accionesForm">
+            <p:growl id="articulosGrowl" widgetVar="articulosGrowl" showDetail="true" life="3000" />
             <div class="button-bar">
-                <p:commandButton value="+ Alta"
+                <p:commandButton value="Alta"
+                                 icon="pi pi-plus"
                                  styleClass="btn alta"
                                  type="button"
                                  onclick="PF('dlgAlta').show();" />
 
                 <p:commandButton value="✎ Modificar"
+                                 icon="pi pi-pencil"
                                  styleClass="btn modificar"
                                  update=":formModificar"
                                  process="@this"
@@ -323,6 +326,7 @@
                                  oncomplete="if (!args.validationFailed) PF('dlgModificar').show();"
                 />
                 <p:commandButton value="🗑 Eliminar"
+                                 icon="pi pi-trash"
                                  styleClass="btn eliminar"
                                  type="button"
                                  disabled="#{articuloUI.seleccionada == null}"
@@ -446,34 +450,36 @@
             </script>
         </ui:repeat>
 
-        <div id="toastSimple" class="toast-simple toast-base">
-            <span id="toastSimpleMessage"></span>
-        </div>
     </div>
 
     <script type="text/javascript">
         //<![CDATA[
-        var simpleToastTimer;
-
-        // Mostrar Toast con soporte para Error (Rojo)
-        function mostrarToastSimple(mensaje, esError) {
-            clearTimeout(simpleToastTimer);
-            var toast = document.getElementById('toastSimple');
-            var message = document.getElementById('toastSimpleMessage');
-            if (toast && message) {
-                // Resetear clases base
-                toast.className = 'toast-simple toast-base';
-
-                // Si es error agregar clase roja
-                if (esError) {
-                    toast.classList.add('toast-error');
+        function normalizarBotonesAcciones() {
+            var root = document.getElementById('accionesForm');
+            if (!root) {
+                return;
+            }
+            var map = [
+                { selector: '.btn.alta .ui-button-text', text: 'Alta' },
+                { selector: '.btn.modificar .ui-button-text', text: 'Modificar' },
+                { selector: '.btn.eliminar .ui-button-text', text: 'Eliminar' }
+            ];
+            map.forEach(function(item) {
+                var el = root.querySelector(item.selector);
+                if (el) {
+                    el.textContent = item.text;
                 }
+            });
+        }
 
-                message.innerText = mensaje;
-                toast.style.display = 'block';
-                simpleToastTimer = setTimeout(function () {
-                    toast.style.display = 'none';
-                }, 3000);
+        function mostrarToastSimple(mensaje, esError) {
+            var growl = PF('articulosGrowl');
+            if (growl) {
+                growl.renderMessage({
+                    summary: esError ? 'Error' : 'Exito',
+                    detail: mensaje,
+                    severity: esError ? 'error' : 'info'
+                });
             }
         }
 
@@ -510,6 +516,15 @@
                     mostrarToastSimple(args.mensajeRespuesta, true);
                 }
             }
+        }
+
+        document.addEventListener('DOMContentLoaded', normalizarBotonesAcciones);
+        if (window.PrimeFaces && PrimeFaces.ajax && PrimeFaces.ajax.addOnEvent) {
+            PrimeFaces.ajax.addOnEvent(function (e) {
+                if (e && e.status === 'success') {
+                    normalizarBotonesAcciones();
+                }
+            });
         }
         //]]>
     </script>

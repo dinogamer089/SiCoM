@@ -5,6 +5,7 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui">
 
+    <h:outputStylesheet name="style-standard.css" />
     <p:growl id="adminGrowl" showDetail="true" life="4000" globalOnly="true">
         <p:autoUpdate />
     </p:growl>
@@ -23,31 +24,39 @@
         .topbar {
             background-color: var(--olive);
             color: var(--white);
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 220px 1fr 220px;
             align-items: center;
-            padding: 10px 20px;
+            padding: 12px 28px;
             box-sizing: border-box;
             width: 100%;
             font-family: var(--font-body);
             line-height: 1.2;
-            min-height: 70px;
+            min-height: 84px;
             z-index: 9999;
             position: relative;
+            column-gap: 16px;
         }
 
         .topbar-left, .topbar-right {
             display: flex;
             align-items: center;
             gap: 10px;
+            min-width: 0;
+        }
+
+        .topbar-right {
+            justify-content: flex-end;
         }
 
         .topbar-center {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 8px 26px;
+            min-width: 0;
             text-align: center;
-            flex-grow: 1;
-            font-style: italic;
-            font-size: 22px;
-            line-height: 1.1;
         }
 
         .topbar a {
@@ -55,17 +64,20 @@
             color: var(--white);
             opacity: 0.9;
             font-size: 16px;
-            margin: 0 5px;
+            margin: 0;
             font-style: italic;
+            white-space: nowrap;
         }
 
-        .topbar-center a {
-            font-size: 16px;
-        }
-
-        .topbar-center a:first-child {
+        .topbar-brand {
             font-size: 22px;
-            display: block;
+            letter-spacing: 0.02em;
+        }
+
+        .topbar-center > a:first-child {
+            flex-basis: 100%;
+            font-size: 22px;
+            letter-spacing: 0.02em;
             margin-bottom: 2px;
         }
 
@@ -111,6 +123,24 @@
 
         .dropdown:hover .dropdown-content {
             display: block;
+        }
+
+        @media (max-width: 900px) {
+            .topbar {
+                grid-template-columns: 1fr;
+                row-gap: 10px;
+                text-align: center;
+            }
+
+            .topbar-left,
+            .topbar-right,
+            .topbar-center {
+                justify-content: center;
+            }
+
+            .topbar-center {
+                gap: 10px 18px;
+            }
         }
         /*]]>*/
     </style>

@@ -32,22 +32,6 @@
             font-style: normal;
         }
 
-        #toastSimple {
-            display: none;
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #F9F1E7;
-            color: #1a1a1a;
-            padding: 20px 25px;
-            border-left: 6px solid #3D4435;
-            z-index: 9999;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            font-family: 'Minerva Modern', serif;
-            font-size: 1.1rem;
-            min-width: 250px;
-        }
-
         .main-container {
             padding: 20px 40px;
             max-width: 1200px;
@@ -435,27 +419,22 @@
 <h:body>
     <ui:include src="componentTopbar.xhtml" />
 
-    <div id="toastSimple">
-        <span id="toastSimpleMessage"></span>
-    </div>
-
     <script>
         function mostrarToastSimple(msg) {
-            var t = document.getElementById('toastSimple');
-            var msgSpan = document.getElementById('toastSimpleMessage');
-
-            msgSpan.innerHTML = msg;
-
-            t.style.display = 'block';
-
-            setTimeout(function(){
-                t.style.display = 'none';
-            }, 3000);
+            var growl = PF('detalleRentaGrowl');
+            if (growl) {
+                growl.renderMessage({
+                    summary: 'Exito',
+                    detail: msg,
+                    severity: 'info'
+                });
+            }
         }
     </script>
 
     <div class="main-container">
         <h:form id="formDetalle">
+            <p:growl id="growlDetalle" widgetVar="detalleRentaGrowl" showDetail="true" life="3000" />
             <div class="page-header">
                 <div class="header-title">
                     <h:commandLink action="Cotizaciones.xhtml" title="Regresar" rendered="#{rentaUI.rentaSeleccionada.estado eq 'SOLICITADA'}">

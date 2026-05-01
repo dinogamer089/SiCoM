@@ -58,6 +58,12 @@
             opacity: 0.8;
         }
 
+        .button-bar > button.btn.eliminar::before {
+            font-family: "primeicons";
+            content: "\e90b";
+            margin-right: 6px;
+        }
+
         /* ---------- TABLA COMBINACIONES ---------- */
         .table-container {
             background-color: white;
@@ -221,6 +227,7 @@
         <h:form>
             <div class="button-bar">
                 <p:commandButton value="+ Nueva combinación"
+                                 icon="pi pi-plus"
                                  styleClass="btn alta"
                                  type="button"
                                  onclick="PF('dlgAltaCombo').show();" />
@@ -229,7 +236,7 @@
         </h:form>
 
         <h:form id="combosForm">
-            <p:growl id="msgs" showDetail="true" />
+            <p:growl id="msgs" widgetVar="combosGrowl" showDetail="true" life="3000" />
 
             <div class="table-container">
                 <p:dataTable id="tabla"
@@ -270,24 +277,29 @@
             </div>
         </h:form>
 
-        <div id="toastSimple" class="toast-simple toast-base">
-            <span id="toastSimpleMessage"></span>
-        </div>
     </div>
 
     <script type="text/javascript">
         //<![CDATA[
-        var simpleToastTimer;
+        function normalizarBotonesCombos() {
+            var alta = document.querySelector('.button-bar .btn.alta .ui-button-text');
+            if (alta) {
+                alta.textContent = 'Nueva combinacion';
+            }
+            var eliminar = document.querySelector('.button-bar > button.btn.eliminar');
+            if (eliminar) {
+                eliminar.textContent = 'Eliminar';
+            }
+        }
+
         function mostrarToastSimple(mensaje) {
-            clearTimeout(simpleToastTimer);
-            var toast = document.getElementById('toastSimple');
-            var message = document.getElementById('toastSimpleMessage');
-            if (toast && message) {
-                message.innerText = mensaje;
-                toast.style.display = 'block';
-                simpleToastTimer = setTimeout(function () {
-                    toast.style.display = 'none';
-                }, 3000);
+            var growl = PF('combosGrowl');
+            if (growl) {
+                growl.renderMessage({
+                    summary: 'Exito',
+                    detail: mensaje,
+                    severity: 'info'
+                });
             }
         }
         //]]>
@@ -297,6 +309,7 @@
         //<![CDATA[
         document.addEventListener('DOMContentLoaded', function () {
             try {
+                normalizarBotonesCombos();
                 function updateDeleteBtn() {
                     var del = document.querySelector('.button-bar > button.btn.eliminar');
                     if (!del) {
@@ -317,6 +330,7 @@
                 if (window.PrimeFaces && PrimeFaces.ajax && PrimeFaces.ajax.addOnEvent) {
                     PrimeFaces.ajax.addOnEvent(function (e) {
                         if (e && e.status === 'success') {
+                            normalizarBotonesCombos();
                             updateDeleteBtn();
                         }
                     });
