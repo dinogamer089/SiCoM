@@ -33,6 +33,7 @@ public class RentaBeanUI implements Serializable {
     private String estadoSiguiente;
     private LocalDate minDate;
     private LocalDate fechaOriginal;
+    private LocalDate fechaInicioOriginal;
     private String filtroNombre;
     private String filtroEstado;
     private String comentarioEntrega;
@@ -79,6 +80,9 @@ public class RentaBeanUI implements Serializable {
 
             if (this.rentaSeleccionada != null) {
                 this.fechaOriginal = this.rentaSeleccionada.getFecha();
+                this.fechaInicioOriginal = this.rentaSeleccionada.getFechaInicio() != null
+                        ? this.rentaSeleccionada.getFechaInicio()
+                        : this.rentaSeleccionada.getFecha();
             }
             actualizarListaEstadosPosibles();
         }
@@ -230,11 +234,24 @@ public class RentaBeanUI implements Serializable {
     public void guardarModificacion() {
         try {
             if (rentaSeleccionada != null) {
-                rentaHelper.actualizarRenta(rentaSeleccionada, fechaOriginal);
+                // Validar coherencia del rango
+                LocalDate fIni = rentaSeleccionada.getFechaInicio();
+                LocalDate fFin = rentaSeleccionada.getFecha();
+                if (fIni != null && fFin != null && fIni.isAfter(fFin)) {
+                    mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Rango inválido",
+                            "La fecha de inicio debe ser anterior o igual a la fecha de fin.");
+                    rentaSeleccionada.setFecha(fechaOriginal);
+                    rentaSeleccionada.setFechaInicio(fechaInicioOriginal);
+                    FacesContext.getCurrentInstance().validationFailed();
+                    return;
+                }
+
+                rentaHelper.actualizarRenta(rentaSeleccionada, fechaInicioOriginal, fechaOriginal);
 
                 mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Datos actualizados y stock ajustado correctamente.");
 
                 this.fechaOriginal = rentaSeleccionada.getFecha();
+                this.fechaInicioOriginal = rentaSeleccionada.getFechaInicio();
 
                 cargarRentaSeleccionada();
                 PrimeFaces.current().executeScript("PF('dlgModificar').hide();");
@@ -243,6 +260,7 @@ public class RentaBeanUI implements Serializable {
             mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error de Stock", re.getMessage());
 
             rentaSeleccionada.setFecha(fechaOriginal);
+            rentaSeleccionada.setFechaInicio(fechaInicioOriginal);
             FacesContext.getCurrentInstance().validationFailed();
 
         } catch (Exception e) {
@@ -321,7 +339,7 @@ public class RentaBeanUI implements Serializable {
 
     public void guardarCambiosArticulos() {
         try {
-            rentaHelper.actualizarRenta(rentaSeleccionada, fechaOriginal);
+            rentaHelper.actualizarRenta(rentaSeleccionada, fechaInicioOriginal, fechaOriginal);
 
             cargarRentaSeleccionada();
             mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Artículos actualizados y stock reservado.");

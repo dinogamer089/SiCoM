@@ -491,7 +491,12 @@
                     <h:panelGroup id="barraFecha" rendered="#{not empty articuloCatalogoUI.fechaSeleccionada}">
                         <div class="date-info-bar">
                             <i class="pi pi-calendar" style="margin-right:6px;"></i>
-                            Reservando para el: <strong>
+                            Reservando del: <strong>
+                            <h:outputText value="#{articuloCatalogoUI.fechaInicio}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                            </h:outputText>
+                        </strong>
+                            al: <strong>
                             <h:outputText value="#{articuloCatalogoUI.fechaSeleccionada}">
                                 <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
                             </h:outputText>
@@ -934,11 +939,11 @@
                 </h:panelGroup>
             </p:dialog>
 
-            <!-- DIALOGO FECHA EVENTO  -->
-            <p:dialog header="Fecha del Evento" widgetVar="dlgFecha"
+            <!-- DIALOGO FECHAS DEL EVENTO  -->
+            <p:dialog header="Fechas del Evento" widgetVar="dlgFecha"
                       modal="true" closable="false" resizable="false" draggable="false"
                       visible="#{empty articuloCatalogoUI.fechaSeleccionada}"
-                      showEffect="fade" hideEffect="fade" responsive="true" width="400"
+                      showEffect="fade" hideEffect="fade" responsive="true" width="420"
                       styleClass="custom-dialog">
 
                 <div style="display:flex; flex-direction:column; gap:20px; align-items:center; text-align:center;">
@@ -946,21 +951,37 @@
                     <div>
                         <h3 style="margin:0; color: var(--olive);">¡Hola!</h3>
                         <p style="margin-top:10px; color:#666; font-size:0.95rem; line-height:1.4;">
-                            Para mostrarte la disponibilidad exacta de nuestros artículos, necesitamos saber la fecha de tu evento.
+                            Para mostrarte la disponibilidad exacta de nuestros artículos, necesitamos saber las fechas de tu evento.
                         </p>
                     </div>
 
-                    <div class="center-calendar">
-                        <p:datePicker id="fechaInput" value="#{articuloCatalogoUI.fechaSeleccionada}"
-                                      pattern="dd/MM/yyyy" showIcon="true" locale="es"
-                                      mindate="#{articuloCatalogoUI.now}" readonlyInput="true" placeholder="Selecciona una fecha"/>
+                    <div class="center-calendar" style="display:flex; flex-direction:column; gap:12px; width:100%;">
+                        <div style="display:flex; flex-direction:column; gap:4px; text-align:left;">
+                            <label style="font-weight:600; color:var(--olive);">Fecha de inicio (entrega):</label>
+                            <p:datePicker id="fechaInicioInput" value="#{articuloCatalogoUI.fechaInicio}"
+                                          pattern="dd/MM/yyyy" showIcon="true" locale="es"
+                                          mindate="#{articuloCatalogoUI.now}" readonlyInput="true"
+                                          placeholder="Selecciona la fecha de entrega">
+                                <p:ajax event="dateSelect" update="btnConfirmarFechas" />
+                            </p:datePicker>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:4px; text-align:left;">
+                            <label style="font-weight:600; color:var(--olive);">Fecha de fin (recolección):</label>
+                            <p:datePicker id="fechaInput" value="#{articuloCatalogoUI.fechaSeleccionada}"
+                                          pattern="dd/MM/yyyy" showIcon="true" locale="es"
+                                          mindate="#{articuloCatalogoUI.now}" readonlyInput="true"
+                                          placeholder="Selecciona la fecha de recolección">
+                                <p:ajax event="dateSelect" update="btnConfirmarFechas" />
+                            </p:datePicker>
+                        </div>
                     </div>
 
-                    <p:commandButton value="Confirmar Fecha"
+                    <p:commandButton id="btnConfirmarFechas" value="Confirmar Fechas"
                                      actionListener="#{articuloCatalogoUI.onFechaCambio}"
                                      update=":formRenta:catalogoPrincipal :formRenta:barraFecha :formRenta:msgs"
                                      oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlgFecha').hide()"
-                                     styleClass="dialog-btn" icon="pi pi-check"/>
+                                     styleClass="dialog-btn" icon="pi pi-check"
+                                     disabled="#{!articuloCatalogoUI.rangoValido}"/>
                 </div>
             </p:dialog>
 
