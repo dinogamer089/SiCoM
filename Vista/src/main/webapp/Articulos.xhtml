@@ -75,102 +75,115 @@
             margin: 0 auto 10px auto;
         }
 
-        .articulos-header {
-            display: flex;
-            align-items: center;
-            background-color: #000000;
-            color: #FFFFFF;
-            padding: 12px 20px;
-            margin-bottom: 8px;
+        .tabla-articulos {
+            border: none !important;
+            background: transparent !important;
+        }
+
+        .tabla-articulos .ui-datatable-header,
+        .tabla-articulos .ui-datatable-footer,
+        .tabla-articulos .ui-widget-header,
+        .tabla-articulos .ui-widget-content {
+            border: none !important;
+        }
+
+        .tabla-articulos table {
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+
+        .tabla-articulos thead th {
+            background-color: #000000 !important;
+            color: #FFFFFF !important;
+            padding: 12px 20px !important;
             font-family: "FreightText Pro", serif;
             font-weight: bold;
             text-transform: uppercase;
+            border: none !important;
         }
 
-        .articulo {
-            display: flex;
-            align-items: center;
-            background-color: #D9D9D9;
+        .tabla-articulos tbody td {
+            background-color: #D9D9D9 !important;
+            color: #000000 !important;
+            padding: 12px 20px !important;
             font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             font-size: 15px;
-
-            color: #000000 !important;
-            text-decoration: none !important;
-
-            padding: 12px 20px;
-            margin-bottom: 10px;
-            gap: 15px;
+            border: none !important;
             cursor: pointer;
             transition: background-color 0.3s ease, color 0.3s ease;
-            user-select: none;
-            border-radius: 4px;
+            vertical-align: middle;
         }
 
-        .articulo:hover {
-            background-color: #C2C8CC;
-            color: #000000 !important;
+        .tabla-articulos tbody tr:hover td {
+            background-color: #C2C8CC !important;
         }
 
-        .articulo.seleccionado {
+        .tabla-articulos tbody tr.ui-state-highlight td,
+        .tabla-articulos tbody tr.ui-state-highlight:hover td {
             background-color: #3D4435 !important;
             color: #C2C8CC !important;
             font-weight: bold;
         }
 
-        .articulo.seleccionado:hover {
-            background-color: #2c3326 !important;
-            color: #C2C8CC !important;
-        }
-
-        .col-articulo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            overflow: hidden;
-        }
-
-        .col-articulo span {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .col-articulo.id {
-            flex-basis: 10%;
+        .tabla-articulos .col-id {
+            width: 10%;
             min-width: 70px;
-            justify-content: flex-start;
         }
 
-        .col-articulo.nombre {
-            flex-basis: 32%;
-            flex-grow: 1;
+        .tabla-articulos .col-nombre {
+            width: 32%;
             min-width: 180px;
         }
 
-        .col-articulo.categoria {
-            flex-basis: 18%;
+        .tabla-articulos .col-categoria {
+            width: 18%;
             min-width: 120px;
         }
 
-        .col-articulo.precio,
-        .col-articulo.unidades {
-            flex-basis: 15%;
+        .tabla-articulos .col-precio,
+        .tabla-articulos .col-unidades {
+            width: 15%;
             min-width: 90px;
-            justify-content: flex-end;
+            text-align: right;
         }
 
-        .col-articulo.imagen {
-            flex-basis: 15%;
+        .tabla-articulos .col-imagen {
+            width: 15%;
             min-width: 80px;
-            justify-content: center;
+            text-align: center;
         }
 
-        .col-articulo.imagen img {
+        .tabla-articulos .col-imagen img {
             width: 60px;
             height: auto;
             border: 1px solid #C2C8CC;
             background: #FFFFFF;
             padding: 2px;
+        }
+
+        .tabla-articulos .ui-paginator {
+            background: transparent !important;
+            border: none !important;
+            padding: 10px 0 0 0 !important;
+            font-family: "FreightText Pro", serif;
+        }
+
+        .tabla-articulos .ui-paginator .ui-paginator-pages .ui-paginator-page,
+        .tabla-articulos .ui-paginator .ui-paginator-first,
+        .tabla-articulos .ui-paginator .ui-paginator-prev,
+        .tabla-articulos .ui-paginator .ui-paginator-next,
+        .tabla-articulos .ui-paginator .ui-paginator-last,
+        .tabla-articulos .ui-paginator .ui-dropdown {
+            background: #D9D9D9 !important;
+            border: none !important;
+            color: #000000 !important;
+            box-shadow: none !important;
+        }
+
+        .tabla-articulos .ui-paginator .ui-state-active,
+        .tabla-articulos .ui-paginator .ui-paginator-page.ui-state-active {
+            background: #3D4435 !important;
+            color: #FFFFFF !important;
         }
 
         /* ---------- DIALOGOS ---------- */
@@ -319,6 +332,46 @@
 
         <h:form id="articulosForm">
             <h:panelGroup id="listaArticulosPanel" layout="block" styleClass="lista-articulos">
+                <p:dataTable id="tablaArticulos"
+                             value="#{articuloUI.articulos}"
+                             var="art"
+                             styleClass="tabla-articulos"
+                             paginator="true"
+                             rows="8"
+                             rowsPerPageTemplate="5,8,10,15"
+                             paginatorPosition="bottom"
+                             selectionMode="single"
+                             selection="#{articuloUI.seleccionada}"
+                             rowKey="#{art.id}"
+                             reflow="true">
+                    <p:ajax event="rowSelect" update=":accionesForm :articulosForm:listaArticulosPanel :formEliminar :formModificar" />
+                    <p:ajax event="rowUnselect" update=":accionesForm :articulosForm:listaArticulosPanel :formEliminar :formModificar" />
+
+                    <p:column headerText="ID" styleClass="col-id">
+                        <h:outputText value="#{art.id}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre" styleClass="col-nombre">
+                        <h:outputText value="#{art.nombre}" />
+                    </p:column>
+
+                    <p:column headerText="Categoria" styleClass="col-categoria">
+                        <h:outputText value="#{art.categoria}" />
+                    </p:column>
+
+                    <p:column headerText="Precio" styleClass="col-precio">
+                        <h:outputText value="$#{art.precio}" />
+                    </p:column>
+
+                    <p:column headerText="Unidades" styleClass="col-unidades">
+                        <h:outputText value="#{art.unidades} unidades" />
+                    </p:column>
+
+                    <p:column headerText="Imagen" styleClass="col-imagen">
+                        <img src="#{articuloUI.getImagenBase64(art)}" alt="img" />
+                    </p:column>
+                </p:dataTable>
+                <ui:fragment rendered="false">
                 <div class="articulos-header">
                     <div class="col-articulo id">
                         <span>ID</span>
@@ -371,6 +424,7 @@
                         </div>
                     </p:commandLink>
                 </ui:repeat>
+                </ui:fragment>
             </h:panelGroup>
         </h:form>
 

@@ -206,6 +206,31 @@
             box-shadow: none;
         }
 
+        .tarjeta-table .ui-paginator {
+            background: transparent !important;
+            border: none !important;
+            padding: 10px 0 0 0 !important;
+            font-family: "FreightText Pro", serif;
+        }
+
+        .tarjeta-table .ui-paginator .ui-paginator-pages .ui-paginator-page,
+        .tarjeta-table .ui-paginator .ui-paginator-first,
+        .tarjeta-table .ui-paginator .ui-paginator-prev,
+        .tarjeta-table .ui-paginator .ui-paginator-next,
+        .tarjeta-table .ui-paginator .ui-paginator-last,
+        .tarjeta-table .ui-paginator .ui-dropdown {
+            background: #D9D9D9 !important;
+            border: none !important;
+            color: #000000 !important;
+            box-shadow: none !important;
+        }
+
+        .tarjeta-table .ui-paginator .ui-state-active,
+        .tarjeta-table .ui-paginator .ui-paginator-page.ui-state-active {
+            background: #3D4435 !important;
+            color: #FFFFFF !important;
+        }
+
 
         /* Estilos para columnas específicas */
         .tarjeta-table tbody td:nth-child(1) {
@@ -479,6 +504,7 @@
                                  var="fila"
                                  paginator="true"
                                  rows="10"
+                                 rowsPerPageTemplate="5,8,10,15"
                                  paginatorPosition="bottom"
                                  styleClass="tarjeta-table">
 

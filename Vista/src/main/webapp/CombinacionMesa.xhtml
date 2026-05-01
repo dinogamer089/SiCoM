@@ -112,6 +112,31 @@
             background-color: #b7e6b3 !important;
         }
 
+        .inventory-table .ui-paginator {
+            background: transparent !important;
+            border: none !important;
+            padding: 10px 0 0 0 !important;
+            font-family: "FreightText Pro", serif;
+        }
+
+        .inventory-table .ui-paginator .ui-paginator-pages .ui-paginator-page,
+        .inventory-table .ui-paginator .ui-paginator-first,
+        .inventory-table .ui-paginator .ui-paginator-prev,
+        .inventory-table .ui-paginator .ui-paginator-next,
+        .inventory-table .ui-paginator .ui-paginator-last,
+        .inventory-table .ui-paginator .ui-dropdown {
+            background: #D9D9D9 !important;
+            border: none !important;
+            color: #000000 !important;
+            box-shadow: none !important;
+        }
+
+        .inventory-table .ui-paginator .ui-state-active,
+        .inventory-table .ui-paginator .ui-paginator-page.ui-state-active {
+            background: #3D4435 !important;
+            color: #FFFFFF !important;
+        }
+
         /* ---------- DIALOGOS ---------- */
         .ui-dialog .ui-dialog-content {
             background-color: #E7D9CB !important;
@@ -215,9 +240,7 @@
                              rowKey="#{c.id}"
                              paginator="true"
                              rows="10"
-                             paginatorPosition="bottom"
-                             styleClass="inventory-table"
-                             style="width:100%;">
+                             rowsPerPageTemplate="5,8,10,15"
                              paginatorPosition="bottom"
                              styleClass="inventory-table"
                              style="width:100%;">
