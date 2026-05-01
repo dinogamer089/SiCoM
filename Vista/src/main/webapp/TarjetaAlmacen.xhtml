@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
       xml:lang="es" lang="es">
 
@@ -16,55 +17,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <style type="text/css">
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #E7D9CB;
+            font-family: "FreightText Pro", serif;
+        }
+
         @font-face {
             font-family: "Minerva Modern";
             src: url("resources/MinervaModern_Bold.ttf") format("truetype");
             font-weight: bold;
             font-style: normal;
-        }
-
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            background: #E7D9CB;
-            font-family: "FreightText Pro", serif;
-        }
-
-        /* ---------- TOPBAR ---------- */
-        .topbar {
-            background-color: #3D4435;
-            color: #C2C8CC;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-        }
-        .topbar-left, .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .topbar-center {
-            text-align: center;
-            flex-grow: 1;
-            font-style: italic;
-            font-size: 22px;
-        }
-        .topbar a {
-            text-decoration: none;
-            color: #C2C8CC;
-            font-size: 16px;
-            margin: 0 5px;
-            font-style: italic;
-        }
-        .topbar a:hover {
-            text-decoration: underline;
-        }
-        .topbar img,
-        .topbar .topbar-icon {
-            width: 20px;
-            height: 20px;
         }
 
         /* ---------- CONTENIDO ---------- */
@@ -241,6 +206,31 @@
             box-shadow: none;
         }
 
+        .tarjeta-table .ui-paginator {
+            background: transparent !important;
+            border: none !important;
+            padding: 10px 0 0 0 !important;
+            font-family: "FreightText Pro", serif;
+        }
+
+        .tarjeta-table .ui-paginator .ui-paginator-pages .ui-paginator-page,
+        .tarjeta-table .ui-paginator .ui-paginator-first,
+        .tarjeta-table .ui-paginator .ui-paginator-prev,
+        .tarjeta-table .ui-paginator .ui-paginator-next,
+        .tarjeta-table .ui-paginator .ui-paginator-last,
+        .tarjeta-table .ui-paginator .ui-dropdown {
+            background: #D9D9D9 !important;
+            border: none !important;
+            color: #000000 !important;
+            box-shadow: none !important;
+        }
+
+        .tarjeta-table .ui-paginator .ui-state-active,
+        .tarjeta-table .ui-paginator .ui-paginator-page.ui-state-active {
+            background: #3D4435 !important;
+            color: #FFFFFF !important;
+        }
+
 
         /* Estilos para columnas específicas */
         .tarjeta-table tbody td:nth-child(1) {
@@ -407,25 +397,7 @@
 </h:head>
 
 <h:body>
-    <div class="topbar">
-        <div class="topbar-left">
-            <img src="resources/edicion.png" alt="Empleados" class="topbar-icon" />
-            <a href="AdminEmpleados.xhtml">Empleados</a>
-        </div>
-        <div class="topbar-center">
-            <a href="principalAdministrador.xhtml">EVENTOS CAMPESTRE</a><br />
-            <a href="TarjetaAlmacen.xhtml">Inventario</a>
-            <a href="Articulos.xhtml">Artículos</a>
-            <a href="Cotizaciones.xhtml">Cotizaciones</a>
-            <a href="Rentas.xhtml">Rentas</a>
-            <a href="Dashboard.xhtml">Informes</a>
-            <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
-        </div>
-        <div class="topbar-right">
-            <span>Administrador</span>
-            <img src="resources/administrador.png" alt="admin" class="topbar-icon" />
-        </div>
-    </div>
+    <ui:include src="componentTopbar.xhtml" />
 
     <div class="content">
         <h1 class="title">Tarjeta de Almacen - Control de Movimientos</h1>
@@ -528,73 +500,67 @@
                 </div>
 
                 <div class="table-container">
-                    <h:dataTable value="#{tarjetaAlmacenUI.tarjetaDelDia}"
+                    <p:dataTable value="#{tarjetaAlmacenUI.tarjetaDelDia}"
                                  var="fila"
+                                 paginator="true"
+                                 rows="10"
+                                 rowsPerPageTemplate="5,8,10,15"
+                                 paginatorPosition="bottom"
                                  styleClass="tarjeta-table">
 
-                        <h:column>
-                            <f:facet name="header">Fecha</f:facet>
+                        <p:column headerText="Fecha">
                             <h:outputText value="#{fila.fechaFormateada}" />
-                        </h:column>
+                        </p:column>
 
-                        <h:column>
-                            <f:facet name="header">Movimiento</f:facet>
+                        <p:column headerText="Movimiento">
                             <h:outputText value="Renta ##{fila.idRenta}"
                                           rendered="#{fila.idRenta != null}" />
                             <h:outputText value="-"
                                           rendered="#{fila.idRenta == null}" />
-                        </h:column>
+                        </p:column>
 
-                        <h:column>
-                            <f:facet name="header">Concepto</f:facet>
+                        <p:column headerText="Concepto">
                             <h:outputText value="#{fila.concepto}" />
-                        </h:column>
+                        </p:column>
 
-                        <h:column>
-                            <f:facet name="header">Inventario Inicial</f:facet>
+                        <p:column headerText="Inventario Inicial">
                             <h:outputText value="#{fila.inventarioInicial}" />
-                        </h:column>
+                        </p:column>
 
-                        <h:column>
-                            <f:facet name="header">Entrada</f:facet>
+                        <p:column headerText="Entrada">
                             <h:outputText value="#{fila.entrada}"
                                           styleClass="#{fila.entrada > 0 ? 'amount-positive' : ''}" />
-                        </h:column>
+                        </p:column>
 
-                        <h:column>
-                            <f:facet name="header">Salida</f:facet>
+                        <p:column headerText="Salida">
                             <h:outputText value="#{fila.salida}"
                                           styleClass="#{fila.salida > 0 ? 'amount-negative' : ''}" />
-                        </h:column>
+                        </p:column>
 
-                        <h:column>
-                            <f:facet name="header">Existencia</f:facet>
+                        <p:column headerText="Existencia">
                             <h:outputText value="#{fila.existencia}" />
-                        </h:column>
+                        </p:column>
 
-                        <h:column>
-                            <f:facet name="header">Debe</f:facet>
+                        <p:column headerText="Debe">
                             <h:outputText value="#{fila.debe}"
                                           styleClass="#{fila.debePositivo ? 'amount-positive' : ''}">
                                 <f:convertNumber type="currency" currencySymbol="$" />
                             </h:outputText>
-                        </h:column>
+                        </p:column>
 
-                        <h:column>
-                            <f:facet name="header">Haber</f:facet>
+                        <p:column headerText="Haber">
                             <h:outputText value="#{fila.haber}"
                                           styleClass="#{fila.haberPositivo ? 'amount-negative' : ''}">
                                 <f:convertNumber type="currency" currencySymbol="$" />
                             </h:outputText>
-                        </h:column>
+                        </p:column>
 
-                        <h:column>
-                            <f:facet name="header">Saldo</f:facet>
+                        <p:column headerText="Saldo">
                             <h:outputText value="#{fila.saldo}">
                                 <f:convertNumber type="currency" currencySymbol="$" />
                             </h:outputText>
-                        </h:column>
-                    </h:dataTable>
+                        </p:column>
+                    </p:dataTable>
                 </div>
             </h:panelGroup>
 

@@ -17,69 +17,19 @@
     <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style type="text/css">
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #E7D9CB;
+            font-family: "FreightText Pro", serif;
+        }
+
         @font-face {
             font-family: "Minerva Modern";
             src: url("resources/MinervaModern Bold.ttf") format("truetype");
             font-weight: bold;
             font-style: normal;
-        }
-
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            background: #E8DCC8;
-            font-family: 'Minerva Modern', serif;
-        }
-
-        #toastSimple {
-            display: none;
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #F9F1E7;
-            color: #1a1a1a;
-            padding: 20px 25px;
-            border-left: 6px solid #3D4435;
-            z-index: 9999;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            font-family: 'Minerva Modern', serif;
-            font-size: 1.1rem;
-            min-width: 250px;
-        }
-
-        .topbar {
-            background-color: #3D4435;
-            color: #C2C8CC;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-        }
-        .topbar-left, .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .topbar-center {
-            text-align: center;
-            flex-grow: 1;
-            font-style: italic;
-            font-size: 22px;
-        }
-        .topbar a {
-            text-decoration: none;
-            color: #C2C8CC;
-            font-size: 16px;
-            margin: 0 5px;
-            font-style: italic;
-        }
-        .topbar a:hover {
-            text-decoration: underline;
-        }
-        .topbar img {
-            width: 20px;
-            height: 20px;
         }
 
         .main-container {
@@ -185,6 +135,31 @@
         .custom-datatable .ui-datatable-data tr.ui-datatable-even,
         .custom-datatable .ui-datatable-data tr.ui-datatable-odd {
             background: transparent !important;
+        }
+
+        .custom-datatable .ui-paginator {
+            background: transparent !important;
+            border: none !important;
+            padding: 10px 0 0 0 !important;
+            font-family: "FreightText Pro", serif;
+        }
+
+        .custom-datatable .ui-paginator .ui-paginator-pages .ui-paginator-page,
+        .custom-datatable .ui-paginator .ui-paginator-first,
+        .custom-datatable .ui-paginator .ui-paginator-prev,
+        .custom-datatable .ui-paginator .ui-paginator-next,
+        .custom-datatable .ui-paginator .ui-paginator-last,
+        .custom-datatable .ui-paginator .ui-dropdown {
+            background: #D9D9D9 !important;
+            border: none !important;
+            color: #000000 !important;
+            box-shadow: none !important;
+        }
+
+        .custom-datatable .ui-paginator .ui-state-active,
+        .custom-datatable .ui-paginator .ui-paginator-page.ui-state-active {
+            background: #3D4435 !important;
+            color: #FFFFFF !important;
         }
 
         .total-section {
@@ -346,8 +321,7 @@
 
         .contenedor-comentarios {
             display: flex;
-            gap: 20px;
-            justify-content: space-between;
+            gap: 20px;            justify-content: space-between;
             width: 100%;
         }
 
@@ -443,46 +417,24 @@
     </style>
 </h:head>
 <h:body>
-    <div id="toastSimple">
-        <span id="toastSimpleMessage"></span>
-    </div>
+    <ui:include src="componentTopbar.xhtml" />
 
     <script>
         function mostrarToastSimple(msg) {
-            var t = document.getElementById('toastSimple');
-            var msgSpan = document.getElementById('toastSimpleMessage');
-
-            msgSpan.innerHTML = msg;
-
-            t.style.display = 'block';
-
-            setTimeout(function(){
-                t.style.display = 'none';
-            }, 3000);
+            var growl = PF('detalleRentaGrowl');
+            if (growl) {
+                growl.renderMessage({
+                    summary: 'Exito',
+                    detail: msg,
+                    severity: 'info'
+                });
+            }
         }
     </script>
 
-    <div class="topbar">
-        <div class="topbar-left">
-            <img src="resources/edicion.png" alt="Empleados" class="topbar-icon" />
-            <a href="AdminEmpleados.xhtml">Empleados</a>
-        </div>
-        <div class="topbar-center">
-            <a href="principalAdministrador.xhtml">EVENTOS CAMPESTRE</a><br />
-            <a href="#">Inventario</a>
-            <a href="Articulos.xhtml">Artículos</a>
-            <a href="Cotizaciones.xhtml">Cotizaciones</a>
-            <a href="Rentas.xhtml">Rentas</a>
-            <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
-        </div>
-        <div class="topbar-right">
-            <span>Administrador</span>
-            <img src="resources/administrador.png" alt="admin" class="topbar-icon" />
-        </div>
-    </div>
-
     <div class="main-container">
         <h:form id="formDetalle">
+            <p:growl id="growlDetalle" widgetVar="detalleRentaGrowl" showDetail="true" life="3000" />
             <div class="page-header">
                 <div class="header-title">
                     <h:commandLink action="Cotizaciones.xhtml" title="Regresar" rendered="#{rentaUI.rentaSeleccionada.estado eq 'SOLICITADA'}">
@@ -590,6 +542,10 @@
                          value="#{rentaUI.rentaSeleccionada.detallesRenta}"
                          styleClass="custom-datatable"
                          emptyMessage="No hay artículos en esta renta."
+                         paginator="true"
+                         rows="10"
+                         rowsPerPageTemplate="5,8,10,15"
+                         paginatorPosition="bottom"
                          style="border-spacing: 0 10px; border-collapse: separate;">
 
                 <p:column headerText="ID">
@@ -738,6 +694,10 @@
                          styleClass="custom-datatable"
                          editable="true"
                          editMode="cell"
+                         paginator="true"
+                         rows="5"
+                         rowsPerPageTemplate="5,8,10,15"
+                         paginatorPosition="bottom"
                          style="margin-bottom: 20px;">
 
                 <p:column headerText="Artículo">
@@ -818,6 +778,7 @@
         <h:form id="formSeleccionarArticulo">
             <p:dataTable var="art" value="#{rentaUI.listaArticulosDisponibles}"
                          paginator="true" rows="5"
+                         rowsPerPageTemplate="5,8,10,15"
                          paginatorPosition="bottom"
                          styleClass="custom-datatable">
 
