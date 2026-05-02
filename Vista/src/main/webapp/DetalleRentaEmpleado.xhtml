@@ -26,67 +26,12 @@
             font-style: normal;
         }
 
-        body, html {
+        html, body {
             margin: 0;
             padding: 0;
             height: 100%;
-            background: #E8DCC8;
-            font-family: 'Minerva Modern', serif;
-        }
-
-        #toastSimple {
-            display: none;
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #F9F1E7;
-            color: #1a1a1a;
-            padding: 20px 25px;
-            border-left: 6px solid #3D4435;
-            z-index: 9999;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            font-family: 'Minerva Modern', serif;
-            font-size: 1.1rem;
-            min-width: 250px;
-        }
-
-        .topbar {
-            background-color: #3D4435;
-            color: #C2C8CC;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-        }
-
-        .topbar-left, .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .topbar-center {
-            text-align: center;
-            flex-grow: 1;
-            font-style: italic;
-            font-size: 22px;
-        }
-
-        .topbar a {
-            text-decoration: none;
-            color: #C2C8CC;
-            font-size: 16px;
-            margin: 0 5px;
-            font-style: italic;
-        }
-
-        .topbar a:hover {
-            text-decoration: underline;
-        }
-
-        .topbar img {
-            width: 20px;
-            height: 20px;
+            background-color: #E7D9CB;
+            font-family: "FreightText Pro", serif;
         }
 
         .main-container {
@@ -108,6 +53,7 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            font-family: 'Minerva Modern', serif;
         }
 
         .info-cards-container {
@@ -384,41 +330,24 @@
     </style>
 </h:head>
 <h:body>
-    <div id="toastSimple">
-        <span id="toastSimpleMessage"></span>
-    </div>
-
     <script>
         function mostrarToastSimple(msg) {
-            var t = document.getElementById('toastSimple');
-            var msgSpan = document.getElementById('toastSimpleMessage');
-
-            msgSpan.innerHTML = msg;
-
-            t.style.display = 'block';
-
-            setTimeout(function(){
-                t.style.display = 'none';
-            }, 3000);
+            var growl = PF('detalleEmpleadoGrowl');
+            if (growl) {
+                growl.renderMessage({
+                    summary: 'Exito',
+                    detail: msg,
+                    severity: 'info'
+                });
+            }
         }
     </script>
 
-    <div class="topbar">
-        <div class="topbar-left">
-            <span style="font-size:14px;">Módulo Operativo</span>
-        </div>
-        <div class="topbar-center">
-            <a href="RentasEmpleado.xhtml">EVENTOS CAMPESTRE</a>
-        </div>
-        <div class="topbar-right">
-            <span>Empleado</span>
-            <img src="resources/administrador.png" alt="user" class="topbar-icon" />
-        </div>
-    </div>
+    <ui:include src="componentTopbarEmpleado.xhtml" />
 
     <div class="main-container">
         <h:form id="formDetalle">
-            <p:growl id="growl" showDetail="true" life="5000" />
+            <p:growl id="growl" widgetVar="detalleEmpleadoGrowl" showDetail="true" life="3000" />
 
             <div class="page-header">
                 <div class="header-title">
@@ -488,8 +417,20 @@
                         <span class="info-value">#{empleadoRentaUI.rentaSeleccionada.idCliente.direccion}</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">Fecha:</span>
-                        <span class="info-value">#{empleadoRentaUI.rentaSeleccionada.fecha}</span>
+                        <span class="info-label">Fecha de entrega:</span>
+                        <span class="info-value">
+                            <h:outputText value="#{empleadoRentaUI.rentaSeleccionada.fechaInicio}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                            </h:outputText>
+                        </span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Fecha de recolección:</span>
+                        <span class="info-value">
+                            <h:outputText value="#{empleadoRentaUI.rentaSeleccionada.fecha}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                            </h:outputText>
+                        </span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Hora:</span>

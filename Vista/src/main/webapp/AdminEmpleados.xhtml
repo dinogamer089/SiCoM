@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
@@ -6,104 +6,23 @@
       xmlns:p="http://primefaces.org/ui" xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
       lang="es">
 
+<f:metadata>
+    <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
+</f:metadata>
+
 <h:head>
     <meta charset="UTF-8"/>
     <title>EVENTOS CAMPESTRE</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"/>
-
     <style type="text/css">
         /* --- INICIO: Estilos Generales (Body) --- */
-        body {
-            background-color: #E7D9CB;
-            font-family: "FreightText Pro", serif;
+        html, body {
             margin: 0;
             padding: 0;
+            height: 100%;
+            background-color: #E7D9CB;
+            font-family: "FreightText Pro", serif;
         }
         /* --- FIN: Estilos Generales (Body) --- */
-
-        /* --- INICIO: Estilos de la Barra de Navegacion Superior (Topbar) --- */
-        /* TOPBAR */
-        .topbar {
-            background-color: #3D4435;
-            color: #C2C8CC;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-        }
-
-        .topbar-left, .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .topbar-center {
-            text-align: center;
-            flex-grow: 1;
-            font-style: italic;
-            font-size: 22px;
-        }
-
-        .topbar a {
-            text-decoration: none;
-            color: #C2C8CC;
-            font-size: 16px;
-            margin: 0 5px;
-            font-style: italic;
-        }
-
-        .topbar a:hover {
-            text-decoration: underline;
-        }
-
-        /* Estilos para imágenes */
-        .topbar img, .topbar-icon {
-            width: 20px;
-            height: 20px;
-        }
-
-        /* DROPDOWN MENU */
-        .dropdown {
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background-color: #f9f9f9;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1000;
-            border-radius: 4px;
-        }
-
-        .dropdown-content a {
-            color: #333 !important;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-            text-align: left;
-            font-style: normal;
-            font-size: 14px;
-        }
-
-        .dropdown-content a:hover {
-            background-color: #ddd;
-            text-decoration: none;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
 
         /* --- INICIO: Estilos del Contenido Principal de la Pagina --- */
         .contenido {
@@ -587,42 +506,7 @@
     </style>
 </h:head>
 <h:body>
-    <f:metadata>
-        <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
-    </f:metadata>
-    <div class="topbar">
-        <div class="topbar-left">
-            <img src="#{request.contextPath}/resources/edicion.png" alt="Empleados" class="topbar-icon" />
-            <a href="#{request.contextPath}/AdminEmpleados.xhtml">Empleados</a>
-        </div>
-
-        <div class="topbar-center">
-            <a href="principalAdministrador.xhtml"> EVENTOS CAMPESTRE</a><br />
-            <a href="Articulos.xhtml">Artículos</a>
-            <a href="CombinacionMesa.xhtml">Combinación de mesas</a>
-            <a href="Cotizaciones.xhtml">Cotizaciones</a>
-            <a href="Rentas.xhtml">Rentas</a>
-            <a href="Dashboard.xhtml">Informes</a>
-            <a href="TarjetaAlmacen.xhtml">Inventario</a>
-        </div>
-
-        <div class="topbar-right">
-            <h:form style="margin:0; padding:0;">
-                <div class="dropdown">
-                    <span>Administrador</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="topbar-icon">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                        <polyline points="16 17 21 12 16 7"></polyline>
-                        <line x1="21" y1="12" x2="9" y2="12"></line>
-                    </svg>
-
-                    <div class="dropdown-content">
-                        <h:commandLink action="#{loginUI.logout}" value="Cerrar Sesión" />
-                    </div>
-                </div>
-            </h:form>
-        </div>
-    </div>
+    <ui:include src="componentTopbar.xhtml" />
     <h:form id="mainForm">
         <div class="contenido">
             <div class="titulo-empleados">
@@ -631,10 +515,11 @@
             </div>
 
             <p:messages id="globalMessages" autoUpdate="true" showDetail="true" closable="true" styleClass="global-messages" />
+            <p:growl id="empleadosGrowl" widgetVar="empleadosGrowl" showDetail="true" life="3000" />
 
             <h:panelGroup id="botonesPanel" layout="block" styleClass="botones">
                 <p:commandButton value="Alta"
-                                 icon="fa-solid fa-plus"
+                                 icon="pi pi-plus"
                                  styleClass="btn-alta"
                                  action="#{empleadoUI.prepararNuevoEmpleado}"
                                  process="@this"
@@ -643,8 +528,8 @@
 
                 <p:commandButton
                         styleClass="btn-reset"
-                        value="Restablecer Contraseña"
-                        icon="fa-solid fa-key"
+                        value="Restablecer Contrasena"
+                        icon="pi pi-key"
                         rendered="#{empleadoUI.empleadoSeleccionado != null}"
                         action="#{empleadoUI.prepararModalReset}"
                         oncomplete="PF('dialogReset').show()"
@@ -653,8 +538,8 @@
 
                 <p:commandButton
                         styleClass="btn-reset"
-                        value="Restablecer Contraseña"
-                        icon="fa-solid fa-key"
+                        value="Restablecer Contrasena"
+                        icon="pi pi-key"
                         rendered="#{empleadoUI.empleadoSeleccionado == null}"
                         disabled="true"
                         style="opacity: 0.6; cursor: not-allowed;" />
@@ -662,7 +547,7 @@
                 <p:commandButton
                         styleClass="btn-eliminar"
                         value="Eliminar"
-                        icon="fa-solid fa-trash"
+                        icon="pi pi-trash"
                         rendered="#{empleadoUI.empleadoSeleccionado != null}"
                         action="#{empleadoUI.prepararEliminacion}"
                         process="@this"
@@ -672,19 +557,12 @@
                 <p:commandButton
                         styleClass="btn-eliminar"
                         value="Eliminar"
-                        icon="fa-solid fa-trash"
+                        icon="pi pi-trash"
                         rendered="#{empleadoUI.empleadoSeleccionado == null}"
                         disabled="true"
                         style="opacity: 0.6; cursor: not-allowed;" />
             </h:panelGroup>
-            <p:inputText id="buscarNombre" value="#{empleadoUI.buscarNombre}" placeholder="Buscar por nombre o correo..."
-                         style="width:100%; max-width:360px; margin-bottom:12px;">
-                <p:ajax event="keyup" process="@this" update="mainForm:listaEmpleadosPanel" delay="300" />
-            </p:inputText>
             <div id="toastContainer"></div>
-            <div id="toastSimple" class="toast-simple toast-base">
-                <span id="toastSimpleMessage"></span>
-            </div>
             <h:panelGroup id="listaEmpleadosPanel" layout="block" styleClass="lista-empleados">
                 <ui:repeat value="#{empleadoUI.empleados}" var="emp">
                     <h:commandLink
@@ -696,12 +574,12 @@
                         <f:ajax execute="@this" render="mainForm:botonesPanel" oncomplete="reaplicarPendientes();"/>
 
                         <div class="col-empleado nombre">
-                            <i class="fa-solid fa-id-card"></i>
+                            <i class="pi pi-id-card"></i>
                             <span>#{emp.apellidoPaterno} #{emp.apellidoMaterno} #{emp.nombre}</span>
                         </div>
 
                         <div class="col-empleado usuario">
-                            <i class="fa-solid fa-user"></i>
+                            <i class="pi pi-user"></i>
                             <span>#{emp.correo}</span>
                         </div>
                     </h:commandLink>
@@ -717,7 +595,7 @@
                       draggable="false"
                       style="max-width: 700px; width: 90%;">
                 <f:facet name="header">
-                    <i class="fa-solid fa-user-plus"></i>
+                    <i class="pi pi-user-plus"></i>
                     <span>Nuevo empleado</span>
                 </f:facet>
 
@@ -738,11 +616,11 @@
 
                 <div class="modal-renglon modal-correo-contrasena">
                     <p:inputText id="correo" value="#{empleadoUI.nuevoEmpleado.correo}"
-                                 placeholder="Correo Electrónico" required="true"
+                                 placeholder="Correo Electronico" required="true"
                                  requiredMessage="Correo es obligatorio." />
                     <p:password id="pass" value="#{empleadoUI.nuevoEmpleado.contrasena}"
-                                placeholder="Contraseña" required="true"
-                                requiredMessage="Contraseña es obligatoria." />
+                                placeholder="Contrasena" required="true"
+                                requiredMessage="Contrasena es obligatoria." />
                 </div>
 
                 <div class="modal-renglon modal-botones">
@@ -770,7 +648,7 @@
                       style="max-width: 700px; width: 90%;">
                 <h:panelGroup id="modalEliminarContent">
                     <div class="modal-renglon modal-titulo">
-                        <i class="fa-solid fa-trash"></i>
+                        <i class="pi pi-trash"></i>
                         <span>Eliminar empleado</span>
                     </div>
 
@@ -803,12 +681,12 @@
                       draggable="false"
                       style="max-width: 700px; width: 90%;">
                 <f:facet name="header">
-                    <i class="fa-solid fa-key"></i>
-                    <span>Restablecer Contraseña</span>
+                    <i class="pi pi-key"></i>
+                    <span>Restablecer Contrasena</span>
                 </f:facet>
 
                 <div class="modal-renglon modal-cuerpo-texto">
-                    <span>Establecer nueva contraseña para el empleado:</span>
+                    <span>Establecer nueva contrasena para el empleado:</span>
                     <span class="nombre-empleado-bold">
                         #{empleadoUI.empleadoSeleccionado.nombre} #{empleadoUI.empleadoSeleccionado.apellidoPaterno}
                     </span>
@@ -816,9 +694,9 @@
 
                 <div class="modal-renglon modal-correo-contrasena" style="justify-content: center; flex-direction: column;">
                     <p:password id="newPass" value="#{empleadoUI.nuevaContrasena}"
-                                placeholder="Escribir nueva contraseña"
+                                placeholder="Escribir nueva contrasena"
                                 required="true"
-                                requiredMessage="La contraseña no puede estar vacía."
+                                requiredMessage="La contrasena no puede estar vacia."
                                 style="width: 50%; min-width: 200px;"/>
                     <p:message for="newPass" styleClass="error-message"/>
                 </div>
@@ -834,7 +712,7 @@
                                      action="#{empleadoUI.restablecerContrasena}"
                                      process="modalResetForm"
                                      update="mainForm"
-                                     oncomplete="if (!args.validationFailed) { PF('dialogReset').hide(); mostrarToastSimple('Contraseña actualizada!'); }"/>
+                                     oncomplete="if (!args.validationFailed) { PF('dialogReset').hide(); mostrarToastSimple('Contrasena actualizada!'); }"/>
                 </div>
             </p:dialog>
             <h:commandButton id="btnResetModal" style="display:none;"
@@ -851,7 +729,6 @@
     <script type="text/javascript">
         //<![CDATA[
 
-        var simpleToastTimer;
         var pendingDeletes = {};
 
         function marcarSeleccion(row) {
@@ -874,16 +751,14 @@
          * Muestra una notificacion simple que desaparece sola.
          */
         function mostrarToastSimple(mensaje) {
-            clearTimeout(simpleToastTimer);
-            var toast = document.getElementById('toastSimple');
-            var message = document.getElementById('toastSimpleMessage');
-
-            message.innerText = mensaje;
-            toast.style.display = 'block';
-
-            simpleToastTimer = setTimeout(function() {
-                toast.style.display = 'none';
-            }, 3000);
+            var growl = PF('empleadosGrowl');
+            if (growl) {
+                growl.renderMessage({
+                    summary: 'Exito',
+                    detail: mensaje,
+                    severity: 'info'
+                });
+            }
         }
         // --- FIN: mostrarToastSimple ---
 
@@ -968,7 +843,7 @@
             }
             delete pendingDeletes[empleadoId];
             rcRecargarLista();
-            mostrarToastSimple('Eliminación cancelada');
+            mostrarToastSimple('Eliminacion cancelada');
         }
 
         // --- INICIO: DOMContentLoaded ---
@@ -985,12 +860,3 @@
     </script>
 </h:body>
 </html>
-
-
-
-
-
-
-
-
-

@@ -46,14 +46,38 @@ public class ArticuloCatalogoBeanUI implements Serializable {
     // Cantidad a agregar (ligado al <p:inputNumber>)
     private int cantidad = 1;
 
-    // Fecha seleccionada por el cliente
+    // Fecha de inicio (entrega) seleccionada por el cliente
+    private LocalDate fechaInicio;
+
+    // Fecha de fin (recoleccion) seleccionada por el cliente
     private LocalDate fechaSeleccionada;
 
     @Inject
     private CarritoBean carritoBeanUI;
 
     /**
-     * Metodo de inicializacion del bean de catalogo.
+     * Verifica si el rango de fechas actual es válido (ambas seleccionadas y coherentes).
+     * @return true si el rango es válido para consultar stock.
+     */
+    public boolean isRangoValido() {
+        return fechaInicio != null && fechaSeleccionada != null && !fechaInicio.isAfter(fechaSeleccionada);
+    }
+
+    /**
+     * Valida el acceso a páginas que requieren fechas. 
+     * Si no hay fechas seleccionadas, redirige al catálogo (donde está el diálogo obligatorio).
+     */
+    public void validarAcceso() {
+        if (!isRangoValido()) {
+            try {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("renta_cliente.xhtml");
+            } catch (Exception e) {
+                // Manejo silencioso o log
+            }
+        }
+    }
+
+     /** Metodo de inicializacion del bean de catalogo.
      * Inicializa las listas vacias. La carga real ocurre cuando el usuario selecciona fecha.
      * Si ya existe una fecha seleccionada (por ejemplo, después de F5), recarga el catálogo automáticamente.
      */
@@ -84,14 +108,14 @@ public class ArticuloCatalogoBeanUI implements Serializable {
      * Si la fecha es valida, actualiza las listas y muestra mensaje de confirmacion.
      */
     public void onFechaCambio() {
-        if (fechaSeleccionada == null) {
+        if (fechaInicio == null || fechaSeleccionada == null) {
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Debe seleccionar una fecha."));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Debe seleccionar fecha de inicio y fecha de fin."));
             return;
         }
 
-        // 1. Validar que sea fecha futura o presente
-        if (fechaSeleccionada.isBefore(LocalDate.now())) {
+        // 1. Validar que ambas fechas sean futuras o presentes
+        if (fechaInicio.isBefore(LocalDate.now()) || fechaSeleccionada.isBefore(LocalDate.now())) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_WARN, "Fecha inválida", "No puedes reservar en el pasado."));
             this.articulos = new ArrayList<>();
@@ -99,22 +123,32 @@ public class ArticuloCatalogoBeanUI implements Serializable {
             return;
         }
 
-        // 2. Cargar catalogo calculando stock RESTANDO reservas para la fecha seleccionada
+        // 2. Validar que el rango sea coherente (inicio <= fin)
+        if (fechaInicio.isAfter(fechaSeleccionada)) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Rango inválido", "La fecha de inicio debe ser anterior o igual a la fecha de fin."));
+            this.articulos = new ArrayList<>();
+            buildGroups();
+            return;
+        }
+
+        // 3. Cargar catalogo calculando stock para TODO el rango
         FacadeArticulo facade = ServiceFacadeLocator.getInstanceFacadeArticulo();
         var entidades = facade.listarCatalogoCliente();
 
-        // Usamos el Helper modificado que recibe la fecha
-        this.articulos = ArticuloHelper.toCardDTOs(entidades, fechaSeleccionada);
+        // Usamos el Helper que considera el rango completo (toma el dia mas saturado)
+        this.articulos = ArticuloHelper.toCardDTOs(entidades, fechaInicio, fechaSeleccionada);
 
-        // 3. Reconstruir los grupos visuales
+        // 4. Reconstruir los grupos visuales
         buildGroups();
 
-        // 4. Resetear seleccion
+        // 5. Resetear seleccion
         this.seleccionado = null;
         this.cantidad = 1;
 
         FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Fecha Establecida", "Catálogo actualizado para: " + fechaSeleccionada));
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "Fechas Establecidas",
+                        "Catálogo actualizado del " + fechaInicio + " al " + fechaSeleccionada));
     }
 
     /**
@@ -325,7 +359,8 @@ public class ArticuloCatalogoBeanUI implements Serializable {
      * @return true si no hay articulo seleccionado, no esta disponible o no hay fecha; false en caso contrario.
      */
     public boolean isAgregarDeshabilitado() {
-        return (seleccionado == null) || !seleccionado.isDisponible() || fechaSeleccionada == null;
+        return (seleccionado == null) || !seleccionado.isDisponible()
+                || fechaSeleccionada == null || fechaInicio == null;
     }
 
     /**
@@ -434,6 +469,14 @@ public class ArticuloCatalogoBeanUI implements Serializable {
 
     public void setFechaSeleccionada(LocalDate fechaSeleccionada) {
         this.fechaSeleccionada = fechaSeleccionada;
+    }
+
+    public LocalDate getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(LocalDate fechaInicio) {
+        this.fechaInicio = fechaInicio;
     }
 
     /**
