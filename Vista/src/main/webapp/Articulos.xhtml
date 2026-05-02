@@ -1,9 +1,9 @@
-﻿<?xml version='1.0' encoding='UTF-8' ?>
+<?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
       xml:lang="es" lang="es">
 
@@ -28,44 +28,8 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            background: #E7D9CB;
+            background-color: #E7D9CB;
             font-family: "FreightText Pro", serif;
-        }
-
-        /* ---------- TOPBAR ---------- */
-        .topbar {
-            background-color: #3D4435;
-            color: #C2C8CC;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-        }
-        .topbar-left, .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .topbar-center {
-            text-align: center;
-            flex-grow: 1;
-            font-style: italic;
-            font-size: 22px;
-        }
-        .topbar a {
-            text-decoration: none;
-            color: #C2C8CC;
-            font-size: 16px;
-            margin: 0 5px;
-            font-style: italic;
-        }
-        .topbar a:hover {
-            text-decoration: underline;
-        }
-        .topbar img,
-        .topbar .topbar-icon {
-            width: 20px;
-            height: 20px;
         }
 
         /* ---------- CONTENIDO ---------- */
@@ -111,102 +75,115 @@
             margin: 0 auto 10px auto;
         }
 
-        .articulos-header {
-            display: flex;
-            align-items: center;
-            background-color: #000000;
-            color: #FFFFFF;
-            padding: 12px 20px;
-            margin-bottom: 8px;
+        .tabla-articulos {
+            border: none !important;
+            background: transparent !important;
+        }
+
+        .tabla-articulos .ui-datatable-header,
+        .tabla-articulos .ui-datatable-footer,
+        .tabla-articulos .ui-widget-header,
+        .tabla-articulos .ui-widget-content {
+            border: none !important;
+        }
+
+        .tabla-articulos table {
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+
+        .tabla-articulos thead th {
+            background-color: #000000 !important;
+            color: #FFFFFF !important;
+            padding: 12px 20px !important;
             font-family: "FreightText Pro", serif;
             font-weight: bold;
             text-transform: uppercase;
+            border: none !important;
         }
 
-        .articulo {
-            display: flex;
-            align-items: center;
-            background-color: #D9D9D9;
+        .tabla-articulos tbody td {
+            background-color: #D9D9D9 !important;
+            color: #000000 !important;
+            padding: 12px 20px !important;
             font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             font-size: 15px;
-
-            color: #000000 !important;
-            text-decoration: none !important;
-
-            padding: 12px 20px;
-            margin-bottom: 10px;
-            gap: 15px;
+            border: none !important;
             cursor: pointer;
             transition: background-color 0.3s ease, color 0.3s ease;
-            user-select: text;
-            border-radius: 4px;
+            vertical-align: middle;
         }
 
-        .articulo:hover {
-            background-color: #C2C8CC;
-            color: #000000 !important;
+        .tabla-articulos tbody tr:hover td {
+            background-color: #C2C8CC !important;
         }
 
-        .articulo.seleccionado {
+        .tabla-articulos tbody tr.ui-state-highlight td,
+        .tabla-articulos tbody tr.ui-state-highlight:hover td {
             background-color: #3D4435 !important;
             color: #C2C8CC !important;
             font-weight: bold;
         }
 
-        .articulo.seleccionado:hover {
-            background-color: #2c3326 !important;
-            color: #C2C8CC !important;
-        }
-
-        .col-articulo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            overflow: hidden;
-        }
-
-        .col-articulo span {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .col-articulo.id {
-            flex-basis: 10%;
+        .tabla-articulos .col-id {
+            width: 10%;
             min-width: 70px;
-            justify-content: flex-start;
         }
 
-        .col-articulo.nombre {
-            flex-basis: 32%;
-            flex-grow: 1;
+        .tabla-articulos .col-nombre {
+            width: 32%;
             min-width: 180px;
         }
 
-        .col-articulo.categoria {
-            flex-basis: 18%;
+        .tabla-articulos .col-categoria {
+            width: 18%;
             min-width: 120px;
         }
 
-        .col-articulo.precio,
-        .col-articulo.unidades {
-            flex-basis: 15%;
+        .tabla-articulos .col-precio,
+        .tabla-articulos .col-unidades {
+            width: 15%;
             min-width: 90px;
-            justify-content: flex-end;
+            text-align: right;
         }
 
-        .col-articulo.imagen {
-            flex-basis: 15%;
+        .tabla-articulos .col-imagen {
+            width: 15%;
             min-width: 80px;
-            justify-content: center;
+            text-align: center;
         }
 
-        .col-articulo.imagen img {
+        .tabla-articulos .col-imagen img {
             width: 60px;
             height: auto;
             border: 1px solid #C2C8CC;
             background: #FFFFFF;
             padding: 2px;
+        }
+
+        .tabla-articulos .ui-paginator {
+            background: transparent !important;
+            border: none !important;
+            padding: 10px 0 0 0 !important;
+            font-family: "FreightText Pro", serif;
+        }
+
+        .tabla-articulos .ui-paginator .ui-paginator-pages .ui-paginator-page,
+        .tabla-articulos .ui-paginator .ui-paginator-first,
+        .tabla-articulos .ui-paginator .ui-paginator-prev,
+        .tabla-articulos .ui-paginator .ui-paginator-next,
+        .tabla-articulos .ui-paginator .ui-paginator-last,
+        .tabla-articulos .ui-paginator .ui-dropdown {
+            background: #D9D9D9 !important;
+            border: none !important;
+            color: #000000 !important;
+            box-shadow: none !important;
+        }
+
+        .tabla-articulos .ui-paginator .ui-state-active,
+        .tabla-articulos .ui-paginator .ui-paginator-page.ui-state-active {
+            background: #3D4435 !important;
+            color: #FFFFFF !important;
         }
 
         /* ---------- DIALOGOS ---------- */
@@ -322,186 +299,83 @@
             align-items: center;
             padding: 10px 15px !important;
         }
-
-        /* DROPDOWN MENU */
-        .dropdown {
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background-color: #f9f9f9;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1000;
-            border-radius: 4px;
-        }
-
-        .dropdown-content a {
-            color: #333 !important;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-            text-align: left;
-            font-style: normal;
-            font-size: 14px;
-        }
-
-        .dropdown-content a:hover {
-            background-color: #ddd;
-            text-decoration: none;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-        /* HEADER Y FILTROS */
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .filters-container {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        /* PAGINACION */
-        .paginacion-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-top: 20px;
-            font-family: "FreightText Pro", serif;
-        }
-
-        .paginacion-info {
-            font-size: 14px;
-            color: #333;
-        }
-
-        .paginacion-btn {
-            background-color: #D9D9D9;
-            color: #000;
-            border: none;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.2s;
-        }
-
-        .paginacion-btn:hover:not(:disabled) {
-            background-color: #C2C8CC;
-        }
-
-        .paginacion-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .paginacion-btn.activo {
-            background-color: #3D4435;
-            color: #FFFFFF;
-            font-weight: bold;
-        }
     </style>
 </h:head>
 
 <h:body>
-    <div class="topbar">
-        <div class="topbar-left">
-            <img src="#{request.contextPath}/resources/edicion.png" alt="Empleados" class="topbar-icon" />
-            <a href="#{request.contextPath}/AdminEmpleados.xhtml">Empleados</a>
-        </div>
-
-        <div class="topbar-center">
-            <a href="principalAdministrador.xhtml"> EVENTOS CAMPESTRE</a><br />
-            <a href="Articulos.xhtml">Artículos</a>
-            <a href="CombinacionMesa.xhtml">Combinaciones</a>
-            <a href="Cotizaciones.xhtml">Cotizaciones</a>
-            <a href="Rentas.xhtml">Rentas</a>
-            <a href="Dashboard.xhtml">Informes</a>
-            <a href="TarjetaAlmacen.xhtml">Inventario</a>
-        </div>
-
-        <div class="topbar-right">
-            <h:form style="margin:0; padding:0;">
-                <div class="dropdown">
-                    <span>Administrador</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="topbar-icon">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                        <polyline points="16 17 21 12 16 7"></polyline>
-                        <line x1="21" y1="12" x2="9" y2="12"></line>
-                    </svg>
-
-                    <div class="dropdown-content">
-                        <h:commandLink action="#{loginUI.logout}" value="Cerrar Sesión" />
-                    </div>
-                </div>
-            </h:form>
-        </div>
-    </div>
+    <ui:include src="componentTopbar.xhtml" />
 
     <div class="content">
-        <h:form id="articulosForm">
-            <div class="header-container">
-                <h1 class="title">Artículos</h1>
+        <h1 class="title">Artículos</h1>
 
-                <div class="filters-container">
-                    <p:inputText value="#{articuloUI.filtroNombre}" placeholder="Buscar artículo..." style="width: 200px;">
-                        <p:ajax event="keyup" listener="#{articuloUI.filtrarArticulos}" update="listaArticulosPanel" delay="300" />
-                    </p:inputText>
+        <h:form id="accionesForm">
+            <p:growl id="articulosGrowl" widgetVar="articulosGrowl" showDetail="true" life="3000" />
+            <div class="button-bar">
+                <p:commandButton value="Alta"
+                                 icon="pi pi-plus"
+                                 styleClass="btn alta"
+                                 type="button"
+                                 onclick="PF('dlgAlta').show();" />
 
-                    <p:selectOneMenu value="#{articuloUI.filtroTipo}" style="width: 200px;">
-                        <f:selectItem itemLabel="Todos los tipos" itemValue="" />
-                        <f:selectItem itemLabel="Sillas" itemValue="Silla" />
-                        <f:selectItem itemLabel="Mesas" itemValue="Mesa" />
-                        <f:selectItem itemLabel="Carpas" itemValue="Carpa" />
-                        <f:selectItem itemLabel="Manteles" itemValue="Mantel" />
-                        <f:selectItem itemLabel="Caminos" itemValue="Camino" />
-                        <f:selectItem itemLabel="Cubremanteles" itemValue="Cubremantel" />
-                        <f:selectItem itemLabel="Coolers" itemValue="Cooler" />
-                        <f:selectItem itemLabel="Calentones" itemValue="Calenton" />
-                        <p:ajax event="change" listener="#{articuloUI.filtrarArticulos}" update="listaArticulosPanel" />
-                    </p:selectOneMenu>
-                </div>
+                <p:commandButton value="✎ Modificar"
+                                 icon="pi pi-pencil"
+                                 styleClass="btn modificar"
+                                 update=":formModificar"
+                                 process="@this"
+                                 disabled="#{articuloUI.seleccionada == null}"
+                                 oncomplete="if (!args.validationFailed) PF('dlgModificar').show();"
+                />
+                <p:commandButton value="🗑 Eliminar"
+                                 icon="pi pi-trash"
+                                 styleClass="btn eliminar"
+                                 type="button"
+                                 disabled="#{articuloUI.seleccionada == null}"
+                                 onclick="PF('dlgEliminar').show(); return false;" />
             </div>
+        </h:form>
 
-            <h:panelGroup id="botonesPanel" layout="block">
-                <div class="button-bar">
-                    <p:commandButton value="+ Alta"
-                                     styleClass="btn alta"
-                                     type="button"
-                                     onclick="PF('dlgAlta').show();" />
-
-                    <p:commandButton value="✎ Modificar"
-                                     styleClass="btn modificar"
-                                     update=":formModificar"
-                                     process="@this"
-                                     disabled="#{articuloUI.seleccionada == null}"
-                                     oncomplete="if (!args.validationFailed) PF('dlgModificar').show();"
-                    />
-                    <p:commandButton value="🗑 Eliminar"
-                                     styleClass="btn eliminar"
-                                     type="button"
-                                     disabled="#{articuloUI.seleccionada == null}"
-                                     onclick="PF('dlgEliminar').show(); return false;" />
-                </div>
-            </h:panelGroup>
-
+        <h:form id="articulosForm">
             <h:panelGroup id="listaArticulosPanel" layout="block" styleClass="lista-articulos">
+                <p:dataTable id="tablaArticulos"
+                             value="#{articuloUI.articulos}"
+                             var="art"
+                             styleClass="tabla-articulos"
+                             paginator="true"
+                             rows="8"
+                             rowsPerPageTemplate="5,8,10,15"
+                             paginatorPosition="bottom"
+                             selectionMode="single"
+                             selection="#{articuloUI.seleccionada}"
+                             rowKey="#{art.id}"
+                             reflow="true">
+                    <p:ajax event="rowSelect" update=":accionesForm :articulosForm:listaArticulosPanel :formEliminar :formModificar" />
+                    <p:ajax event="rowUnselect" update=":accionesForm :articulosForm:listaArticulosPanel :formEliminar :formModificar" />
+
+                    <p:column headerText="ID" styleClass="col-id">
+                        <h:outputText value="#{art.id}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre" styleClass="col-nombre">
+                        <h:outputText value="#{art.nombre}" />
+                    </p:column>
+
+                    <p:column headerText="Categoria" styleClass="col-categoria">
+                        <h:outputText value="#{art.categoria}" />
+                    </p:column>
+
+                    <p:column headerText="Precio" styleClass="col-precio">
+                        <h:outputText value="$#{art.precio}" />
+                    </p:column>
+
+                    <p:column headerText="Unidades" styleClass="col-unidades">
+                        <h:outputText value="#{art.unidades} unidades" />
+                    </p:column>
+
+                    <p:column headerText="Imagen" styleClass="col-imagen">
+                        <img src="#{articuloUI.getImagenBase64(art)}" alt="img" />
+                    </p:column>
+                </p:dataTable>
+                <ui:fragment rendered="false">
                 <div class="articulos-header">
                     <div class="col-articulo id">
                         <span>ID</span>
@@ -522,16 +396,12 @@
                         <span>Imagen</span>
                     </div>
                 </div>
-
-                <ui:repeat value="#{articuloUI.articulosPaginados}" var="art">
+                <ui:repeat value="#{articuloUI.articulos}" var="art">
                     <p:commandLink styleClass="articulo #{articuloUI.seleccionada != null and articuloUI.seleccionada.id == art.id ? 'seleccionado' : ''}"
                                    actionListener="#{articuloUI.seleccionar(art)}"
-                                   ajax="true"
                                    process="@this"
-                                   update=":articulosForm:botonesPanel :formEliminar :formModificar"
-                                   onclick="seleccionarArticuloVisualmente(this);"
-                                   oncomplete="console.log('Selección completada');"
-                                   partialSubmit="true">
+                                   update=":accionesForm :articulosForm:listaArticulosPanel :formEliminar :formModificar">
+                        <f:setPropertyActionListener target="#{articuloUI.seleccionada}" value="#{art}" />
 
                         <div class="col-articulo id">
                             <span>#{art.id}</span>
@@ -558,37 +428,7 @@
                         </div>
                     </p:commandLink>
                 </ui:repeat>
-
-                <!-- Paginación -->
-                <div class="paginacion-container">
-                    <p:commandButton value="⏮" styleClass="paginacion-btn"
-                                     action="#{articuloUI.irPrimeraPagina}"
-                                     update="@parent"
-                                     disabled="#{articuloUI.paginaActual == 1}"
-                                     process="@this" />
-
-                    <p:commandButton value="◀" styleClass="paginacion-btn"
-                                     action="#{articuloUI.irPaginaAnterior}"
-                                     update="@parent"
-                                     disabled="#{articuloUI.paginaActual == 1}"
-                                     process="@this" />
-
-                    <span class="paginacion-info">
-                        Mostrando #{articuloUI.registroInicio}-#{articuloUI.registroFin} de #{articuloUI.totalArticulos}
-                    </span>
-
-                    <p:commandButton value="▶" styleClass="paginacion-btn"
-                                     action="#{articuloUI.irPaginaSiguiente}"
-                                     update="@parent"
-                                     disabled="#{articuloUI.paginaActual >= articuloUI.totalPaginas}"
-                                     process="@this" />
-
-                    <p:commandButton value="⏭" styleClass="paginacion-btn"
-                                     action="#{articuloUI.irUltimaPagina}"
-                                     update="@parent"
-                                     disabled="#{articuloUI.paginaActual >= articuloUI.totalPaginas}"
-                                     process="@this" />
-                </div>
+                </ui:fragment>
             </h:panelGroup>
         </h:form>
 
@@ -610,46 +450,36 @@
             </script>
         </ui:repeat>
 
-        <div id="toastSimple" class="toast-simple toast-base">
-            <span id="toastSimpleMessage"></span>
-        </div>
     </div>
 
     <script type="text/javascript">
         //<![CDATA[
-        // Función para seleccionar visualmente un artículo
-        function seleccionarArticuloVisualmente(element) {
-            // Remover la clase 'seleccionado' de todos los artículos
-            var todosArticulos = document.querySelectorAll('.articulo');
-            todosArticulos.forEach(function(art) {
-                art.classList.remove('seleccionado');
+        function normalizarBotonesAcciones() {
+            var root = document.getElementById('accionesForm');
+            if (!root) {
+                return;
+            }
+            var map = [
+                { selector: '.btn.alta .ui-button-text', text: 'Alta' },
+                { selector: '.btn.modificar .ui-button-text', text: 'Modificar' },
+                { selector: '.btn.eliminar .ui-button-text', text: 'Eliminar' }
+            ];
+            map.forEach(function(item) {
+                var el = root.querySelector(item.selector);
+                if (el) {
+                    el.textContent = item.text;
+                }
             });
-
-            // Agregar la clase 'seleccionado' al elemento clickeado
-            element.classList.add('seleccionado');
         }
 
-        var simpleToastTimer;
-
-        // Mostrar Toast con soporte para Error (Rojo)
         function mostrarToastSimple(mensaje, esError) {
-            clearTimeout(simpleToastTimer);
-            var toast = document.getElementById('toastSimple');
-            var message = document.getElementById('toastSimpleMessage');
-            if (toast && message) {
-                // Resetear clases base
-                toast.className = 'toast-simple toast-base';
-
-                // Si es error agregar clase roja
-                if (esError) {
-                    toast.classList.add('toast-error');
-                }
-
-                message.innerText = mensaje;
-                toast.style.display = 'block';
-                simpleToastTimer = setTimeout(function () {
-                    toast.style.display = 'none';
-                }, 3000);
+            var growl = PF('articulosGrowl');
+            if (growl) {
+                growl.renderMessage({
+                    summary: esError ? 'Error' : 'Exito',
+                    detail: mensaje,
+                    severity: esError ? 'error' : 'info'
+                });
             }
         }
 
@@ -665,7 +495,7 @@
         function handleRequest(xhr, status, args, dialogVar) {
             // Si falló validación estándar de JSF (aunque quitamos required, por si acaso)
             if (args.validationFailed) {
-                var msg = args.mensajeRespuesta || "Faltan datos obligatorios o inválidos";
+                var msg = args.mensajeRespuesta || "Faltan datos obligatorios or inválidos";
                 mostrarToastSimple(msg, true);
                 return;
             }
@@ -686,6 +516,15 @@
                     mostrarToastSimple(args.mensajeRespuesta, true);
                 }
             }
+        }
+
+        document.addEventListener('DOMContentLoaded', normalizarBotonesAcciones);
+        if (window.PrimeFaces && PrimeFaces.ajax && PrimeFaces.ajax.addOnEvent) {
+            PrimeFaces.ajax.addOnEvent(function (e) {
+                if (e && e.status === 'success') {
+                    normalizarBotonesAcciones();
+                }
+            });
         }
         //]]>
     </script>
@@ -809,7 +648,7 @@
             <p:commandButton value="Guardar"
                              action="#{articuloUI.guardarNuevo}"
                              process="@form"
-                             update=":articulosForm:listaArticulosPanel formAlta"
+                             update=":articulosForm formAlta"
                              ajax="true"
                              styleClass="btn"
                              onclick="return (function(){
@@ -867,7 +706,7 @@
             <p:commandButton value="Eliminar"
                              action="#{articuloUI.eliminarSeleccionada}"
                              process="@form"
-                             update=":articulosForm:listaArticulosPanel"
+                             update=":articulosForm :accionesForm"
                              ajax="true"
                              styleClass="btn"
                              style="margin-top: 20px;"
@@ -962,7 +801,7 @@
                     <p:commandButton value="Guardar Cambios"
                                      action="#{articuloUI.guardarModificacion}"
                                      process=":formModificar"
-                                     update=":articulosForm:listaArticulosPanel"
+                                     update=":articulosForm"
                                      onclick="return (function(){
                                              var el = document.getElementById('formModificar:nombreMod');
                                              var idEl = document.getElementById('formModificar:idSel');
@@ -985,7 +824,7 @@
 
                     <p:commandButton value="Cancelar"
                                      actionListener="#{articuloUI.cancelarModificacion}"
-                                     update=":articulosForm:listaArticulosPanel"
+                                     update=":articulosForm"
                                      oncomplete="PF('dlgModificar').hide();"
                                      process="@this"
                                      styleClass="btn" style="margin-left: 10px;" />

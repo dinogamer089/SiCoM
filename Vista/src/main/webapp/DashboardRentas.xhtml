@@ -3,110 +3,31 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:ui="http://java.sun.com/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<f:metadata>
+    <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
+</f:metadata>
 <h:head>
     <title>Dashboard Rentas - Eventos Campestre</title>
     <style>
-        /* --- VARIABLES DE COLOR --- */
-        :root {
-            --bg-olive: #3e4637;
-            --bg-body: #eaddcf;
-            --bg-filter: #efe6db;
-            --text-dark: #1a1a1a;
-            --green-pct: #8cc66f;
-            --red-pct: #ff7676;
-            --font-serif: 'Georgia', 'Times New Roman', serif;
-            --font-sans: 'Segoe UI', sans-serif;
-        }
-
-        /* --- ESTILOS GENERALES --- */
-        body {
-            background-color: #E7D9CB;
-            font-family: "FreightText Pro", var(--font-serif);
+        html, body {
             margin: 0;
             padding: 0;
-            color: #1a1a1a;
+            height: 100%;
+            background-color: #E7D9CB;
+            font-family: "FreightText Pro", serif;
         }
 
-        /* TOPBAR */
-        .topbar {
-            background-color: #3D4435;
-            color: #C2C8CC;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-        }
-
-        .topbar-left, .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .topbar-center {
-            text-align: center;
-            flex-grow: 1;
-            font-style: italic;
-            font-size: 22px;
-        }
-
-        .topbar a {
-            text-decoration: none;
-            color: #C2C8CC;
-            font-size: 16px;
-            margin: 0 5px;
-            font-style: italic;
-        }
-
-        .topbar a:hover {
-            text-decoration: underline;
-        }
-
-        /* Estilos para imágenes */
-        .topbar img, .topbar-icon {
-            width: 20px;
-            height: 20px;
-        }
-
-        /* DROPDOWN MENU */
-        .dropdown {
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background-color: #f9f9f9;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1000;
-            border-radius: 4px;
-        }
-
-        .dropdown-content a {
-            color: #333 !important;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-            text-align: left;
-            font-style: normal;
-            font-size: 14px;
-        }
-
-        .dropdown-content a:hover {
-            background-color: #ddd;
-            text-decoration: none;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
+        /* --- VARIABLES DE COLOR --- */
+        :root {
+            --bg-olive:   #3e4637;
+            --bg-body:    #eaddcf;
+            --bg-filter:  #efe6db;
+            --text-dark:  #1a1a1a;
+            --green-pct:  #8cc66f;
+            --red-pct:    #ff7676;
+            --font-serif: 'Georgia', 'Times New Roman', serif;
+            --font-sans:  'Segoe UI', sans-serif;
         }
 
         /* --- NAV STRIP --- */
@@ -143,33 +64,7 @@
 
         .nav-item.active { border-bottom: 2px solid #333; }
 
-        /* --- FILTROS CENTRADOS --- */
-        .filter-wrapper {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
-            width: 100%;
-        }
-
-        .filter-container {
-            background-color: var(--bg-filter);
-            border: 1px solid #d4cbbd;
-            padding: 15px 30px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border-radius: 4px;
-        }
-
-        /* Ajustes para los inputs de Primefaces dentro del filtro */
-        .filter-container .ui-outputlabel {
-            font-family: var(--font-serif);
-            font-weight: bold;
-            color: #3D4435;
-        }
-
-        /* Hacemos que los inputs se vean más limpios */
+        /* --- FILTROS --- */
         .filter-wrapper {
             display: flex;
             justify-content: center;
@@ -194,7 +89,7 @@
             color: #3D4435;
         }
 
-        /* --- KPI CARDS PERSONALIZADAS --- */
+        /* --- KPI CARDS --- */
         .kpi-grid {
             display: flex;
             gap: 25px;
@@ -212,7 +107,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            height: 130px; /* Cartas más altas */
+            height: 130px;
         }
 
         .card-title {
@@ -236,9 +131,7 @@
             line-height: 1;
         }
 
-        .kpi-badge { text-align: right; }
-
-        /* --- HEATMAP y CHART SECTION --- */
+        /* --- SECCIONES --- */
         .content-section {
             max-width: 1200px;
             margin: 0 auto 40px auto;
@@ -248,54 +141,143 @@
             gap: 30px;
         }
 
-        /* Estilos tabla Heatmap */
+        /* --- HEATMAP --- */
+        .heatmap-wrapper {
+            background: white;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
         .custom-panel-header {
             font-family: var(--font-serif);
             font-size: 20px;
             color: #3D4435;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
             border-bottom: 1px solid #3D4435;
-            padding-bottom: 5px;
+            padding-bottom: 8px;
         }
 
         .heatmap {
             border-collapse: collapse;
             width: 100%;
-            background: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            min-width: 520px;
+            table-layout: fixed;
         }
 
-        .heatmap th {
-            padding: 10px;
+        /* Cabecera días */
+        .heatmap thead th {
+            padding: 10px 6px;
             text-align: center;
             background-color: var(--bg-olive);
             color: #fff;
             font-family: var(--font-sans);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .heatmap thead th:first-child {
+            width: 52px;
+        }
+
+        /* Separador de mes */
+        .mes-separator td {
+            background-color: var(--bg-olive);
+            color: #fff;
+            font-family: var(--font-serif);
+            font-size: 12px;
+            letter-spacing: 2px;
+            padding: 5px 12px;
             font-weight: normal;
         }
 
+        /* Filas normales */
         .heatmap td {
-            padding: 10px;
+            padding: 6px 4px;
             text-align: center;
-            border: 1px solid #eee;
+            border: 1px solid #f0ebe4;
             font-family: var(--font-sans);
         }
 
         .heatmap .week-col {
             font-weight: bold;
-            background: #f9f9f9;
+            background: #f9f6f2;
             font-family: var(--font-serif);
             color: #3D4435;
+            font-size: 12px;
         }
 
-        .heatmap .cell {
-            color: #1b1b1b;
-            font-weight: 600;
-            font-size: 0.9em;
-            border-radius: 4px; /* Celdas redondeadas visualmente */
+        /* Celda de calor */
+        .cell {
+            position: relative;
+            cursor: default;
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            border-radius: 3px;
         }
 
-        /* Contenedor blanco para gráficas */
+        .cell:hover {
+            transform: scale(1.15);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            z-index: 5;
+        }
+
+        /* Tooltip CSS puro */
+        .cell[data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #222;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            white-space: nowrap;
+            z-index: 100;
+            pointer-events: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        /* Día fuera del rango: tono apagado */
+        .cell-out {
+            opacity: 0.35;
+        }
+
+        .cell-day {
+            font-size: 11px;
+            color: #888;
+            line-height: 1.2;
+        }
+
+        .cell-count {
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.4;
+            color: inherit;
+        }
+
+        /* --- LEYENDA --- */
+        .heatmap-legend {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 14px;
+            font-family: var(--font-sans);
+            font-size: 12px;
+            color: #777;
+        }
+
+        .legend-box {
+            width: 18px;
+            height: 18px;
+            border-radius: 3px;
+            display: inline-block;
+            border: 1px solid rgba(0,0,0,0.08);
+        }
+
+        /* --- CHART BOX --- */
         .chart-box {
             background: white;
             padding: 20px;
@@ -303,7 +285,7 @@
             border-radius: 4px;
         }
 
-        /* Reset de Primefaces Panels para que no choquen con el diseño */
+        /* Reset PrimeFaces panels */
         .ui-panel, .ui-panel-content {
             background: transparent !important;
             border: none !important;
@@ -319,69 +301,35 @@
             font-size: 1.2em !important;
             color: #3D4435 !important;
         }
-
     </style>
 </h:head>
 <h:body>
-    <f:metadata>
-        <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
-    </f:metadata>
-
-    <div class="topbar">
-        <div class="topbar-left">
-            <img src="#{request.contextPath}/resources/edicion.png" alt="Empleados" class="topbar-icon" />
-            <a href="#{request.contextPath}/AdminEmpleados.xhtml">Empleados</a>
-        </div>
-
-        <div class="topbar-center">
-            <a href="principalAdministrador.xhtml"> EVENTOS CAMPESTRE</a><br />
-            <a href="Articulos.xhtml">Artículos</a>
-            <a href="CombinacionMesa.xhtml">Combinación de mesas</a>
-            <a href="Cotizaciones.xhtml">Cotizaciones</a>
-            <a href="Rentas.xhtml">Rentas</a>
-            <a href="Dashboard.xhtml">Informes</a>
-            <a href="TarjetaAlmacen.xhtml">Inventario</a>
-        </div>
-
-        <div class="topbar-right">
-            <h:form style="margin:0; padding:0;">
-                <div class="dropdown">
-                    <span>Administrador</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="topbar-icon">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                        <polyline points="16 17 21 12 16 7"></polyline>
-                        <line x1="21" y1="12" x2="9" y2="12"></line>
-                    </svg>
-
-                    <div class="dropdown-content">
-                        <h:commandLink action="#{loginUI.logout}" value="Cerrar Sesión" />
-                    </div>
-                </div>
-            </h:form>
-        </div>
-    </div>
+    <ui:include src="componentTopbar.xhtml" />
 
     <div class="nav-strip">
         <ul class="nav-menu">
-            <li class="nav-item"><a href="Dashboard.xhtml" style="color: inherit; text-decoration: none;">Vista General</a></li>
-            <li class="nav-item active"><a href="DashboardRentas.xhtml" style="color: inherit; text-decoration: none;">Rentas</a></li>
-            <li class="nav-item"><a href="DashboardCotizaciones.xhtml" style="color: inherit; text-decoration: none;">Cotizaciones</a></li>
-            <li class="nav-item"><a href="DashboardClientes.xhtml" style="color: inherit; text-decoration: none;">Clientes</a></li>
+            <li class="nav-item"><a href="Dashboard.xhtml"             style="color:inherit;text-decoration:none;">Vista General</a></li>
+            <li class="nav-item active"><a href="DashboardRentas.xhtml" style="color:inherit;text-decoration:none;">Rentas</a></li>
+            <li class="nav-item"><a href="DashboardCotizaciones.xhtml" style="color:inherit;text-decoration:none;">Cotizaciones</a></li>
+            <li class="nav-item"><a href="DashboardClientes.xhtml"     style="color:inherit;text-decoration:none;">Clientes</a></li>
         </ul>
     </div>
 
     <h:form id="formDashboardRentas">
 
+        <!-- FILTROS -->
         <div class="filter-wrapper">
             <div class="filter-container">
                 <h:panelGroup styleClass="filter-item">
                     <p:outputLabel for="inicio" value="Desde:" />
-                    <p:datePicker id="inicio" value="#{dashboardRentasBean.fechaInicio}" pattern="yyyy-MM-dd" showIcon="true"/>
+                    <p:datePicker id="inicio" value="#{dashboardRentasBean.fechaInicio}"
+                                  pattern="yyyy-MM-dd" showIcon="true"/>
                 </h:panelGroup>
 
                 <h:panelGroup styleClass="filter-item">
                     <p:outputLabel for="fin" value="Hasta:" />
-                    <p:datePicker id="fin" value="#{dashboardRentasBean.fechaFin}" pattern="yyyy-MM-dd" showIcon="true"/>
+                    <p:datePicker id="fin" value="#{dashboardRentasBean.fechaFin}"
+                                  pattern="yyyy-MM-dd" showIcon="true"/>
                 </h:panelGroup>
 
                 <p:commandButton value="Actualizar Dashboard"
@@ -389,10 +337,11 @@
                                  form=":formDashboardRentas"
                                  update=":formDashboardRentas"
                                  process=":formDashboardRentas"
-                                 style="background-color: #3D4435; border:none; font-family: var(--font-serif);" />
+                                 style="background-color:#3D4435;border:none;font-family:var(--font-serif);" />
             </div>
         </div>
 
+        <!-- KPI CARDS -->
         <div class="kpi-grid">
             <div class="custom-card">
                 <div class="card-title">Tasa de Cancelación</div>
@@ -400,15 +349,13 @@
                     <span class="kpi-number">#{dashboardRentasBean.tasaCancelacionStr}</span>
                 </div>
             </div>
-
-            <div class="custom-card" style="border-left-color: var(--red-pct);">
+            <div class="custom-card">
                 <div class="card-title">Total Canceladas</div>
                 <div class="card-body">
                     <span class="kpi-number">#{dashboardRentasBean.totalCanceladas}</span>
                 </div>
             </div>
-
-            <div class="custom-card" style="border-left-color: var(--green-pct);">
+            <div class="custom-card">
                 <div class="card-title">Rentas Completadas</div>
                 <div class="card-body">
                     <span class="kpi-number">#{dashboardRentasBean.totalCompletadas}</span>
@@ -416,13 +363,17 @@
             </div>
         </div>
 
+        <!-- CONTENIDO PRINCIPAL -->
         <div class="content-section">
 
-            <p:panel header="Calendario de Ocupación (Mapa de Calor)">
+            <!-- HEATMAP -->
+            <div class="heatmap-wrapper">
+                <div class="custom-panel-header">Calendario de Ocupación (Mapa de Calor)</div>
+
                 <table class="heatmap">
                     <thead>
                     <tr>
-                        <th>Semana</th>
+                        <th></th>
                         <th>Lun</th>
                         <th>Mar</th>
                         <th>Mié</th>
@@ -434,20 +385,45 @@
                     </thead>
                     <tbody>
                     <ui:repeat value="#{dashboardRentasBean.heatmap}" var="week">
+
+                        <!-- Separador de mes (solo si cambia el mes) -->
+                        <tr class="mes-separator"
+                            style="display: #{empty week.mesHeader ? 'none' : 'table-row'}">
+                            <td colspan="8">#{week.mesHeader}</td>
+                        </tr>
+
+                        <!-- Fila de semana -->
                         <tr>
                             <td class="week-col">#{week.label}</td>
                             <ui:repeat value="#{week.cells}" var="cell">
-                                <td class="cell" style="background: #{cell.color}">
-                                    <div style="font-size:12px; color:#555;">#{cell.diaLabel}</div>
-                                    <div style="font-size:16px;">#{cell.count}</div>
+                                <td class="cell #{cell.dentroDelRango ? '' : 'cell-out'}"
+                                    style="background: #{cell.color};"
+                                    data-tooltip="#{cell.tooltip}">
+                                    <div class="cell-day">#{cell.diaLabel}</div>
+                                    <div class="cell-count"
+                                         style="color: #{cell.count gt 0 ? '#fff' : '#bbb'}">
+                                        #{cell.count gt 0 ? cell.count : '·'}
+                                    </div>
                                 </td>
                             </ui:repeat>
                         </tr>
+
                     </ui:repeat>
                     </tbody>
                 </table>
-            </p:panel>
 
+                <!-- Leyenda -->
+                <div class="heatmap-legend">
+                    <span class="legend-box" style="background:#f0f4ef; border:1px solid #ddd;"></span>
+                    <span>Sin rentas</span>
+                    <span style="margin: 0 6px;">·</span>
+                    <span class="legend-box" style="background:rgb(46,125,50);"></span>
+                    <span>Con rentas</span>
+                    <span style="margin-left:20px; color:#bbb;">&#9642; Días fuera del rango</span>
+                </div>
+            </div>
+
+            <!-- BAR CHART -->
             <div class="chart-box">
                 <p:panel header="Análisis: Rentas vs Cancelaciones">
                     <p:barChart model="#{dashboardRentasBean.stackedBarModel}"
@@ -456,7 +432,6 @@
             </div>
 
         </div>
-
     </h:form>
 </h:body>
 </html>

@@ -2,10 +2,6 @@ package mx.avanti.desarollo.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
-import jakarta.persistence.TypedQuery;
-import mx.desarollo.entity.Articulo;
-import mx.desarollo.entity.StockReservadoDiario;
-
 import java.sql.Date;
 import java.time.LocalDate;
 

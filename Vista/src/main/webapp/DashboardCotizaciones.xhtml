@@ -3,10 +3,21 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:ui="http://java.sun.com/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<f:metadata>
+    <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
+</f:metadata>
 <h:head>
     <title>Dashboard Cotizaciones - Eventos Campestre</title>
     <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #E7D9CB;
+            font-family: "FreightText Pro", serif;
+        }
+
         :root {
             --bg-olive: #3e4637;
             --bg-body: #eaddcf;
@@ -16,95 +27,6 @@
             --olive-soft: #90a36a;
             --font-serif: 'Georgia', 'Times New Roman', serif;
             --font-sans: 'Segoe UI', sans-serif;
-        }
-
-        body {
-            background-color: #E7D9CB;
-            font-family: "FreightText Pro", var(--font-serif);
-            margin: 0;
-            padding: 0;
-            color: var(--text-dark);
-        }
-
-        /* TOPBAR */
-        .topbar {
-            background-color: #3D4435;
-            color: #C2C8CC;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-        }
-
-        .topbar-left, .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .topbar-center {
-            text-align: center;
-            flex-grow: 1;
-            font-style: italic;
-            font-size: 22px;
-        }
-
-        .topbar a {
-            text-decoration: none;
-            color: #C2C8CC;
-            font-size: 16px;
-            margin: 0 5px;
-            font-style: italic;
-        }
-
-        .topbar a:hover {
-            text-decoration: underline;
-        }
-
-        /* Estilos para imágenes */
-        .topbar img, .topbar-icon {
-            width: 20px;
-            height: 20px;
-        }
-
-        /* DROPDOWN MENU */
-        .dropdown {
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background-color: #f9f9f9;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1000;
-            border-radius: 4px;
-        }
-
-        .dropdown-content a {
-            color: #333 !important;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-            text-align: left;
-            font-style: normal;
-            font-size: 14px;
-        }
-
-        .dropdown-content a:hover {
-            background-color: #ddd;
-            text-decoration: none;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
         }
 
         /* --- NAV STRIP --- */
@@ -281,43 +203,7 @@
     </style>
 </h:head>
 <h:body>
-    <f:metadata>
-        <f:event type="preRenderView" listener="#{loginUI.preventBackAfterLogout}" />
-    </f:metadata>
-
-    <div class="topbar">
-        <div class="topbar-left">
-            <img src="#{request.contextPath}/resources/edicion.png" alt="Empleados" class="topbar-icon" />
-            <a href="#{request.contextPath}/AdminEmpleados.xhtml">Empleados</a>
-        </div>
-
-        <div class="topbar-center">
-            <a href="principalAdministrador.xhtml"> EVENTOS CAMPESTRE</a><br />
-            <a href="Articulos.xhtml">Artículos</a>
-            <a href="CombinacionMesa.xhtml">Combinación de mesas</a>
-            <a href="Cotizaciones.xhtml">Cotizaciones</a>
-            <a href="Rentas.xhtml">Rentas</a>
-            <a href="Dashboard.xhtml">Informes</a>
-            <a href="TarjetaAlmacen.xhtml">Inventario</a>
-        </div>
-
-        <div class="topbar-right">
-            <h:form style="margin:0; padding:0;">
-                <div class="dropdown">
-                    <span>Administrador</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="topbar-icon">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                        <polyline points="16 17 21 12 16 7"></polyline>
-                        <line x1="21" y1="12" x2="9" y2="12"></line>
-                    </svg>
-
-                    <div class="dropdown-content">
-                        <h:commandLink action="#{loginUI.logout}" value="Cerrar Sesión" />
-                    </div>
-                </div>
-            </h:form>
-        </div>
-    </div>
+    <ui:include src="componentTopbar.xhtml" />
 
     <div class="nav-strip">
         <ul class="nav-menu">
