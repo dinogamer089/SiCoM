@@ -149,9 +149,15 @@ public class RentaHelper {
     }
 
     public void actualizarRenta(Renta renta, LocalDate fechaAnterior) throws Exception {
+        // Compatibilidad: cuando solo se conoce la fecha fin anterior, se asume que
+        // tambien era la fecha de inicio (renta de un solo dia en datos historicos).
+        actualizarRenta(renta, fechaAnterior, fechaAnterior);
+    }
+
+    public void actualizarRenta(Renta renta, LocalDate fechaInicioAnterior, LocalDate fechaAnterior) throws Exception {
         System.out.println("=== RentaHelper.actualizarRenta() ===");
         if (renta == null) throw new Exception("La renta es nula");
 
-        ServiceFacadeLocator.getInstanceFacadeRenta().actualizarRentaConStock(renta, fechaAnterior);
+        ServiceFacadeLocator.getInstanceFacadeRenta().actualizarRentaConStock(renta, fechaInicioAnterior, fechaAnterior);
     }
 }

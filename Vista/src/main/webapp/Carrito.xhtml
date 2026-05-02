@@ -30,78 +30,119 @@
             font-family: "Minerva Modern", "Times New Roman", serif;
             color: var(--black);
             margin: 0;
+            padding-top: 110px;
             padding-bottom: 50px;
         }
 
         /* --- TOPBAR --- */
-        .topbar {
-            background-color: var(--olive);
-            color: var(--white);
-            padding: 15px 40px 10px 40px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            z-index: 1000;
+        .topbar { 
+            background-color: var(--olive); 
+            color: var(--white); 
+            padding: 15px 40px 10px 40px; 
+            display: flex; 
+            flex-direction: column; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            z-index: 1000; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15); 
+            transition: padding 0.25s ease, box-shadow 0.25s ease; 
         }
 
-        .tb-row1 {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            align-items: center;
+        .tb-row1 { 
+            display: grid; 
+            grid-template-columns: 1fr auto 1fr; 
+            align-items: center; 
         }
 
-        .tb-left {
-            display: flex;
-            gap: 15px;
+        .tb-left { 
+            display: flex; 
+            gap: 15px; 
+            align-items: center; 
         }
 
-        .tb-left i {
-            font-size: 1.2rem;
-            color: var(--white);
-            opacity: 0.9;
-            cursor: pointer;
+        .tb-left i { 
+            font-size: 1.2rem; 
+            color: var(--white); 
+            opacity: 0.9; 
+            cursor: pointer; 
         }
 
-        .tb-brand {
-            text-align: center;
-            font-style: italic;
-            font-weight: 400;
-            font-size: 2rem;
-            letter-spacing: 0.05em;
-            font-family: "Cinzel", serif;
+        .tb-left a { 
+            color: var(--white); 
+            text-decoration: none; 
+            opacity: 0.9; 
+            display: flex; 
+            align-items: center; 
         }
 
-        .tb-brand a {
-            color: var(--white);
-            text-decoration: none;
+        .tb-left a:hover { 
+            opacity: 1; 
         }
 
-        .tb-right {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 10px;
+        .tb-brand { 
+            text-align: center; 
+            font-style: italic; 
+            font-weight: 400; 
+            font-size: 2rem; 
+            letter-spacing: 0.05em; 
+            transition: font-size 0.25s ease;
         }
 
-        .tb-count {
-            font-size: 1.15rem;
-            font-style: italic;
-            font-weight: 700;
-            letter-spacing: 0.05em;
+        .tb-brand a { 
+            color: var(--white); 
+            text-decoration: none; 
         }
 
-        .tb-row2 {
-            display: flex;
-            justify-content: center;
-            gap: 60px;
-            margin-top: 15px;
-            font-style: italic;
-            font-size: 1.1rem;
+        .tb-right { 
+            display: flex; 
+            justify-content: flex-end; 
+            align-items: center; 
+            gap: 25px; 
         }
-        .tb-row2 a {
-            color: var(--white);
-            text-decoration: none;
-            opacity: 0.9;
+
+        .tb-count { 
+            font-size: 1.15rem; 
+            font-style: italic; 
+            font-weight: 700; 
+            letter-spacing: 0.05em; 
+        }
+
+        .tb-row2 { 
+            display: flex; 
+            justify-content: center; 
+            gap: 60px; 
+            margin-top: 15px; 
+            font-style: italic; 
+            font-size: 1.1rem; 
+            transition: margin-top 0.25s ease, gap 0.25s ease, font-size 0.25s ease; 
+        }
+
+        .tb-row2 a { 
+            color: var(--white); 
+            text-decoration: none; 
+            opacity: 0.9; 
+        }
+
+        .tb-row2 a:hover { 
+            opacity: 1; 
+            text-decoration: underline; 
+        }
+
+        .topbar.topbar--shrink { 
+            padding: 6px 30px 4px 30px; 
+            box-shadow: 0 3px 10px rgba(0,0,0,0.25); 
+        }
+
+        .topbar.topbar--shrink .tb-brand { 
+            font-size: 1.5rem; 
+        }
+
+        .topbar.topbar--shrink .tb-row2 { 
+            margin-top: 6px; 
+            gap: 40px; 
+            font-size: 1rem; 
         }
 
         /* --- LAYOUT PRINCIPAL --- */
@@ -549,7 +590,21 @@
         .stock-alert .sa-actions { margin-left: 8px; }
         .stock-alert ul { margin: 6px 0 0 18px; padding: 0; }
     </style>
+
+    <script type="text/javascript">
+        window.addEventListener('DOMContentLoaded', function () {
+            var topbar = document.querySelector('.topbar');
+            if (!topbar) return;
+            window.addEventListener('scroll', function () {
+                if (window.scrollY > 120) { topbar.classList.add('topbar--shrink'); } else { topbar.classList.remove('topbar--shrink'); }
+            });
+        });
+    </script>
 </h:head>
+
+<f:metadata>
+    <f:viewAction action="#{articuloCatalogoUI.validarAcceso}" />
+</f:metadata>
 
 <h:body>
     <h:form id="formCarrito">
@@ -566,20 +621,40 @@
                 <div class="tb-brand">
                     <a href="principal_cliente.xhtml">EVENTOS CAMPESTRE</a>
                 </div>
-                <div class="tb-right">
-                    <h:panelGroup layout="block" style="display:flex; align-items:center; gap:8px; margin-right:10px;">
-                        <h:outputText value="Fecha de evento:"/>
-                        <p:datePicker id="fechaCatalogo"
-                                      value="#{carritoBean.fechaCatalogoSeleccionada}"
-                                      showIcon="true"
-                                      appendTo="@(body)"
-                                      mindate="#{carritoBean.fechaActual}"
-                                      readonlyInput="true">
-                            <p:ajax event="dateSelect"
-                                    process="@this"
-                                    listener="#{carritoBean.actualizarFechaDesdeCatalogo(carritoBean.fechaCatalogoSeleccionada)}"
-                                    update=":formCarrito:stockAlerts :formCarrito:mainCartGrid :formCarrito:tb-count-group :formCarrito:modalCarritoContent"/>
-                        </p:datePicker>
+                <div class="tb-right" style="gap: 30px; align-items: center;">
+                    <h:panelGroup layout="block" style="display:flex; flex-direction:column; gap:6px; align-items:flex-end; white-space:nowrap;">
+                        <h:panelGroup layout="block" style="display:flex; align-items:center; gap:10px;">
+                            <h:outputText value="Inicio:" style="font-weight:bold; font-size:0.75rem; color:var(--white);"/>
+                            <p:datePicker id="fechaInicioCatalogo"
+                                          value="#{carritoBean.fechaInicioCatalogo}"
+                                          showIcon="true"
+                                          appendTo="@(body)"
+                                          mindate="#{carritoBean.fechaActual}"
+                                          readonlyInput="true"
+                                          inputStyle="width: 100px; font-size: 0.8rem; padding: 5px;"
+                                          style="width: 135px;">
+                                <p:ajax event="dateSelect"
+                                        process="@this"
+                                        listener="#{carritoBean.actualizarFechaInicioDesdeCatalogo(carritoBean.fechaInicioCatalogo)}"
+                                        update=":formCarrito:stockAlerts :formCarrito:mainCartGrid :formCarrito:tb-count-group :formCarrito:modalCarritoContent"/>
+                            </p:datePicker>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block" style="display:flex; align-items:center; gap:10px;">
+                            <h:outputText value="Fin:" style="font-weight:bold; font-size:0.75rem; color:var(--white);"/>
+                            <p:datePicker id="fechaCatalogo"
+                                          value="#{carritoBean.fechaCatalogoSeleccionada}"
+                                          showIcon="true"
+                                          appendTo="@(body)"
+                                          mindate="#{carritoBean.fechaActual}"
+                                          readonlyInput="true"
+                                          inputStyle="width: 100px; font-size: 0.8rem; padding: 5px;"
+                                          style="width: 135px;">
+                                <p:ajax event="dateSelect"
+                                        process="@this"
+                                        listener="#{carritoBean.actualizarFechaDesdeCatalogo(carritoBean.fechaCatalogoSeleccionada)}"
+                                        update=":formCarrito:stockAlerts :formCarrito:mainCartGrid :formCarrito:tb-count-group :formCarrito:modalCarritoContent"/>
+                            </p:datePicker>
+                        </h:panelGroup>
                     </h:panelGroup>
                     <p:commandLink onclick="PF('carritoModal').show(); return false;"
                                    style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 5px; cursor: pointer;">

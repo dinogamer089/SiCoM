@@ -123,4 +123,44 @@ public class StockReservadoDAO {
             throw new RuntimeException("Error al ajustar stock reservado", e);
         }
     }
+
+    /**
+     * Obtiene el MAXIMO reservado en cualquier dia del rango.
+     * Es lo que limita la disponibilidad real cuando una renta abarca varios dias.
+     *
+     * @param idArticulo   ID del articulo
+     * @param fechaInicio  fecha de inicio (inclusive)
+     * @param fechaFin     fecha de fin (inclusive)
+     * @return Maximo reservado en el rango, 0 si no hay reservas
+     */
+    public int obtenerMaximoReservadoEnRango(int idArticulo, LocalDate fechaInicio, LocalDate fechaFin) {
+        if (fechaInicio == null || fechaFin == null) {
+            return 0;
+        }
+        // Si el rango es invertido, se intercambian
+        LocalDate desde = fechaInicio.isAfter(fechaFin) ? fechaFin : fechaInicio;
+        LocalDate hasta = fechaInicio.isAfter(fechaFin) ? fechaInicio : fechaFin;
+
+        try {
+            Object single = entityManager.createNativeQuery(
+                            "SELECT COALESCE(MAX(cantidad_reservada), 0) " +
+                                    "FROM stock_reservado_diario " +
+                                    "WHERE idarticulo = ?1 AND fecha BETWEEN ?2 AND ?3")
+                    .setParameter(1, idArticulo)
+                    .setParameter(2, Date.valueOf(desde))
+                    .setParameter(3, Date.valueOf(hasta))
+                    .getSingleResult();
+
+            if (single == null) {
+                return 0;
+            }
+            if (single instanceof Number) {
+                return ((Number) single).intValue();
+            }
+            return Integer.parseInt(single.toString());
+
+        } catch (NoResultException ex) {
+            return 0;
+        }
+    }
 }

@@ -40,10 +40,11 @@ public class FacadeRenta {
     // Método requerido por el flujo de CarritoBean para registrar una renta/cotización
     public void registrarRenta(Cliente cliente,
                                List<Detallerenta> detalles,
+                               LocalDate fechaInicio,
                                LocalDate fecha,
                                LocalTime hora,
                                String estado) {
-        delegateRenta.registrarRenta(cliente, detalles, fecha, hora, estado);
+        delegateRenta.registrarRenta(cliente, detalles, fechaInicio, fecha, hora, estado);
     }
 
     /**
@@ -65,7 +66,7 @@ public class FacadeRenta {
         delegateRenta.guardarComentario(comentario);
     }
 
-    public void actualizarRentaConStock(Renta renta, LocalDate fechaAnterior) throws Exception {
-        delegateRenta.actualizarRentaConStock(renta, fechaAnterior);
+    public void actualizarRentaConStock(Renta renta, LocalDate fechaInicioAnterior, LocalDate fechaAnterior) throws Exception {
+        delegateRenta.actualizarRentaConStock(renta, fechaInicioAnterior, fechaAnterior);
     }
 }

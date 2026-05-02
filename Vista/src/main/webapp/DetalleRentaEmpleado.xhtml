@@ -488,8 +488,20 @@
                         <span class="info-value">#{empleadoRentaUI.rentaSeleccionada.idCliente.direccion}</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">Fecha:</span>
-                        <span class="info-value">#{empleadoRentaUI.rentaSeleccionada.fecha}</span>
+                        <span class="info-label">Fecha de entrega:</span>
+                        <span class="info-value">
+                            <h:outputText value="#{empleadoRentaUI.rentaSeleccionada.fechaInicio}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                            </h:outputText>
+                        </span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Fecha de recolección:</span>
+                        <span class="info-value">
+                            <h:outputText value="#{empleadoRentaUI.rentaSeleccionada.fecha}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                            </h:outputText>
+                        </span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Hora:</span>

@@ -33,6 +33,9 @@ public class Renta {
     @Column(name = "hora")
     private LocalTime hora;
 
+    @Column(name = "fecha_inicio")
+    private LocalDate fechaInicio;
+
     @Column(name = "fecha")
     private LocalDate fecha;
 
@@ -96,6 +99,14 @@ public class Renta {
 
     public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
+    }
+
+    public LocalDate getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(LocalDate fechaInicio) {
+        this.fechaInicio = fechaInicio;
     }
 
     public Empleado getIdEmpleado() {
