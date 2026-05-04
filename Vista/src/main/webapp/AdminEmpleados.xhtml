@@ -149,6 +149,18 @@
             flex-grow: 1;
             min-width: 150px;
         }
+
+        .empleados-header {
+            display: flex;
+            align-items: center;
+            background-color: #000000;
+            color: #FFFFFF;
+            padding: 12px 20px;
+            margin-bottom: 8px;
+            font-family: "FreightText Pro", serif;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
         /* --- FIN: Estilos de la Lista de Empleados --- */
 
         /* --- INICIO: Estilos para las Ventanas Emergentes (Modales) --- */
@@ -564,6 +576,14 @@
             </h:panelGroup>
             <div id="toastContainer"></div>
             <h:panelGroup id="listaEmpleadosPanel" layout="block" styleClass="lista-empleados">
+                <div class="empleados-header">
+                    <div class="col-empleado nombre">
+                        <span>Nombre</span>
+                    </div>
+                    <div class="col-empleado usuario">
+                        <span>Correo</span>
+                    </div>
+                </div>
                 <ui:repeat value="#{empleadoUI.empleados}" var="emp">
                     <h:commandLink
                             styleClass="empleado #{empleadoUI.empleadoSeleccionado.id == emp.id ? 'seleccionado' : ''}"
