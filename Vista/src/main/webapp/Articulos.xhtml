@@ -1,9 +1,9 @@
-<?xml version='1.0' encoding='UTF-8' ?>
+﻿<?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
       xml:lang="es" lang="es">
 
@@ -28,8 +28,89 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            background-color: #E7D9CB;
+            background: #E7D9CB;
             font-family: "FreightText Pro", serif;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            background-color: #3D4435;
+            color: #C2C8CC;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        .topbar-left, .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topbar-center {
+            text-align: center;
+            flex-grow: 1;
+            font-style: italic;
+            font-size: 22px;
+        }
+
+        .topbar a {
+            text-decoration: none;
+            color: #C2C8CC;
+            font-size: 16px;
+            margin: 0 5px;
+            font-style: italic;
+        }
+
+        .topbar a:hover {
+            text-decoration: underline;
+        }
+
+        /* Estilos para imágenes */
+        .topbar img, .topbar-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* DROPDOWN MENU */
+        .dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border-radius: 4px;
+        }
+
+        .dropdown-content a {
+            color: #333 !important;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            font-style: normal;
+            font-size: 14px;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+            text-decoration: none;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
         }
 
         /* ---------- CONTENIDO ---------- */
@@ -75,115 +156,102 @@
             margin: 0 auto 10px auto;
         }
 
-        .tabla-articulos {
-            border: none !important;
-            background: transparent !important;
-        }
-
-        .tabla-articulos .ui-datatable-header,
-        .tabla-articulos .ui-datatable-footer,
-        .tabla-articulos .ui-widget-header,
-        .tabla-articulos .ui-widget-content {
-            border: none !important;
-        }
-
-        .tabla-articulos table {
-            border-collapse: separate;
-            border-spacing: 0 8px;
-        }
-
-        .tabla-articulos thead th {
-            background-color: #000000 !important;
-            color: #FFFFFF !important;
-            padding: 12px 20px !important;
+        .articulos-header {
+            display: flex;
+            align-items: center;
+            background-color: #000000;
+            color: #FFFFFF;
+            padding: 12px 20px;
+            margin-bottom: 8px;
             font-family: "FreightText Pro", serif;
             font-weight: bold;
             text-transform: uppercase;
-            border: none !important;
         }
 
-        .tabla-articulos tbody td {
-            background-color: #D9D9D9 !important;
-            color: #000000 !important;
-            padding: 12px 20px !important;
+        .articulo {
+            display: flex;
+            align-items: center;
+            background-color: #D9D9D9;
             font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             font-size: 15px;
-            border: none !important;
+
+            color: #000000 !important;
+            text-decoration: none !important;
+
+            padding: 12px 20px;
+            margin-bottom: 10px;
+            gap: 15px;
             cursor: pointer;
             transition: background-color 0.3s ease, color 0.3s ease;
-            vertical-align: middle;
+            user-select: none;
+            border-radius: 4px;
         }
 
-        .tabla-articulos tbody tr:hover td {
-            background-color: #C2C8CC !important;
+        .articulo:hover {
+            background-color: #C2C8CC;
+            color: #000000 !important;
         }
 
-        .tabla-articulos tbody tr.ui-state-highlight td,
-        .tabla-articulos tbody tr.ui-state-highlight:hover td {
+        .articulo.seleccionado {
             background-color: #3D4435 !important;
             color: #C2C8CC !important;
             font-weight: bold;
         }
 
-        .tabla-articulos .col-id {
-            width: 10%;
-            min-width: 70px;
+        .articulo.seleccionado:hover {
+            background-color: #2c3326 !important;
+            color: #C2C8CC !important;
         }
 
-        .tabla-articulos .col-nombre {
-            width: 32%;
+        .col-articulo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden;
+        }
+
+        .col-articulo span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .col-articulo.id {
+            flex-basis: 10%;
+            min-width: 70px;
+            justify-content: flex-start;
+        }
+
+        .col-articulo.nombre {
+            flex-basis: 32%;
+            flex-grow: 1;
             min-width: 180px;
         }
 
-        .tabla-articulos .col-categoria {
-            width: 18%;
+        .col-articulo.categoria {
+            flex-basis: 18%;
             min-width: 120px;
         }
 
-        .tabla-articulos .col-precio,
-        .tabla-articulos .col-unidades {
-            width: 15%;
+        .col-articulo.precio,
+        .col-articulo.unidades {
+            flex-basis: 15%;
             min-width: 90px;
-            text-align: right;
+            justify-content: flex-end;
         }
 
-        .tabla-articulos .col-imagen {
-            width: 15%;
+        .col-articulo.imagen {
+            flex-basis: 15%;
             min-width: 80px;
-            text-align: center;
+            justify-content: center;
         }
 
-        .tabla-articulos .col-imagen img {
+        .col-articulo.imagen img {
             width: 60px;
             height: auto;
             border: 1px solid #C2C8CC;
             background: #FFFFFF;
             padding: 2px;
-        }
-
-        .tabla-articulos .ui-paginator {
-            background: transparent !important;
-            border: none !important;
-            padding: 10px 0 0 0 !important;
-            font-family: "FreightText Pro", serif;
-        }
-
-        .tabla-articulos .ui-paginator .ui-paginator-pages .ui-paginator-page,
-        .tabla-articulos .ui-paginator .ui-paginator-first,
-        .tabla-articulos .ui-paginator .ui-paginator-prev,
-        .tabla-articulos .ui-paginator .ui-paginator-next,
-        .tabla-articulos .ui-paginator .ui-paginator-last,
-        .tabla-articulos .ui-paginator .ui-dropdown {
-            background: #D9D9D9 !important;
-            border: none !important;
-            color: #000000 !important;
-            box-shadow: none !important;
-        }
-
-        .tabla-articulos .ui-paginator .ui-state-active,
-        .tabla-articulos .ui-paginator .ui-paginator-page.ui-state-active {
-            background: #3D4435 !important;
-            color: #FFFFFF !important;
         }
 
         /* ---------- DIALOGOS ---------- */
@@ -303,22 +371,51 @@
 </h:head>
 
 <h:body>
-    <ui:include src="componentTopbar.xhtml" />
+    <div class="topbar">
+        <div class="topbar-left">
+            <img src="#{request.contextPath}/resources/edicion.png" alt="Empleados" class="topbar-icon" />
+            <a href="#{request.contextPath}/AdminEmpleados.xhtml">Empleados</a>
+        </div>
+
+        <div class="topbar-center">
+            <a href="principalAdministrador.xhtml"> EVENTOS CAMPESTRE</a><br />
+            <a href="Articulos.xhtml">Artículos</a>
+            <a href="CombinacionMesa.xhtml">Combinacion de mesas</a>
+            <a href="Cotizaciones.xhtml">Cotizaciones</a>
+            <a href="Rentas.xhtml">Rentas</a>
+            <a href="Dashboard.xhtml">Informes</a>
+            <a href="TarjetaAlmacen.xhtml">Inventario</a>
+        </div>
+
+        <div class="topbar-right">
+            <h:form style="margin:0; padding:0;">
+                <div class="dropdown">
+                    <span>Administrador</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="topbar-icon">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+
+                    <div class="dropdown-content">
+                        <h:commandLink action="#{loginUI.logout}" value="Cerrar Sesión" />
+                    </div>
+                </div>
+            </h:form>
+        </div>
+    </div>
 
     <div class="content">
         <h1 class="title">Artículos</h1>
 
         <h:form id="accionesForm">
-            <p:growl id="articulosGrowl" widgetVar="articulosGrowl" showDetail="true" life="3000" />
             <div class="button-bar">
-                <p:commandButton value="Alta"
-                                 icon="pi pi-plus"
+                <p:commandButton value="+ Alta"
                                  styleClass="btn alta"
                                  type="button"
                                  onclick="PF('dlgAlta').show();" />
 
                 <p:commandButton value="✎ Modificar"
-                                 icon="pi pi-pencil"
                                  styleClass="btn modificar"
                                  update=":formModificar"
                                  process="@this"
@@ -326,7 +423,6 @@
                                  oncomplete="if (!args.validationFailed) PF('dlgModificar').show();"
                 />
                 <p:commandButton value="🗑 Eliminar"
-                                 icon="pi pi-trash"
                                  styleClass="btn eliminar"
                                  type="button"
                                  disabled="#{articuloUI.seleccionada == null}"
@@ -336,46 +432,6 @@
 
         <h:form id="articulosForm">
             <h:panelGroup id="listaArticulosPanel" layout="block" styleClass="lista-articulos">
-                <p:dataTable id="tablaArticulos"
-                             value="#{articuloUI.articulos}"
-                             var="art"
-                             styleClass="tabla-articulos"
-                             paginator="true"
-                             rows="8"
-                             rowsPerPageTemplate="5,8,10,15"
-                             paginatorPosition="bottom"
-                             selectionMode="single"
-                             selection="#{articuloUI.seleccionada}"
-                             rowKey="#{art.id}"
-                             reflow="true">
-                    <p:ajax event="rowSelect" update=":accionesForm :articulosForm:listaArticulosPanel :formEliminar :formModificar" />
-                    <p:ajax event="rowUnselect" update=":accionesForm :articulosForm:listaArticulosPanel :formEliminar :formModificar" />
-
-                    <p:column headerText="ID" styleClass="col-id">
-                        <h:outputText value="#{art.id}" />
-                    </p:column>
-
-                    <p:column headerText="Nombre" styleClass="col-nombre">
-                        <h:outputText value="#{art.nombre}" />
-                    </p:column>
-
-                    <p:column headerText="Categoria" styleClass="col-categoria">
-                        <h:outputText value="#{art.categoria}" />
-                    </p:column>
-
-                    <p:column headerText="Precio" styleClass="col-precio">
-                        <h:outputText value="$#{art.precio}" />
-                    </p:column>
-
-                    <p:column headerText="Unidades" styleClass="col-unidades">
-                        <h:outputText value="#{art.unidades} unidades" />
-                    </p:column>
-
-                    <p:column headerText="Imagen" styleClass="col-imagen">
-                        <img src="#{articuloUI.getImagenBase64(art)}" alt="img" />
-                    </p:column>
-                </p:dataTable>
-                <ui:fragment rendered="false">
                 <div class="articulos-header">
                     <div class="col-articulo id">
                         <span>ID</span>
@@ -428,7 +484,6 @@
                         </div>
                     </p:commandLink>
                 </ui:repeat>
-                </ui:fragment>
             </h:panelGroup>
         </h:form>
 
@@ -450,36 +505,34 @@
             </script>
         </ui:repeat>
 
+        <div id="toastSimple" class="toast-simple toast-base">
+            <span id="toastSimpleMessage"></span>
+        </div>
     </div>
 
     <script type="text/javascript">
         //<![CDATA[
-        function normalizarBotonesAcciones() {
-            var root = document.getElementById('accionesForm');
-            if (!root) {
-                return;
-            }
-            var map = [
-                { selector: '.btn.alta .ui-button-text', text: 'Alta' },
-                { selector: '.btn.modificar .ui-button-text', text: 'Modificar' },
-                { selector: '.btn.eliminar .ui-button-text', text: 'Eliminar' }
-            ];
-            map.forEach(function(item) {
-                var el = root.querySelector(item.selector);
-                if (el) {
-                    el.textContent = item.text;
-                }
-            });
-        }
+        var simpleToastTimer;
 
+        // Mostrar Toast con soporte para Error (Rojo)
         function mostrarToastSimple(mensaje, esError) {
-            var growl = PF('articulosGrowl');
-            if (growl) {
-                growl.renderMessage({
-                    summary: esError ? 'Error' : 'Exito',
-                    detail: mensaje,
-                    severity: esError ? 'error' : 'info'
-                });
+            clearTimeout(simpleToastTimer);
+            var toast = document.getElementById('toastSimple');
+            var message = document.getElementById('toastSimpleMessage');
+            if (toast && message) {
+                // Resetear clases base
+                toast.className = 'toast-simple toast-base';
+
+                // Si es error agregar clase roja
+                if (esError) {
+                    toast.classList.add('toast-error');
+                }
+
+                message.innerText = mensaje;
+                toast.style.display = 'block';
+                simpleToastTimer = setTimeout(function () {
+                    toast.style.display = 'none';
+                }, 3000);
             }
         }
 
@@ -495,7 +548,7 @@
         function handleRequest(xhr, status, args, dialogVar) {
             // Si falló validación estándar de JSF (aunque quitamos required, por si acaso)
             if (args.validationFailed) {
-                var msg = args.mensajeRespuesta || "Faltan datos obligatorios or inválidos";
+                var msg = args.mensajeRespuesta || "Faltan datos obligatorios o inválidos";
                 mostrarToastSimple(msg, true);
                 return;
             }
@@ -516,15 +569,6 @@
                     mostrarToastSimple(args.mensajeRespuesta, true);
                 }
             }
-        }
-
-        document.addEventListener('DOMContentLoaded', normalizarBotonesAcciones);
-        if (window.PrimeFaces && PrimeFaces.ajax && PrimeFaces.ajax.addOnEvent) {
-            PrimeFaces.ajax.addOnEvent(function (e) {
-                if (e && e.status === 'success') {
-                    normalizarBotonesAcciones();
-                }
-            });
         }
         //]]>
     </script>
