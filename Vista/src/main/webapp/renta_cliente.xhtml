@@ -320,20 +320,25 @@
 
                     <p:messages id="msgs" showDetail="true" closable="true" />
 
-                    <h:panelGroup id="barraFecha" rendered="#{not empty articuloCatalogoUI.fechaSeleccionada}">
-                        <div class="date-info-bar">
-                            <i class="pi pi-calendar" style="margin-right:6px;"></i>
-                            Reservando del: <strong>
-                            <h:outputText value="#{articuloCatalogoUI.fechaInicio}">
-                                <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
-                            </h:outputText>
-                        </strong>
-                            al: <strong>
-                            <h:outputText value="#{articuloCatalogoUI.fechaSeleccionada}">
-                                <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
-                            </h:outputText>
-                        </strong>
-                        </div>
+                    <h:panelGroup id="barraFecha" layout="block">
+                        <h:panelGroup rendered="#{not empty articuloCatalogoUI.fechaSeleccionada}">
+                            <div class="date-info-bar">
+                                <i class="pi pi-calendar" style="margin-right:6px;"></i>
+                                Reservando para el:
+                                <strong style="margin-left:6px;">
+                                    <h:outputText value="#{articuloCatalogoUI.fechaSeleccionada}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" type="localDate"/>
+                                    </h:outputText>
+                                </strong>
+                            </div>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{empty articuloCatalogoUI.fechaSeleccionada}">
+                            <div class="date-info-bar" style="background:#f9f9f9; border:1px dashed #e0e0e0; color:#666;">
+                                <i class="pi pi-exclamation-circle" style="color:var(--muted)"></i>
+                                <span>No has seleccionado fecha — pulsa <strong style="margin:0 6px;">"Seleccionar Fecha"</strong> para ver disponibilidad.</span>
+                                <p:commandButton value="Seleccionar Fecha" onclick="PF('dlgFecha').show()" type="button" styleClass="cta-btn" style="margin-left:12px;"/>
+                            </div>
+                        </h:panelGroup>
                     </h:panelGroup>
 
                     <p:remoteCommand name="rcMesaCombinacion"

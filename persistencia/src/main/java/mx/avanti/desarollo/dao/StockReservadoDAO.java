@@ -2,6 +2,9 @@ package mx.avanti.desarollo.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.TypedQuery;
+import mx.desarollo.entity.Articulo;
+import mx.desarollo.entity.StockReservadoDiario;
 import java.sql.Date;
 import java.time.LocalDate;
 
@@ -48,6 +51,75 @@ public class StockReservadoDAO {
 
         } catch (NoResultException ex) {
             return 0;
+        }
+    }
+
+    /**
+     * Ajusta el stock reservado de un artículo para una fecha.
+     * Si el ajuste es positivo, aumenta la reserva (o crea registro).
+     * Si es negativo, disminuye la reserva (o elimina registro si llega a 0).
+     * <p>
+     * Este método maneja su propia transacción.
+     *
+     * @param idArticulo     ID del artículo
+     * @param fecha          Fecha de la reserva
+     * @param cantidadAjuste Cantidad a ajustar (positivo para reservar, negativo para liberar)
+     */
+    public void ajustarStockReservado(Integer idArticulo, LocalDate fecha, Integer cantidadAjuste) {
+        if (idArticulo == null || fecha == null || cantidadAjuste == null || cantidadAjuste == 0) {
+            return;
+        }
+
+        try {
+            entityManager.getTransaction().begin();
+
+            try {
+                // Buscar registro existente
+                TypedQuery<StockReservadoDiario> query = entityManager.createQuery(
+                        "SELECT s FROM StockReservadoDiario s WHERE s.idarticulo.id = :idArt AND s.fecha = :fecha",
+                        StockReservadoDiario.class);
+                query.setParameter("idArt", idArticulo);
+                query.setParameter("fecha", fecha);
+
+                StockReservadoDiario stockRegistro = query.getSingleResult();
+
+                // Calcular nueva cantidad
+                int nuevaCantidad = stockRegistro.getCantidadReservada() + cantidadAjuste;
+
+                if (nuevaCantidad <= 0) {
+                    // Si llega a 0 o menos, eliminar registro
+                    entityManager.remove(stockRegistro);
+                } else {
+                    // Actualizar cantidad
+                    stockRegistro.setCantidadReservada(nuevaCantidad);
+                    entityManager.merge(stockRegistro);
+                }
+
+            } catch (NoResultException e) {
+                // No existe registro
+                if (cantidadAjuste > 0) {
+                    // Solo crear si el ajuste es positivo (reservar)
+                    Articulo artRef = entityManager.getReference(Articulo.class, idArticulo);
+
+                    StockReservadoDiario nuevoRegistro = new StockReservadoDiario();
+                    nuevoRegistro.setIdarticulo(artRef);
+                    nuevoRegistro.setFecha(fecha);
+                    nuevoRegistro.setCantidadReservada(cantidadAjuste);
+
+                    entityManager.persist(nuevoRegistro);
+                }
+                // Si el ajuste es negativo y no existe registro, no hacer nada
+            }
+
+            entityManager.getTransaction().commit();
+
+        } catch (Exception e) {
+            if (entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+            }
+            System.err.println("Error al ajustar stock reservado para artículo " + idArticulo +
+                    " en fecha " + fecha + ": " + e.getMessage());
+            throw new RuntimeException("Error al ajustar stock reservado", e);
         }
     }
 

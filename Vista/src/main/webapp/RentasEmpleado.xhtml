@@ -89,7 +89,10 @@
                                     <span class="badge badge-pool">DISPONIBLE</span>
                                 </h:panelGroup>
                                 <h:panelGroup rendered="#{rent.idEmpleado != null and rent.estado ne 'Pendiente a recoleccion'}">
-                                    <span class="badge badge-mine">ASIGNADA A MÍ</span>
+                                <span class="badge badge-mine">
+                                ASIGNADA -
+                                <h:outputText value="#{rent.idEmpleado.nombre.toUpperCase()}"/>
+                                </span>
                                 </h:panelGroup>
 
                                 <h:outputText value="#{rent.idCliente.nombre}" style="font-size: 16px; margin-bottom: 3px; display: block;"/>

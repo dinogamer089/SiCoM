@@ -52,9 +52,13 @@ public class DelegateRenta {
                 conceptoBase = "Salida por Renta #" + idRenta + " (Confirmado)";
                 fechaMovimiento = renta.getFechaInicio() != null ? renta.getFechaInicio()
                         : (renta.getFecha() != null ? renta.getFecha() : LocalDate.now());
-            } else { // Finalizada
+            } else if ("Finalizada".equalsIgnoreCase(nuevoEstado)) {
                 tipoMovimiento = TipoMovimiento.ENTRADA;
                 conceptoBase = "Devolución Renta #" + idRenta + " (Finalizada)";
+                fechaMovimiento = renta.getFecha() != null ? renta.getFecha() : LocalDate.now();
+            } else { // Cancelada
+                tipoMovimiento = TipoMovimiento.ENTRADA;
+                conceptoBase = "Devolución Renta #" + idRenta + " (Cancelada)";
                 fechaMovimiento = renta.getFecha() != null ? renta.getFecha() : LocalDate.now();
             }
 

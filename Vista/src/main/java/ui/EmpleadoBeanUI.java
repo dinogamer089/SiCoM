@@ -1,3 +1,4 @@
+// java
 package ui;
 
 import jakarta.annotation.PostConstruct;
@@ -9,6 +10,8 @@ import mx.desarollo.entity.Empleado;
 import mx.desarollo.facade.FacadeEmpleado;
 import mx.desarollo.integration.ServiceFacadeLocator;
 import org.primefaces.PrimeFaces;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import java.io.Serializable;
 import java.util.List;
@@ -61,6 +64,7 @@ public class EmpleadoBeanUI implements Serializable
     // --- FIN: recargarEmpleados ---
 
     // --- INICIO: guardarEmpleado ---
+    // java
     public void guardarEmpleado() {
         this.operacionExitosa = false;
         FacesContext ctx = FacesContext.getCurrentInstance();
@@ -70,7 +74,6 @@ public class EmpleadoBeanUI implements Serializable
                     nuevoEmpleado.getApellidoPaterno() == null || nuevoEmpleado.getApellidoPaterno().trim().isEmpty() ||
                     nuevoEmpleado.getApellidoMaterno() == null || nuevoEmpleado.getApellidoMaterno().trim().isEmpty()) {
 
-
                 ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Nombre y apellidos son obligatorios."));
                 ctx.validationFailed();
                 PrimeFaces.current().ajax().addCallbackParam("operacionExitosa", this.operacionExitosa);
@@ -79,6 +82,15 @@ public class EmpleadoBeanUI implements Serializable
 
             if (nuevoEmpleado.getCorreo() == null || nuevoEmpleado.getCorreo().trim().isEmpty()) {
                 ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "El correo es obligatorio."));
+                ctx.validationFailed();
+                PrimeFaces.current().ajax().addCallbackParam("operacionExitosa", this.operacionExitosa);
+                return;
+            }
+
+            // Validación: correo debe tener formato usuario@dominio.ext (al menos un punto en el dominio)
+            String correo = nuevoEmpleado.getCorreo().trim();
+            if (!correo.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
+                ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Correo Invalido", "El correo no tiene un dominio válido."));
                 ctx.validationFailed();
                 PrimeFaces.current().ajax().addCallbackParam("operacionExitosa", this.operacionExitosa);
                 return;
@@ -127,6 +139,7 @@ public class EmpleadoBeanUI implements Serializable
 
         PrimeFaces.current().ajax().addCallbackParam("operacionExitosa", this.operacionExitosa);
     }
+
     // --- FIN: guardarEmpleado ---
 
     // --- INICIO: restablecerContrasena ---
@@ -286,10 +299,31 @@ public class EmpleadoBeanUI implements Serializable
     }
     // --- FIN: obtenerMensajeRaiz ---
 
+    // language: java
+    private String buscarNombre;
+
+    public List<Empleado> getEmpleados() {
+        if (buscarNombre == null || buscarNombre.trim().isEmpty()) {
+            return empleados;
+        }
+        String term = buscarNombre.trim().toLowerCase();
+        if (empleados == null) return new ArrayList<>();
+        return empleados.stream()
+                .filter(e -> {
+                    String full = (e.getNombre() == null ? "" : e.getNombre()) + " "
+                            + (e.getApellidoPaterno() == null ? "" : e.getApellidoPaterno()) + " "
+                            + (e.getApellidoMaterno() == null ? "" : e.getApellidoMaterno()) + " "
+                            + (e.getCorreo() == null ? "" : e.getCorreo());
+                    return full.toLowerCase().contains(term);
+                })
+                .collect(Collectors.toList());
+    }
+
+    public String getBuscarNombre() { return buscarNombre; }
+    public void setBuscarNombre(String buscarNombre) { this.buscarNombre = buscarNombre; }
+
 
     // --- GETTERS Y SETTERS ---
-    public List<Empleado> getEmpleados() { return empleados;
-    }
     public void setEmpleados(List<Empleado> empleados) { this.empleados = empleados;
     }
     public Empleado getEmpleadoSeleccionado() { return empleadoSeleccionado;
