@@ -1,0 +1,167 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xml:lang="es" lang="es">
+
+<f:metadata>
+    <f:event type="preRenderView" listener="#{rentaUI.obtenerTodasLasCotizaciones}" />
+</f:metadata>
+
+<h:head>
+    <title>Gestion de Cotizaciones</title>
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style type="text/css">
+        @font-face {
+            font-family: "Minerva Modern";
+            src: url("resources/MinervaModern Bold.ttf") format("truetype");
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #E7D9CB;
+            font-family: "FreightText Pro", serif;
+        }
+
+        .content {
+            padding: 20px 60px;
+            font-family: 'Minerva Modern', serif;
+        }
+
+        .title {
+            font-size: 26px;
+            color: #000000;
+        }
+
+        .cotizaciones-list {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .cotizacion-card {
+            width: 250px;
+            height: 120px;
+            background-color: black;
+            color: white;
+            padding: 15px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .cotizacion-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .cotizacion-icon {
+            font-size: 40px;
+        }
+
+        .cotizacion-details {
+            display: flex;
+            align-items: center;
+        }
+
+        .cotizacion-details img{
+            width: 25px;
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        .cotizacion-info {
+            display: flex;
+            flex-direction: column;
+            font-weight: bold;
+            font-size: 14px;
+            font-family: "FreightTextCmp Pro Semibold";
+        }
+
+        .cotizacion-status {
+            font-size: 14px;
+            font-style: italic;
+            margin-top: 5px;
+            color: lightblue;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .filters-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+    </style>
+</h:head>
+<h:body>
+    <ui:include src="componentTopbar.xhtml" />
+
+    <div class="content">
+        <h:form id="cotizacionesForm">
+            <p:growl id="messages" showDetail="true" life="3000"/>
+
+            <div class="header-container">
+                <h1 class="title">Cotizaciones</h1>
+
+                <div class="filters-container">
+                    <p:inputText value="#{rentaUI.filtroNombre}" placeholder="Buscar cliente..." style="width: 250px;">
+                        <p:ajax event="keyup" listener="#{rentaUI.filtrarRentas}" update="panelCotizaciones" delay="300" />
+                    </p:inputText>
+                </div>
+            </div>
+
+            <h:panelGroup id="panelCotizaciones">
+                <div class="cotizaciones-list">
+
+                    <h:panelGroup rendered="#{not empty rentaUI.rentas}">
+                        <ui:repeat value="#{rentaUI.rentas}" var="cot">
+
+                            <h:commandLink action="#{rentaUI.seleccionarRenta(cot)}" style="text-decoration: none; color: inherit;">
+                                <div class="cotizacion-card">
+                                    <div class="cotizacion-details">
+                                        <img src="resources/cotizacion.png" alt="Cotizacion" />
+
+                                        <div class="cotizacion-info">
+                                            <h:outputText value="#{cot.idCliente.nombre}" style="font-size: 16px;"/>
+                                            <h:outputText value="#{cot.idCliente.telefono}" style="font-size: 14px;"/>
+
+                                            <h:outputText value="#{cot.estado}" styleClass="cotizacion-status"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </h:commandLink>
+                        </ui:repeat>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{empty rentaUI.rentas}">
+                        <div class="cotizacion-card" style="background-color: #000000; cursor: default; display:flex; justify-content: center; align-items:center; width: 300px; height: 120px; padding: 15px;">
+                            <div class="cotizacion-info" style="text-align: center; color: white">
+                                <h:outputText value="No se encontraron cotizaciones." />
+                            </div>
+                        </div>
+                    </h:panelGroup>
+                </div>
+            </h:panelGroup>
+        </h:form>
+    </div>
+</h:body>
+</html>
