@@ -48,6 +48,7 @@
             margin-bottom: 25px;
             border-radius: 8px;
             border: 1px solid #ddd;
+            overflow: visible;
         }
 
         .filter-panel h3 {
@@ -70,6 +71,7 @@
             align-items: flex-end;
             margin-bottom: 15px;
             flex-wrap: wrap;
+            overflow: visible;
         }
 
         .filter-row-inline {
@@ -78,6 +80,7 @@
             align-items: flex-end;
             flex-wrap: wrap;
             flex: 1;
+            overflow: visible;
         }
 
         .filter-field {
@@ -362,12 +365,23 @@
             position: relative;
         }
 
+        /* El panel del datePicker debe quedar sobre el topbar (z-index: 9999) */
+        .ui-datepicker {
+            z-index: 99999 !important;
+            margin-top: 4px;
+        }
+
         /* Botón del calendario a la derecha */
         .filter-field .ui-datepicker-trigger {
             position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 36px;
+            padding: 0;
+            margin: 0;
+            background: none;
+            border: none;
             cursor: pointer;
         }
 
@@ -444,6 +458,7 @@
                                               showIcon="true"
                                               locale="es"
                                               readonlyInput="true"
+                                              appendTo="@(body)"
                                               placeholder="Selecciona una fecha" />
                             </div>
                         </h:panelGroup>
@@ -457,6 +472,7 @@
                                               showIcon="true"
                                               locale="es"
                                               readonlyInput="true"
+                                              appendTo="@(body)"
                                               placeholder="Selecciona fecha inicio" />
                             </div>
 
@@ -468,6 +484,7 @@
                                               showIcon="true"
                                               locale="es"
                                               readonlyInput="true"
+                                              appendTo="@(body)"
                                               placeholder="Selecciona fecha fin" />
                             </div>
                         </h:panelGroup>
@@ -571,5 +588,7 @@
             </h:panelGroup>
         </h:form>
     </div>
+
+
 </h:body>
 </html>
