@@ -10,7 +10,7 @@
 
     <artifactId>vista</artifactId>
     <packaging>war</packaging>
-    <name>web Maven Webapp</name>
+    <name>vista</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -21,7 +21,7 @@
 
         <primefaces.version>14.0.0</primefaces.version>
         <primefaces.extensions.version>14.0.0</primefaces.extensions.version>
-        <jakarta.ee.version>10.0.0</jakarta.ee.version>
+        <jakarta.ee.version>11.0.0</jakarta.ee.version>
 
         <joda.time.version>2.12.5</joda.time.version>
         <itext.version>8.0.2</itext.version>
@@ -160,6 +160,6 @@
     </dependencies>
 
     <build>
-        <finalName>web</finalName>
+        <finalName>vista</finalName>
     </build>
 </project>

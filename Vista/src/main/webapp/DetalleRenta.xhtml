@@ -432,21 +432,19 @@
         }
     </script>
 
-    <ui:include src="componentTopbar.xhtml" />
-
     <div class="main-container">
-        <h:form id="formDetalle">
+        <h:form id="formDetalle" rendered="#{not empty rentaUI.rentaSeleccionada}">
             <p:growl id="growlDetalle" widgetVar="detalleRentaGrowl" showDetail="true" life="3000" />
             <div class="page-header">
                 <div class="header-title">
-                    <h:commandLink action="Cotizaciones.xhtml" title="Regresar" rendered="#{rentaUI.rentaSeleccionada.estado eq 'SOLICITADA'}">
+                    <h:commandLink action="Cotizaciones.xhtml" title="Regresar" rendered="#{not empty rentaUI.rentaSeleccionada and rentaUI.rentaSeleccionada.estado eq 'SOLICITADA'}">
                         <h:graphicImage value="resources/retornar.png" alt="Regresar" width="40" height="40" style="cursor: pointer;" />
                     </h:commandLink>
-                    <h:commandLink action="Rentas.xhtml" title="Regresar" rendered="#{rentaUI.rentaSeleccionada.estado ne 'SOLICITADA'}">
+                    <h:commandLink action="Rentas.xhtml" title="Regresar" rendered="#{not empty rentaUI.rentaSeleccionada and rentaUI.rentaSeleccionada.estado ne 'SOLICITADA'}">
                         <h:graphicImage value="resources/retornar.png" alt="Regresar" width="40" height="40" style="cursor: pointer;" />
                     </h:commandLink>
-                    <h:outputText value="Cotizacion ID##{rentaUI.rentaSeleccionada.id}" style="margin-left: 10px;" rendered="#{rentaUI.rentaSeleccionada.estado eq 'SOLICITADA'}"/>
-                    <h:outputText value="Renta ID##{rentaUI.rentaSeleccionada.id}" style="margin-left: 10px;" rendered="#{rentaUI.rentaSeleccionada.estado ne 'SOLICITADA'}"/>
+                    <h:outputText value="Cotizacion ID##{rentaUI.rentaSeleccionada.id}" style="margin-left: 10px;" rendered="#{not empty rentaUI.rentaSeleccionada and rentaUI.rentaSeleccionada.estado eq 'SOLICITADA'}"/>
+                    <h:outputText value="Renta ID##{rentaUI.rentaSeleccionada.id}" style="margin-left: 10px;" rendered="#{not empty rentaUI.rentaSeleccionada and rentaUI.rentaSeleccionada.estado ne 'SOLICITADA'}"/>
                 </div>
 
                 <div style="display: flex; gap: 10px;">
@@ -455,7 +453,7 @@
                                      action="#{rentaUI.aprobarCotizacion()}"
                                      update="@form"
                                      oncomplete="if (!args.validationFailed) { mostrarToastSimple('Cotización aprobada correctamente.'); }"
-                                     rendered="#{rentaUI.rentaSeleccionada.estado eq 'SOLICITADA'}">
+                                     rendered="#{not empty rentaUI.rentaSeleccionada and rentaUI.rentaSeleccionada.estado eq 'SOLICITADA'}">
 
                         <p:confirm header="Confirmación de Aprobación"
                                    message="¿Está seguro de que desea aprobar esta cotización y convertirla en Renta?"
@@ -467,18 +465,18 @@
                                      update=":dlgDetallesComentarios"
                                      oncomplete="PF('dlgDetallesComentarios').show()"
                                      styleClass="btn"
-                                     rendered="#{rentaUI.rentaSeleccionada.estado ne 'SOLICITADA'}"
+                                     rendered="#{not empty rentaUI.rentaSeleccionada and rentaUI.rentaSeleccionada.estado ne 'SOLICITADA'}"
                                      style="margin-right: 5px; background-color: black !important; color: white !important; border:none;">
                     </p:commandButton>
                     <p:commandButton styleClass="btn modificar"
                                      process="@this"
                                      oncomplete="if (!args.validationFailed) PF('dlgOpcionesModificar').show();"
                                      value="✎ Modificar"
-                                     rendered="#{rentaUI.rentaSeleccionada.estado ne 'SOLICITADA'}">
+                                     rendered="#{not empty rentaUI.rentaSeleccionada and rentaUI.rentaSeleccionada.estado ne 'SOLICITADA'}">
                     </p:commandButton>
                     <p:selectOneMenu value="#{rentaUI.rentaSeleccionada.estado}"
                                      styleClass="estado-dropdown"
-                                     rendered="#{rentaUI.rentaSeleccionada.estado ne 'SOLICITADA'}">
+                                     rendered="#{not empty rentaUI.rentaSeleccionada and rentaUI.rentaSeleccionada.estado ne 'SOLICITADA'}">
 
                         <f:selectItems value="#{rentaUI.listaEstadosRenta}" />
                         <p:ajax event="change"
@@ -499,11 +497,11 @@
                         <span class="info-label">Telefono:</span>
                         <span class="info-value">#{rentaUI.rentaSeleccionada.idCliente.telefono}</span>
                     </div>
-                    <h:panelGroup class="info-row" layout="block" rendered="#{rentaUI.rentaSeleccionada.estado eq 'En reparto' and rentaUI.rentaSeleccionada.idEmpleado != null}">
+                    <h:panelGroup class="info-row" layout="block" rendered="#{not empty rentaUI.rentaSeleccionada and rentaUI.rentaSeleccionada.estado eq 'En reparto' and rentaUI.rentaSeleccionada.idEmpleado != null}">
                         <span class="info-label">Pendiente a entregar por:</span>
                         <span class="info-value">#{rentaUI.rentaSeleccionada.idEmpleado.nombre}</span> </h:panelGroup>
 
-                    <h:panelGroup class="info-row" layout="block" rendered="#{rentaUI.rentaSeleccionada.entregado != null}">
+                    <h:panelGroup class="info-row" layout="block" rendered="#{not empty rentaUI.rentaSeleccionada and rentaUI.rentaSeleccionada.entregado != null}">
                         <span class="info-label">Entregado por:</span>
                         <span class="info-value" style="vertical-align: bottom">#{rentaUI.rentaSeleccionada.entregado}</span>
                     </h:panelGroup>
@@ -526,12 +524,12 @@
                             </h:outputText>
                         </span>
                     </div>
-                    <h:panelGroup class="info-row" layout="block" rendered="#{rentaUI.rentaSeleccionada.estado eq 'En recoleccion' and rentaUI.rentaSeleccionada.idEmpleado != null}">
+                    <h:panelGroup class="info-row" layout="block" rendered="#{not empty rentaUI.rentaSeleccionada and rentaUI.rentaSeleccionada.estado eq 'En recoleccion' and rentaUI.rentaSeleccionada.idEmpleado != null}">
                         <span class="info-label">Pendiente a recoger por:</span>
                         <span class="info-value" style="vertical-align: bottom">#{rentaUI.rentaSeleccionada.idEmpleado.nombre}</span>
                     </h:panelGroup>
 
-                    <h:panelGroup class="info-row" layout="block" rendered="#{rentaUI.rentaSeleccionada.recogido != null}">
+                    <h:panelGroup class="info-row" layout="block" rendered="#{not empty rentaUI.rentaSeleccionada and rentaUI.rentaSeleccionada.recogido != null}">
                         <span class="info-label">Recogido por:</span>
                         <span class="info-value" style="vertical-align: bottom">#{rentaUI.rentaSeleccionada.recogido}</span>
                     </h:panelGroup>

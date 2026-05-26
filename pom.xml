@@ -12,7 +12,7 @@
         <module>entidad</module>
         <module>persistencia</module>
         <module>negocio</module>
-        <module>Vista</module>
+        <module>vista</module>
     </modules>
 
 
