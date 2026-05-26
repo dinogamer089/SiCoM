@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -199,7 +200,9 @@ public class CarritoBean implements Serializable {
                     ? carrito.getFechaSeleccionada()
                     : (fechaCatalogoSeleccionada != null
                         ? fechaCatalogoSeleccionada.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-                        : null);
+                        : (fechaInicioCatalogo != null
+                            ? fechaInicioCatalogo.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                            : null));
 
             LocalDate fechaInicio = (carrito.getFechaInicio() != null)
                     ? carrito.getFechaInicio()
@@ -254,11 +257,7 @@ public class CarritoBean implements Serializable {
             fechaCatalogoSeleccionada = null;
             fechaInicioCatalogo = null;
 
-            ctx.addMessage(null, new FacesMessage(
-                    FacesMessage.SEVERITY_INFO,
-                    "Éxito",
-                    "La renta se registró correctamente."
-            ));
+            PrimeFaces.current().executeScript("PF('solicitudDialog').hide(); PF('successDialog').show();");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -415,10 +414,72 @@ public class CarritoBean implements Serializable {
     public List<String> getNotificacionesStock() { return notificacionesStock; }
     public boolean isHuboAjustesStock() { return notificacionesStock != null && !notificacionesStock.isEmpty(); }
 
-    // Permite ocultar/limpiar el banner de notificaciones desde la vista
+    public long getTotalDiasRenta() {
+        LocalDate inicio = carrito.getFechaInicio();
+        LocalDate fin = carrito.getFechaSeleccionada();
+        if (inicio == null || fin == null) return 1;
+        long dias = ChronoUnit.DAYS.between(inicio, fin) + 1;
+        return dias < 1 ? 1 : dias;
+    }
+
+    public String getFechaInicioStr() {
+        LocalDate f = carrito.getFechaInicio();
+        if (f == null) f = carrito.getFechaSeleccionada();
+        return f != null ? f.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "";
+    }
+
+    public String getFechaFinStr() {
+        LocalDate f = carrito.getFechaSeleccionada();
+        return f != null ? f.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "";
+    }
+
+    public void procesarCotizacion() {
+        confirmarCotizacion();
+    }
+
     public void limpiarNotificacionesStock() {
         if (notificacionesStock != null) {
             notificacionesStock.clear();
         }
+    }
+
+    public List<ItemProblemaStock> getItemsConProblemaStock() {
+        List<ItemProblemaStock> problemas = new ArrayList<>();
+        if (carrito == null) return problemas;
+        for (CarritoItem item : carrito.getItems()) {
+            if (item.getArticulo() == null) continue;
+            int disponible = carrito.checkStockEnRango(item.getArticulo());
+            if (item.getCantidad() > disponible) {
+                problemas.add(new ItemProblemaStock(item.getArticulo(), disponible, item.getCantidad()));
+            }
+        }
+        return problemas;
+    }
+
+    public void ajustarCantidadesAStock() {
+        if (carrito == null) return;
+        for (CarritoItem item : new ArrayList<>(carrito.getItems())) {
+            if (item.getArticulo() == null) continue;
+            int disponible = carrito.checkStockEnRango(item.getArticulo());
+            if (item.getCantidad() > disponible) {
+                carrito.cambiarCantidad(item, disponible);
+            }
+        }
+    }
+
+    public static class ItemProblemaStock implements java.io.Serializable {
+        private final mx.desarollo.entity.Articulo articulo;
+        private final int stockDisponible;
+        private final int cantidadEnCarrito;
+
+        public ItemProblemaStock(mx.desarollo.entity.Articulo articulo, int stockDisponible, int cantidadEnCarrito) {
+            this.articulo = articulo;
+            this.stockDisponible = stockDisponible;
+            this.cantidadEnCarrito = cantidadEnCarrito;
+        }
+
+        public mx.desarollo.entity.Articulo getArticulo() { return articulo; }
+        public int getStockDisponible() { return stockDisponible; }
+        public int getCantidadEnCarrito() { return cantidadEnCarrito; }
     }
 }
