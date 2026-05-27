@@ -9,13 +9,16 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import mx.desarollo.entity.*;
+import mx.desarollo.facade.FacadeCarrito;
 import org.primefaces.PrimeFaces;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Named("rentaUI")
@@ -46,7 +49,10 @@ public class RentaBeanUI implements Serializable {
     private Integer idEmpleadoSeleccionado;
 
     private List<Articulo> listaArticulosDisponibles;
+    private List<Articulo> listaArticulosDisponiblesBase;
+    private Map<Integer, Integer> stockDisponiblePorArticulo;
     private ArticuloHelper articuloHelper;
+    private String filtroArticuloTexto;
 
     private static final List<String> ESTADOS_ORDENADOS = new ArrayList<>();
     static {
@@ -233,6 +239,10 @@ public class RentaBeanUI implements Serializable {
 
     public void guardarModificacion() {
         try {
+            if (rentaFinalizada()) {
+                mostrarMensaje(FacesMessage.SEVERITY_WARN, "Aviso", "No se puede modificar una renta finalizada.");
+                return;
+            }
             if (rentaSeleccionada != null) {
                 // Validar coherencia del rango
                 LocalDate fIni = rentaSeleccionada.getFechaInicio();
@@ -285,7 +295,82 @@ public class RentaBeanUI implements Serializable {
     }
 
     public void cargarArticulosDisponibles() {
-        this.listaArticulosDisponibles = articuloHelper.obtenerTodas();
+        if (rentaFinalizada()) {
+            mostrarMensaje(FacesMessage.SEVERITY_WARN, "Aviso", "No se puede modificar una renta finalizada.");
+            return;
+        }
+        List<Articulo> base = articuloHelper.obtenerTodas();
+        if (base == null) {
+            base = new ArrayList<>();
+        }
+        FacadeCarrito facadeCarrito = new FacadeCarrito();
+        LocalDate fechaInicio = rentaSeleccionada != null ? rentaSeleccionada.getFechaInicio() : null;
+        LocalDate fechaFin = rentaSeleccionada != null ? rentaSeleccionada.getFecha() : null;
+
+        this.stockDisponiblePorArticulo = new HashMap<>();
+        for (Articulo art : base) {
+            int disponible = facadeCarrito.obtenerDisponibleEnRango(art, fechaInicio, fechaFin);
+            if (art != null && art.getId() != null) {
+                stockDisponiblePorArticulo.put(art.getId(), disponible);
+            }
+        }
+
+        this.listaArticulosDisponiblesBase = base;
+
+        aplicarFiltroArticulosDisponibles(false);
+    }
+
+    public void buscarArticulosDisponibles() {
+        if (rentaFinalizada()) {
+            mostrarMensaje(FacesMessage.SEVERITY_WARN, "Aviso", "No se puede modificar una renta finalizada.");
+            return;
+        }
+        aplicarFiltroArticulosDisponibles(true);
+    }
+
+    private void aplicarFiltroArticulosDisponibles(boolean mostrarMensaje) {
+        if (listaArticulosDisponiblesBase == null) {
+            listaArticulosDisponibles = new ArrayList<>();
+            return;
+        }
+
+        String filtro = filtroArticuloTexto != null ? filtroArticuloTexto.trim().toLowerCase() : "";
+
+        if (filtro.isEmpty()) {
+            listaArticulosDisponibles = new ArrayList<>(listaArticulosDisponiblesBase);
+            return;
+        }
+
+        listaArticulosDisponibles = listaArticulosDisponiblesBase.stream()
+                .filter(a -> (a.getNombre() != null && a.getNombre().toLowerCase().contains(filtro))
+                    || (a.getCategoria() != null && a.getCategoria().name().toLowerCase().contains(filtro))
+                    || (a.getForma() != null && a.getForma().name().toLowerCase().contains(filtro))
+                    || (a.getTextilTipo() != null && a.getTextilTipo().name().toLowerCase().contains(filtro)))
+                .collect(Collectors.toList());
+
+        if (mostrarMensaje && listaArticulosDisponibles.isEmpty()) {
+            mostrarMensaje(FacesMessage.SEVERITY_WARN, "Sin resultados", "No se encontraron articulos.");
+        }
+    }
+
+    public int stockDisponible(Articulo articulo) {
+        if (articulo == null) return 0;
+        Integer id = articulo.getId();
+        if (stockDisponiblePorArticulo != null && id != null) {
+            Integer cached = stockDisponiblePorArticulo.get(id);
+            if (cached != null) return cached;
+        }
+
+        FacadeCarrito facadeCarrito = new FacadeCarrito();
+        LocalDate fechaInicio = rentaSeleccionada != null ? rentaSeleccionada.getFechaInicio() : null;
+        LocalDate fechaFin = rentaSeleccionada != null ? rentaSeleccionada.getFecha() : null;
+        int disponible = facadeCarrito.obtenerDisponibleEnRango(articulo, fechaInicio, fechaFin);
+
+        if (stockDisponiblePorArticulo != null && id != null) {
+            stockDisponiblePorArticulo.put(id, disponible);
+        }
+
+        return disponible;
     }
 
     public void recalcularTotal() {
@@ -307,10 +392,25 @@ public class RentaBeanUI implements Serializable {
 
     public void agregarArticulo(Articulo articulo) {
         if (rentaSeleccionada == null) return;
+        if (rentaFinalizada()) {
+            mostrarMensaje(FacesMessage.SEVERITY_WARN, "Aviso", "No se puede modificar una renta finalizada.");
+            return;
+        }
+        if (articulo == null) return;
+
+        if (stockDisponible(articulo) <= 0) {
+            mostrarMensaje(FacesMessage.SEVERITY_WARN, "Stock insuficiente", "No hay stock disponible para este artículo.");
+            return;
+        }
 
         boolean existe = false;
         for (Detallerenta det : rentaSeleccionada.getDetallesRenta()) {
             if (det.getIdarticulo().getId().equals(articulo.getId())) {
+                int max = maxCantidadDetalle(det);
+                if (det.getCantidad() + 1 > max) {
+                    mostrarMensaje(FacesMessage.SEVERITY_WARN, "Stock insuficiente", "No hay stock suficiente para aumentar la cantidad.");
+                    return;
+                }
                 det.setCantidad(det.getCantidad() + 1);
                 existe = true;
                 break;
@@ -333,12 +433,33 @@ public class RentaBeanUI implements Serializable {
     }
 
     public void quitarDetalle(Detallerenta detalle) {
+        if (rentaFinalizada()) {
+            mostrarMensaje(FacesMessage.SEVERITY_WARN, "Aviso", "No se puede modificar una renta finalizada.");
+            return;
+        }
         rentaSeleccionada.getDetallesRenta().remove(detalle);
         recalcularTotal();
     }
 
     public void guardarCambiosArticulos() {
         try {
+            if (rentaFinalizada()) {
+                mostrarMensaje(FacesMessage.SEVERITY_WARN, "Aviso", "No se puede modificar una renta finalizada.");
+                return;
+            }
+
+            if (rentaSeleccionada != null && rentaSeleccionada.getDetallesRenta() != null) {
+                for (Detallerenta det : rentaSeleccionada.getDetallesRenta()) {
+                    int max = maxCantidadDetalle(det);
+                    if (det.getCantidad() != null && det.getCantidad() > max) {
+                        mostrarMensaje(FacesMessage.SEVERITY_WARN, "Stock insuficiente",
+                                "No hay stock suficiente para: " + det.getIdarticulo().getNombre());
+                        FacesContext.getCurrentInstance().validationFailed();
+                        return;
+                    }
+                }
+            }
+
             rentaHelper.actualizarRenta(rentaSeleccionada, fechaInicioOriginal, fechaOriginal);
 
             cargarRentaSeleccionada();
@@ -392,6 +513,21 @@ public class RentaBeanUI implements Serializable {
         PrimeFaces.current().executeScript("PF('dlgComentarioEstado').hide();");
     }
 
+    public int maxCantidadDetalle(Detallerenta detalle) {
+        if (detalle == null || detalle.getIdarticulo() == null) return 0;
+        FacadeCarrito facadeCarrito = new FacadeCarrito();
+        LocalDate fechaInicio = rentaSeleccionada != null ? rentaSeleccionada.getFechaInicio() : null;
+        LocalDate fechaFin = rentaSeleccionada != null ? rentaSeleccionada.getFecha() : null;
+        int disponible = facadeCarrito.obtenerDisponibleEnRango(detalle.getIdarticulo(), fechaInicio, fechaFin);
+        int actual = detalle.getCantidad() != null ? detalle.getCantidad() : 0;
+        int max = disponible + actual;
+        return Math.max(1, max);
+    }
+
+    private boolean rentaFinalizada() {
+        return rentaSeleccionada != null && "Finalizada".equals(rentaSeleccionada.getEstado());
+    }
+
     public void filtrarRentas() {
         if (listaMaestraRentas == null) return;
 
@@ -423,6 +559,14 @@ public class RentaBeanUI implements Serializable {
 
     public void setListaArticulosDisponibles(List<Articulo> listaArticulosDisponibles) {
         this.listaArticulosDisponibles = listaArticulosDisponibles;
+    }
+
+    public String getFiltroArticuloTexto() {
+        return filtroArticuloTexto;
+    }
+
+    public void setFiltroArticuloTexto(String filtroArticuloTexto) {
+        this.filtroArticuloTexto = filtroArticuloTexto;
     }
 
     public String seleccionarRenta(Renta renta) {
