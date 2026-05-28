@@ -857,6 +857,9 @@
 
                 <p:inputTextarea value="#{rentaUI.nuevoComentarioTexto}"
                                  rows="6"
+                                 maxlength="200"
+                                 counter="display"
+                                 counterTemplate="{0} caracteres restantes"
                                  styleClass="custom-textarea"
                                  placeholder="Escribe los detalles aquí..." />
 
@@ -870,6 +873,8 @@
                                      actionListener="#{rentaUI.confirmarCambioConComentario}"
                                      update=":formDetalle"
                                      styleClass="btn-black" />
+
+                    <h:outputText id="display" style="color: white; margin-left: 10px; align-self: center; font-family: 'Minerva Modern', serif;" />
                 </div>
             </div>
         </h:form>
