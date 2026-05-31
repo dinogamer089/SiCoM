@@ -212,8 +212,8 @@ public class ArticuloBeanUI implements Serializable {
                 enviarRespuestaJS("error", "Las unidades son obligatorias.");
                 return;
             }
-            if (nuevoArticulo.getUnidades() <= 0) {
-                enviarRespuestaJS("error", "Las unidades deben ser mayor a 0.");
+            if (nuevoArticulo.getUnidades() < 0) {
+                enviarRespuestaJS("error", "Las unidades deben ser 0 o mayores.");
                 return;
             }
 
@@ -346,9 +346,9 @@ public class ArticuloBeanUI implements Serializable {
                 enviarRespuestaJS("error", "Las unidades son obligatorias.");
                 return;
             }
-            if (seleccionada.getUnidades() <= 0) {
+            if (seleccionada.getUnidades() < 0) {
                 articulos = articuloHelper.obtenerTodas();
-                enviarRespuestaJS("error", "Las unidades deben ser mayor a 0.");
+                enviarRespuestaJS("error", "Las unidades deben ser 0 o mayores.");
                 return;
             }
 
