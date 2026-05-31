@@ -160,5 +160,6 @@
     </dependencies>
 
     <build>
+        <finalName>vista</finalName>
     </build>
 </project>

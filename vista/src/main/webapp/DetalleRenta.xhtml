@@ -488,11 +488,11 @@
                                      process="@this"
                                      oncomplete="if (!args.validationFailed) PF('dlgOpcionesModificar').show();"
                                      value="✎ Modificar"
-                                     rendered="#{rentaUI.rentaSeleccionada.estado ne 'SOLICITADA' and rentaUI.rentaSeleccionada.estado ne 'Finalizada'}">
+                                     rendered="#{not empty rentaUI.rentaSeleccionada and rentaUI.rentaSeleccionada.estado ne 'SOLICITADA' and rentaUI.rentaSeleccionada.estado ne 'Finalizada'}">
                     </p:commandButton>
                     <p:selectOneMenu value="#{rentaUI.rentaSeleccionada.estado}"
                                      styleClass="estado-dropdown"
-                                     rendered="#{rentaUI.rentaSeleccionada.estado ne 'SOLICITADA'}"
+                                     rendered="#{not empty rentaUI.rentaSeleccionada and rentaUI.rentaSeleccionada.estado ne 'SOLICITADA'}"
                                      disabled="#{rentaUI.rentaSeleccionada.estado eq 'Finalizada'}">
 
                         <f:selectItems value="#{rentaUI.listaEstadosRenta}" />

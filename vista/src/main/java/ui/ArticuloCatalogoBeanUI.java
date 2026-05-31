@@ -93,6 +93,17 @@ public class ArticuloCatalogoBeanUI implements Serializable {
         }
     }
 
+    public void onPageLoad() {
+        if (isRangoValido()) {
+            recargarCatalogo();
+        } else if (fechaSeleccionada == null && fechaInicio == null) {
+            this.articulos = new ArrayList<>();
+            buildGroups();
+            this.seleccionado = null;
+            this.cantidad = 1;
+        }
+    }
+
     /**
      * Metodo utilitario para obtener la fecha actual del sistema.
      * Se usa en la vista (p:datePicker) para bloquear fechas pasadas (mindate).
@@ -161,12 +172,15 @@ public class ArticuloCatalogoBeanUI implements Serializable {
             return;
         }
 
+        LocalDate inicio = fechaInicio != null ? fechaInicio : fechaSeleccionada;
+        LocalDate fin = fechaSeleccionada;
+
         // Cargar catalogo calculando stock RESTANDO reservas para la fecha seleccionada
         FacadeArticulo facade = ServiceFacadeLocator.getInstanceFacadeArticulo();
         var entidades = facade.listarCatalogoCliente();
 
-        // Usamos el Helper modificado que recibe la fecha
-        this.articulos = ArticuloHelper.toCardDTOs(entidades, fechaSeleccionada);
+        // Usamos el Helper modificado que recibe el rango
+        this.articulos = ArticuloHelper.toCardDTOs(entidades, inicio, fin);
 
         // Reconstruir los grupos visuales
         buildGroups();
