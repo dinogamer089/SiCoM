@@ -49,6 +49,17 @@
             margin-bottom: 30px;
         }
 
+        .filtro-articulos {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin: 0 0 25px 0;
+        }
+
+        .filtro-articulos .ui-inputtext {
+            width: 280px;
+        }
+
         .btn {
             background-color: #000000 !important;
             color: #FFFFFF !important;
@@ -336,6 +347,17 @@
 
         <h:form id="articulosForm">
             <h:panelGroup id="listaArticulosPanel" layout="block" styleClass="lista-articulos">
+                <div class="filtro-articulos">
+                    <p:inputText id="filtroNombre"
+                                 value="#{articuloUI.filtroNombre}"
+                                 placeholder="Buscar artículo...">
+                        <p:ajax event="keyup"
+                                listener="#{articuloUI.filtrarArticulos}"
+                                update=":accionesForm :articulosForm:listaArticulosPanel"
+                                process="@this"
+                                delay="300" />
+                    </p:inputText>
+                </div>
                 <p:dataTable id="tablaArticulos"
                              value="#{articuloUI.articulos}"
                              var="art"
@@ -368,7 +390,7 @@
                     </p:column>
 
                     <p:column headerText="Unidades" styleClass="col-unidades">
-                        <h:outputText value="#{art.unidades} unidades" />
+                        <h:outputText value="#{art.unidades}" />
                     </p:column>
 
                     <p:column headerText="Imagen" styleClass="col-imagen">
@@ -420,7 +442,7 @@
                         </div>
 
                         <div class="col-articulo unidades">
-                            <span>#{art.unidades} unidades</span>
+                            <span>#{art.unidades}</span>
                         </div>
 
                         <div class="col-articulo imagen">
@@ -526,6 +548,22 @@
                 }
             });
         }
+        document.addEventListener('keydown', function (e) {
+            var target = e.target;
+            if (target && target.classList && target.classList.contains('no-negative')) {
+                if (e.key === '-' || e.key === 'Subtract' || e.keyCode === 189 || e.keyCode === 109) {
+                    e.preventDefault();
+                }
+            }
+        });
+        document.addEventListener('input', function (e) {
+            var target = e.target;
+            if (target && target.classList && target.classList.contains('no-negative')) {
+                if (target.value && target.value.indexOf('-') !== -1) {
+                    target.value = target.value.replace(/-/g, '');
+                }
+            }
+        });
         //]]>
     </script>
 
@@ -574,7 +612,8 @@
                     <p:inputNumber id="unidades"
                                    value="#{articuloUI.nuevoArticulo.unidades}"
                                    decimalPlaces="0"
-                                   minValue="0" />
+                                   minValue="0"
+                                   inputStyleClass="no-negative" />
                 </div>
 
                 <div class="campo-formulario">
@@ -759,7 +798,11 @@
                     </div>
                     <div class="campo-formulario">
                         <p:outputLabel for="unidadesMod" value="Unidades: *" />
-                        <p:inputNumber id="unidadesMod" value="#{articuloUI.seleccionada.unidades}" decimalPlaces="0" minValue="0" />
+                        <p:inputNumber id="unidadesMod"
+                                       value="#{articuloUI.seleccionada.unidades}"
+                                       decimalPlaces="0"
+                                       minValue="0"
+                                       inputStyleClass="no-negative" />
                     </div>
                     <div class="campo-formulario">
                         <p:outputLabel for="formaMod" value="Forma:" />
