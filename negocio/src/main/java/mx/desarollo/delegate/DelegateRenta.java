@@ -23,6 +23,9 @@ public class DelegateRenta {
 
         // Registrar movimientos automáticos según el estado
         registrarMovimientosAutomaticos(idRenta, nuevoEstado);
+
+        // Liberar reservas del lado del cliente al finalizar o cancelar
+        liberarReservasCliente(idRenta, nuevoEstado);
     }
 
     /**
@@ -87,6 +90,46 @@ public class DelegateRenta {
 
         } catch (Exception e) {
             System.err.println("Error al registrar movimientos automáticos para renta " + idRenta + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Libera las reservas del lado del cliente (stock_reservado_diario) cuando la
+     * renta termina (Finalizada) o se cancela (Cancelada), recorriendo todo el
+     * rango [fechaInicio, fecha]. No toca la lógica de almacén.
+     */
+    private void liberarReservasCliente(Integer idRenta, String nuevoEstado) {
+        if (!"Finalizada".equalsIgnoreCase(nuevoEstado) && !"Cancelada".equalsIgnoreCase(nuevoEstado)) {
+            return;
+        }
+        try {
+            Renta renta = ServiceLocator.getInstanceRentaDAO().obtenerRentaID(idRenta);
+            if (renta == null || renta.getDetallesRenta() == null || renta.getDetallesRenta().isEmpty()) {
+                return;
+            }
+
+            LocalDate fIni = renta.getFechaInicio() != null ? renta.getFechaInicio() : renta.getFecha();
+            LocalDate fFin = renta.getFecha() != null ? renta.getFecha() : fIni;
+            if (fIni == null || fFin == null) {
+                return;
+            }
+            if (fIni.isAfter(fFin)) {
+                LocalDate tmp = fIni; fIni = fFin; fFin = tmp;
+            }
+
+            var dao = ServiceLocator.getInstanceStockReservadoDAO();
+            for (Detallerenta detalle : renta.getDetallesRenta()) {
+                if (detalle.getIdarticulo() == null || detalle.getCantidad() == null) continue;
+                Integer idArticulo = detalle.getIdarticulo().getId();
+                LocalDate dia = fIni;
+                while (!dia.isAfter(fFin)) {
+                    dao.ajustarStockReservado(idArticulo, dia, -detalle.getCantidad());
+                    dia = dia.plusDays(1);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error al liberar reservas de cliente para renta " + idRenta + ": " + e.getMessage());
             e.printStackTrace();
         }
     }
