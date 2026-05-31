@@ -175,12 +175,12 @@
             <div class="filter-container">
                 <h:panelGroup styleClass="filter-item">
                     <p:outputLabel for="inicio" value="Desde:" />
-                    <p:datePicker id="inicio" value="#{dashboardClientesBean.fechaInicio}" pattern="yyyy-MM-dd" showIcon="true"/>
+                    <p:datePicker id="inicio" value="#{dashboardClientesBean.fechaInicio}" pattern="dd MMM yyyy" showIcon="true"/>
                 </h:panelGroup>
 
                 <h:panelGroup styleClass="filter-item">
                     <p:outputLabel for="fin" value="Hasta:" />
-                    <p:datePicker id="fin" value="#{dashboardClientesBean.fechaFin}" pattern="yyyy-MM-dd" showIcon="true"/>
+                    <p:datePicker id="fin" value="#{dashboardClientesBean.fechaFin}" pattern="dd MMM yyyy" showIcon="true"/>
                 </h:panelGroup>
 
                 <p:commandButton value="Actualizar Dashboard"
