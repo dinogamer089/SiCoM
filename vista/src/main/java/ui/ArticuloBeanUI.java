@@ -23,7 +23,7 @@ public class ArticuloBeanUI implements Serializable {
     private Articulo articulo;
     private List<Articulo> articulos;
     private List<Articulo> articulosOriginales; // Lista sin filtrar
-    private ArticuloHelper articuloHelper;
+    private final ArticuloHelper articuloHelper;
     private Articulo seleccionada;
 
     private Articulo nuevoArticulo;

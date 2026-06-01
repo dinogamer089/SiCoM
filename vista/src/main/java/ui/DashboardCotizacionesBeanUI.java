@@ -229,46 +229,19 @@ public class DashboardCotizacionesBeanUI implements Serializable {
         this.fechaFin = fechaFin;
     }
 
-    public static class FunnelStage {
-        private final String label;
-        private final long value;
-        private final double pct;
-        private final String color;
-
-        public FunnelStage(String label, long value, double pct, String color) {
-            this.label = label;
-            this.value = value;
-            this.pct = pct;
-            this.color = color;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public long getValue() {
-            return value;
-        }
-
-        public double getPct() {
-            return pct;
-        }
+    public record FunnelStage(String label, long value, double pct, String color) {
 
         public String getPercentText() {
-            if (Double.isNaN(pct)) return "--";
-            return String.format("%.0f%%", pct);
-        }
-
-        public String getColor() {
-            return color;
-        }
-
-        public int getWidthPct() {
-            if (Double.isNaN(pct)) {
-                return 30;
+                if (Double.isNaN(pct)) return "--";
+                return String.format("%.0f%%", pct);
             }
-            int width = (int) Math.round(pct);
-            return Math.max(width, 15);
+
+            public int getWidthPct() {
+                if (Double.isNaN(pct)) {
+                    return 30;
+                }
+                int width = (int) Math.round(pct);
+                return Math.max(width, 15);
+            }
         }
-    }
 }

@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 @ViewScoped
 public class RentaBeanUI implements Serializable {
 
-    private RentaHelper rentaHelper;
-    private EmpleadoHelper empleadoHelper;
+    private final RentaHelper rentaHelper;
+    private final EmpleadoHelper empleadoHelper;
     private List<Renta> rentas;
     private List<Renta> listaMaestraRentas;
     private Renta nuevaRenta;
@@ -31,7 +31,7 @@ public class RentaBeanUI implements Serializable {
     private Integer idRentaSeleccionada;
     private List<String> listaEstadosRenta;
     private String estadoSiguiente;
-    private LocalDate minDate;
+    private final LocalDate minDate;
     private LocalDate fechaOriginal;
     private LocalDate fechaInicioOriginal;
     private String filtroNombre;
@@ -46,7 +46,7 @@ public class RentaBeanUI implements Serializable {
     private Integer idEmpleadoSeleccionado;
 
     private List<Articulo> listaArticulosDisponibles;
-    private ArticuloHelper articuloHelper;
+    private final ArticuloHelper articuloHelper;
 
     private static final List<String> ESTADOS_ORDENADOS = new ArrayList<>();
     static {

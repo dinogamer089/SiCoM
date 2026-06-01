@@ -212,8 +212,7 @@ public class ArticuloCatalogoBeanUI implements Serializable {
             // Agregar textiles asociados (mantel obligatorio si fue seleccionado; camino o cubre opcional)
             try {
                 FacesContext ctx = FacesContext.getCurrentInstance();
-                CombinacionMesaClienteBeanUI comb = (CombinacionMesaClienteBeanUI)
-                        ctx.getApplication().evaluateExpressionGet(ctx, "#{combinacionMesaClienteUI}", CombinacionMesaClienteBeanUI.class);
+                CombinacionMesaClienteBeanUI comb = ctx.getApplication().evaluateExpressionGet(ctx, "#{combinacionMesaClienteUI}", CombinacionMesaClienteBeanUI.class);
                 if (comb != null) {
                     // Mantel
                     if (comb.getMantelId() != null) {
