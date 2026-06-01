@@ -550,6 +550,21 @@ public class RentaBeanUI implements Serializable {
 
                     return coincideNombre && coincideEstado;
                 })
+                .sorted((r1, r2) -> {
+                    // Prioridad 1: Pendiente a reparto (Urgente)
+                    // Prioridad 2: Otros estados pendientes (Aprobada, En reparto, etc.)
+                    // Prioridad 3: Estados terminados (Finalizada, Cancelada)
+
+                    int p1 = "Pendiente a reparto".equals(r1.getEstado()) ? 1 : 
+                            (!("Finalizada".equals(r1.getEstado()) || "Cancelada".equals(r1.getEstado())) ? 2 : 3);
+                    int p2 = "Pendiente a reparto".equals(r2.getEstado()) ? 1 : 
+                            (!("Finalizada".equals(r2.getEstado()) || "Cancelada".equals(r2.getEstado())) ? 2 : 3);
+
+                    if (p1 != p2) return Integer.compare(p1, p2);
+
+                    // Si tienen la misma prioridad, ordenar por ID descendente (más recientes primero)
+                    return r2.getId().compareTo(r1.getId());
+                })
                 .collect(Collectors.toList());
     }
 

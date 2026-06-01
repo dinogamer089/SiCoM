@@ -244,14 +244,16 @@
         .tarjeta-table tbody td:nth-child(4),
         .tarjeta-table tbody td:nth-child(5),
         .tarjeta-table tbody td:nth-child(6),
-        .tarjeta-table tbody td:nth-child(7) {
+        .tarjeta-table tbody td:nth-child(7),
+        .tarjeta-table tbody td:nth-child(8) {
             text-align: center;
             font-variant-numeric: tabular-nums;
         }
 
         .tarjeta-table tbody td:nth-child(8),
         .tarjeta-table tbody td:nth-child(9),
-        .tarjeta-table tbody td:nth-child(10) {
+        .tarjeta-table tbody td:nth-child(10),
+        .tarjeta-table tbody td:nth-child(11) {
             text-align: right;
             font-variant-numeric: tabular-nums;
         }
@@ -556,6 +558,14 @@
 
                         <p:column headerText="Existencia">
                             <h:outputText value="#{fila.existencia}" />
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">Precio Unitario</f:facet>
+                            <h:outputText value="#{fila.precioUnitario}"
+                                          styleClass="#{fila.debePositivo ? 'amount-positive' : ''}">
+                                <f:convertNumber type="currency" currencySymbol="$" />
+                            </h:outputText>
                         </p:column>
 
                         <p:column headerText="Debe">
