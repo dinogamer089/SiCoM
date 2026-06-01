@@ -551,6 +551,9 @@
 
                 <p:inputTextarea value="#{empleadoRentaUI.nuevoComentarioTexto}"
                                  rows="6"
+                                 maxlength="200"
+                                 counter="display"
+                                 counterTemplate="{0} caracteres restantes"
                                  styleClass="custom-textarea"
                                  placeholder="Escribe los detalles aquí..." />
 
@@ -566,6 +569,8 @@
                                      update=":formDetalle"
                                      oncomplete="if (!args.validationFailed) { PF('dlgComentarioEstado').hide(); mostrarToastSimple('Estado actualizado correctamente.'); }"
                                      styleClass="btn-black" />
+
+                    <h:outputText id="display" style="color: white; margin-left: 10px; align-self: center; font-family: 'Minerva Modern', serif;" />
                 </div>
             </div>
         </h:form>

@@ -317,8 +317,7 @@ public class CarritoBean implements Serializable {
         try {
             FacesContext ctx = FacesContext.getCurrentInstance();
             if (ctx == null) return;
-            ArticuloCatalogoBeanUI cat = (ArticuloCatalogoBeanUI)
-                    ctx.getApplication().evaluateExpressionGet(ctx, "#{articuloCatalogoUI}", ArticuloCatalogoBeanUI.class);
+            ArticuloCatalogoBeanUI cat = ctx.getApplication().evaluateExpressionGet(ctx, "#{articuloCatalogoUI}", ArticuloCatalogoBeanUI.class);
             if (cat != null && cat.getFechaSeleccionada() != null) {
                 LocalDate fFin = cat.getFechaSeleccionada();
                 LocalDate fIni = (cat.getFechaInicio() != null) ? cat.getFechaInicio() : fFin;
