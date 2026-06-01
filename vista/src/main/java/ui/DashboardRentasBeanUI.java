@@ -17,6 +17,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.TextStyle;
+import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -53,11 +54,13 @@ public class DashboardRentasBeanUI implements Serializable {
             diarios = Collections.emptyList();
         }
 
-        totalCanceladas  = diarios.stream().mapToLong(DailyRentaStatusDTO::getCanceladas).sum();
+        // Totales para KPIs
+        totalCanceladas = diarios.stream().mapToLong(DailyRentaStatusDTO::getCanceladas).sum();
         totalCompletadas = diarios.stream().mapToLong(DailyRentaStatusDTO::getCompletadas).sum();
         long total = diarios.stream().mapToLong(DailyRentaStatusDTO::getTotal).sum();
-        tasaCancelacion  = total == 0 ? Double.NaN : (double) totalCanceladas / total * 100.0;
+        tasaCancelacion = total == 0 ? Double.NaN : (double) totalCanceladas / total * 100.0;
 
+        // Preparar bar chart y heatmap
         Map<LocalDate, DailyRentaStatusDTO> porFecha = diarios.stream()
                 .collect(Collectors.toMap(DailyRentaStatusDTO::getFecha, d -> d));
 
@@ -66,62 +69,31 @@ public class DashboardRentasBeanUI implements Serializable {
     }
 
     private void buildHeatmap(Map<LocalDate, DailyRentaStatusDTO> porFecha) {
-        // Expandir el rango al lunes anterior y domingo posterior
-        LocalDate primerLunes   = fechaInicio.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        LocalDate ultimoDomingo = fechaFin.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+        List<HeatCell> allCells = new ArrayList<>();
+        LocalDate cursor = fechaInicio;
+        while (!cursor.isAfter(fechaFin)) {
+            DailyRentaStatusDTO dto = porFecha.get(cursor);
+            long count = dto != null ? dto.getTotal() : 0;
+            allCells.add(new HeatCell(cursor, count));
+            cursor = cursor.plusDays(1);
+        }
+        long max = allCells.stream().mapToLong(c -> c.count).max().orElse(0);
+        for (HeatCell c : allCells) {
+            c.color = resolveColor(c.count, max);
+        }
 
+        // Agrupar por semana del mes
+        Map<Integer, List<HeatCell>> porSemana = allCells.stream()
+                .collect(Collectors.groupingBy(c -> c.date.get(ChronoField.ALIGNED_WEEK_OF_MONTH)));
+
+        List<Integer> semanas = new ArrayList<>(porSemana.keySet());
+        Collections.sort(semanas);
         List<WeekRow> rows = new ArrayList<>();
-        LocalDate weekStart = primerLunes;
-        int semanaNum = 1;
-        int mesActual = -1;
-
-        while (!weekStart.isAfter(ultimoDomingo)) {
-            List<HeatCell> cells = new ArrayList<>();
-
-            for (int i = 0; i < 7; i++) {
-                LocalDate dia = weekStart.plusDays(i);
-                boolean dentroDelRango = !dia.isBefore(fechaInicio) && !dia.isAfter(fechaFin);
-                long count = 0;
-                if (dentroDelRango) {
-                    DailyRentaStatusDTO dto = porFecha.get(dia);
-                    count = dto != null ? dto.getTotal() : 0;
-                }
-                cells.add(new HeatCell(dia, count, dentroDelRango));
-            }
-
-            // Detectar cambio de mes usando el miércoles de la semana como referente
-            LocalDate referente = weekStart.plusDays(3);
-            int mesReferente = referente.getMonthValue();
-            String mesHeader = null;
-            if (mesReferente != mesActual) {
-                mesActual = mesReferente;
-                mesHeader = referente.getMonth()
-                        .getDisplayName(TextStyle.FULL, new Locale("es", "MX"))
-                        .toUpperCase()
-                        + " " + referente.getYear();
-            }
-
-            rows.add(new WeekRow("S" + semanaNum, cells, mesHeader));
-            semanaNum++;
-            weekStart = weekStart.plusWeeks(1);
+        for (Integer semana : semanas) {
+            List<HeatCell> cells = porSemana.get(semana);
+            cells.sort(Comparator.comparing(c -> c.date.getDayOfWeek().getValue()));
+            rows.add(new WeekRow("S" + semana, cells));
         }
-
-        // Calcular max global solo sobre días dentro del rango
-        long max = rows.stream()
-                .flatMap(r -> r.getCells().stream())
-                .filter(HeatCell::isDentroDelRango)
-                .mapToLong(c -> c.count)
-                .max().orElse(0);
-
-        // Asignar colores
-        for (WeekRow row : rows) {
-            for (HeatCell cell : row.getCells()) {
-                cell.color = cell.isDentroDelRango()
-                        ? resolveColor(cell.count, max)
-                        : "#eeeeee";
-            }
-        }
-
         heatmap = rows;
     }
 
@@ -144,8 +116,8 @@ public class DashboardRentasBeanUI implements Serializable {
         canceladas.setStack("rentas");
 
         List<Object> completadasVals = new ArrayList<>();
-        List<Object> canceladasVals  = new ArrayList<>();
-        List<String> labels          = new ArrayList<>();
+        List<Object> canceladasVals = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
 
         for (DailyRentaStatusDTO dto : diarios) {
             labels.add(String.valueOf(dto.getFecha().getDayOfMonth()));
@@ -155,9 +127,11 @@ public class DashboardRentasBeanUI implements Serializable {
 
         completadas.setData(completadasVals);
         canceladas.setData(canceladasVals);
+
         data.addChartDataSet(completadas);
         data.addChartDataSet(canceladas);
         data.setLabels(labels);
+
         stackedBarModel.setData(data);
 
         BarChartOptions options = new BarChartOptions();
@@ -174,69 +148,65 @@ public class DashboardRentasBeanUI implements Serializable {
     }
 
     private String resolveColor(long count, long max) {
-        if (count <= 0) return "#f0f4ef";
-        return "rgb(46,125,50)";
+        if (count <= 0 || max <= 0) {
+            return "#f5f5f5";
+        }
+        double ratio = (double) count / (double) max;
+        double intensity = 0.35 + (0.65 * ratio);
+        int r = (int) Math.round(46 * intensity);
+        int g = (int) Math.round(125 * intensity);
+        int b = (int) Math.round(50 * intensity);
+        return String.format("rgb(%d,%d,%d)", r, g, b);
     }
 
     private java.util.Date toDate(LocalDate ld) {
         return java.util.Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
-    // ── Getters ──────────────────────────────────────────────────────────────
-    public List<WeekRow>   getHeatmap()           { return heatmap; }
-    public BarChartModel   getStackedBarModel()    { return stackedBarModel; }
-    public LocalDate       getFechaInicio()        { return fechaInicio; }
-    public void            setFechaInicio(LocalDate v) { this.fechaInicio = v; }
-    public LocalDate       getFechaFin()           { return fechaFin; }
-    public void            setFechaFin(LocalDate v)    { this.fechaFin = v; }
-    public long            getTotalCanceladas()    { return totalCanceladas; }
-    public long            getTotalCompletadas()   { return totalCompletadas; }
-    public double          getTasaCancelacion()    { return tasaCancelacion; }
-    public String          getTasaCancelacionStr() {
+    // Getters y modelos para la vista
+    public List<WeekRow> getHeatmap() { return heatmap; }
+    public BarChartModel getStackedBarModel() { return stackedBarModel; }
+    public LocalDate getFechaInicio() { return fechaInicio; }
+    public void setFechaInicio(LocalDate fechaInicio) { this.fechaInicio = fechaInicio; }
+    public LocalDate getFechaFin() { return fechaFin; }
+    public void setFechaFin(LocalDate fechaFin) { this.fechaFin = fechaFin; }
+    public long getTotalCanceladas() { return totalCanceladas; }
+    public long getTotalCompletadas() { return totalCompletadas; }
+    public double getTasaCancelacion() { return tasaCancelacion; }
+    public String getTasaCancelacionStr() {
         if (Double.isNaN(tasaCancelacion)) return "—";
         return String.format("%.1f%%", tasaCancelacion);
     }
 
-    // ── Clases internas ──────────────────────────────────────────────────────
+    // Row y Cell para heatmap
     public static class WeekRow {
-        private final String        label;
+        private final String label;
         private final List<HeatCell> cells;
-        private final String        mesHeader; // null si no hay cambio de mes
 
-        public WeekRow(String label, List<HeatCell> cells, String mesHeader) {
-            this.label     = label;
-            this.cells     = cells;
-            this.mesHeader = mesHeader;
+        public WeekRow(String label, List<HeatCell> cells) {
+            this.label = label;
+            this.cells = cells;
         }
 
-        public String         getLabel()     { return label; }
-        public List<HeatCell> getCells()     { return cells; }
-        public String         getMesHeader() { return mesHeader; }
+        public String getLabel() { return label; }
+        public List<HeatCell> getCells() { return cells; }
     }
 
     public static class HeatCell {
         private final LocalDate date;
-        private final long      count;
-        private final boolean   dentroDelRango;
-        private       String    color;
+        private final long count;
+        private String color;
 
-        public HeatCell(LocalDate date, long count, boolean dentroDelRango) {
-            this.date           = date;
-            this.count          = count;
-            this.dentroDelRango = dentroDelRango;
+        public HeatCell(LocalDate date, long count) {
+            this.date = date;
+            this.count = count;
         }
 
-        public String  getDiaLabel()      { return String.valueOf(date.getDayOfMonth()); }
-        public String  getColor()         { return color; }
-        public long    getCount()         { return count; }
-        public boolean isDentroDelRango() { return dentroDelRango; }
-
-        /** Texto para el tooltip: "Sábado 15 · 3 renta(s)" */
-        public String getTooltip() {
-            String dia = date.getDayOfWeek()
-                    .getDisplayName(TextStyle.FULL, new Locale("es", "MX"));
-            dia = dia.substring(0, 1).toUpperCase() + dia.substring(1);
-            return dia + " " + date.getDayOfMonth() + " · " + count + " renta(s)";
+        public String getDiaLabel() {
+            return String.valueOf(date.getDayOfMonth());
         }
+
+        public String getColor() { return color; }
+        public long getCount() { return count; }
     }
 }

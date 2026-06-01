@@ -6,10 +6,10 @@ import java.time.LocalDate;
  * Agregado diario de rentas por estado.
  */
 public class DailyRentaStatusDTO {
-    private LocalDate fecha;
-    private long total;
-    private long completadas;
-    private long canceladas;
+    private final LocalDate fecha;
+    private final long total;
+    private final long completadas;
+    private final long canceladas;
 
     public DailyRentaStatusDTO(LocalDate fecha, long total, long completadas, long canceladas) {
         this.fecha = fecha;

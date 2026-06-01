@@ -1,9 +1,9 @@
 package mx.avanti.desarollo.dashboard;
 
 public class TopArticuloDTO {
-    private int id;
-    private String nombre;
-    private long cantidad;
+    private final int id;
+    private final String nombre;
+    private final long cantidad;
     private double porcentaje;
 
     public TopArticuloDTO(int id, String nombre, long cantidad) {
