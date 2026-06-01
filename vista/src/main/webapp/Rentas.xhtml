@@ -96,6 +96,31 @@
             color: lightblue;
         }
 
+        .status-container {
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 6px;
+            display: inline-block;
+        }
+
+        .status-aprobada { background-color: #f39c12; }
+        .status-confirmado { background-color: #f1c40f; }
+        .status-pendiente-a-reparto { background-color: #e67e22; }
+        .status-en-reparto { background-color: #3498db; }
+        .status-entregado { background-color: #2ecc71; }
+        .status-pendiente-a-recoleccion { background-color: #9b59b6; }
+        .status-en-recoleccion { background-color: #8e44ad; }
+        .status-finalizada { background-color: #27ae60; }
+        .status-cancelada { background-color: #e74c3c; }
+        .status-default { background-color: #bdc3c7; }
+
         .icon-bill {
             font-size: 40px;
             margin-right: 15px;
@@ -151,7 +176,10 @@
                                             <h:outputText value="#{rent.idCliente.nombre}" style="font-size: 16px;"/>
                                             <h:outputText value="#{rent.idCliente.telefono}" style="font-size: 14px;"/>
 
-                                            <h:outputText value="#{rent.estado}" styleClass="renta-status"/>
+                                            <div class="status-container">
+                                                <span class="status-dot status-#{rent.estado.toLowerCase().replaceAll(' ', '-')}"></span>
+                                                <h:outputText value="#{rent.estado}" styleClass="renta-status" style="margin-top: 0;"/>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
