@@ -7,9 +7,9 @@ import java.io.Serializable;
  * Item dentro del carrito en sesion
  */
 public class CarritoItem implements Serializable {
-    private Integer articuloId;
-    private String nombre;
-    private BigDecimal precioUnitario;
+    private final Integer articuloId;
+    private final String nombre;
+    private final BigDecimal precioUnitario;
     private int cantidad = 1;
 
     public CarritoItem(Integer articuloId, String nombre, BigDecimal precioUnitario) {

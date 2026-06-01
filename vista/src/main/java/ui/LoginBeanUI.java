@@ -14,7 +14,7 @@ import java.io.Serializable;
 @SessionScoped
 public class LoginBeanUI implements Serializable {
 
-    private LoginHelper loginHelper;
+    private final LoginHelper loginHelper;
     private String correo;
     private String contrasena;
     private Object usuario; // can be Administrador or Empleado

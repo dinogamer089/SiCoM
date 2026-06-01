@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class MovimientoAlmacenDAO extends AbstractDAO<MovimientoAlmacen> {
 
-    private EntityManager em;
+    private final EntityManager em;
 
     public MovimientoAlmacenDAO(EntityManager entityManager) {
         super(MovimientoAlmacen.class);
